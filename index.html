@@ -57,7 +57,7 @@
 
             </nav>
         </div>
-        <div class="p-4 border-t border-slate-800 text-xs text-slate-500">Comercial Ethan Cloud v3.3</div>
+        <div class="p-4 border-t border-slate-800 text-xs text-slate-500">Comercial Ethan Cloud v3.3[cite: 4]</div>
     </aside>
 
     <!-- Contenido Principal -->
@@ -80,10 +80,10 @@
             <!-- DASHBOARD GENERAL -->
             <div id="vista-dashboard" class="space-y-6">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><p class="text-slate-400 text-xs font-semibold uppercase">Clientes Activos</p><h3 id="dash-clientes" class="text-2xl font-bold mt-1 text-slate-900">0</h3></div>
-                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><p class="text-slate-400 text-xs font-semibold uppercase">Stock Disponible</p><h3 id="dash-stock" class="text-2xl font-bold mt-1 text-indigo-600">0</h3></div>
-                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><p class="text-slate-400 text-xs font-semibold uppercase">Ventas Totales</p><h3 id="dash-ventas-totales" class="text-2xl font-bold mt-1 text-emerald-600">$0.00</h3></div>
-                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><p class="text-slate-400 text-xs font-semibold uppercase">Saldo Pendiente (Deuda)</p><h3 id="dash-deuda" class="text-2xl font-bold mt-1 text-rose-600">$0.00</h3></div>
+                    <div onclick="cambiarVista('clientes')" class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm cursor-pointer hover:border-indigo-500 transition"><p class="text-slate-400 text-xs font-semibold uppercase">Clientes Activos</p><h3 id="dash-clientes" class="text-2xl font-bold mt-1 text-slate-900">0</h3></div>
+                    <div onclick="cambiarVista('inventario')" class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm cursor-pointer hover:border-indigo-500 transition"><p class="text-slate-400 text-xs font-semibold uppercase">Stock Disponible</p><h3 id="dash-stock" class="text-2xl font-bold mt-1 text-indigo-600">0</h3></div>
+                    <div onclick="cambiarVista('ventas')" class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm cursor-pointer hover:border-indigo-500 transition"><p class="text-slate-400 text-xs font-semibold uppercase">Ventas Totales</p><h3 id="dash-ventas-totales" class="text-2xl font-bold mt-1 text-emerald-600">$0.00</h3></div>
+                    <div onclick="cambiarVista('pagos')" class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm cursor-pointer hover:border-indigo-500 transition"><p class="text-slate-400 text-xs font-semibold uppercase">Saldo Pendiente (Deuda)</p><h3 id="dash-deuda" class="text-2xl font-bold mt-1 text-rose-600">$0.00</h3></div>
                 </div>
             </div>
 
@@ -835,7 +835,7 @@
                     if(m.tipo === 'Entrada') {
                         if(esHoy) ingHoy += montoNum;
                         if(esEsteMes) ingMes += montoNum;
-                        ingSem += montoNum; // Acumulado simplificado
+                        ingSem += montoNum; 
                     } else {
                         if(esHoy) gasHoy += montoNum;
                         if(esEsteMes) gasMes += montoNum;
@@ -857,7 +857,6 @@
                 document.getElementById('tabla-movimientos-cuerpo').innerHTML = htmlMov || '<tr><td colspan="6" class="p-4 text-center text-slate-400">Sin movimientos registrados</td></tr>';
                 document.getElementById('tabla-combustible-cuerpo').innerHTML = htmlMov || '<tr><td colspan="5" class="p-4 text-center text-slate-400">Sin combustible registrado</td></tr>';
 
-                // Asignar Valores Financieros al Dashboard Personal (Exacto a la imagen)
                 document.getElementById('fin-ing-hoy').innerText = `$${ingHoy.toFixed(2)}`;
                 document.getElementById('fin-ing-sem').innerText = `$${ingSem.toFixed(2)}`;
                 document.getElementById('fin-ing-mes').innerText = `$${ingMes.toFixed(2)}`;
@@ -878,7 +877,6 @@
                 const porcGastoComb = gasMes > 0 ? ((combustibleTotal / gasMes) * 100).toFixed(1) : '35.5';
                 document.getElementById('fin-porc-comb').innerText = `${porcGastoComb}%`;
 
-                // Renderizar gráfico de barras simulado en CSS
                 const contenedorGrafico = document.getElementById('contenedor-grafico-finanzas');
                 contenedorGrafico.innerHTML = `
                     <div class="flex flex-col items-center gap-2 h-full justify-end">
@@ -1191,7 +1189,7 @@
             document.getElementById('tabla-detalles-cobros').innerHTML = htmlC || '<tr><td colspan="2" class="p-3 text-center text-slate-400">Sin pagos registrados.</td></tr>';
 
             document.getElementById('det-saldo').innerText = `$${Math.max(0, totalV - totalC).toFixed(2)}`;
-            document.getElementById('modal-detalle-cliente').classList.add('hidden'); // Fix toggle
+            document.getElementById('modal-detalle-cliente').classList.add('hidden'); 
             document.getElementById('modal-detalle-cliente').classList.remove('hidden');
         }
         window.cerrarModalDetalle = () => document.getElementById('modal-detalle-cliente').classList.add('hidden');
