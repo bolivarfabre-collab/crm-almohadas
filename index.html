@@ -27,6 +27,8 @@
                 
                 <p class="px-3 text-[10px] tracking-wider text-slate-500 uppercase font-semibold mt-4 mb-1">Sistema</p>
                 <a href="#" onclick="sincronizarDatos()" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition text-amber-400"><i class="fa-solid fa-rotate w-5"></i> Sincronizar Nube</a>
+                <!-- BOTÓN DE RESPALDO INTEGRADO -->
+                <a href="#" onclick="descargarRespaldoJSON()" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition text-emerald-400"><i class="fa-solid fa-cloud-arrow-down w-5"></i> Respaldo de Datos</a>
             </nav>
         </div>
         <div class="p-4 border-t border-slate-800 text-xs text-slate-500">Comercial Ethan Cloud v3.0</div>
@@ -185,7 +187,7 @@
                 </div>
             </div>
 
-            <!-- COMISIONES (ACTUALIZADO CON ESTILOS Y ACCIÓN MARCAR) -->
+            <!-- COMISIONES -->
             <div id="vista-comisiones" class="space-y-6 hidden">
                 <h2 class="font-bold text-slate-800 text-lg">Gestión de Comisiones</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -361,13 +363,12 @@
                 listaInventario = [];
                 snapInv.forEach(d => listaInventario.push({ id: d.id, ...d.data() }));
 
-// Si el inventario está vacío, inyectamos las compras por defecto
-if(listaInventario.length === 0) {
-    listaInventario = [
-        { id: 'compra-1', fecha: '2026-07-17', cantidad: 5, costoTotal: 69.00 },
-        { id: 'compra-2', fecha: '2026-07-21', cantidad: 7, costoTotal: 96.60 }
-    ];
-}
+                if(listaInventario.length === 0) {
+                    listaInventario = [
+                        { id: 'compra-1', fecha: '2026-07-17', cantidad: 5, costoTotal: 69.00 },
+                        { id: 'compra-2', fecha: '2026-07-21', cantidad: 7, costoTotal: 96.60 }
+                    ];
+                }
                 let totalComprado = 0;
                 let costoTotalGasto = 0;
                 let htmlInv = '';
@@ -522,7 +523,7 @@ if(listaInventario.length === 0) {
                 });
                 document.getElementById('tabla-ventas-cuerpo').innerHTML = htmlVentas || '<tr><td colspan="7" class="p-4 text-center text-slate-400">Sin ventas registradas</td></tr>';
 
-                // 5. Renderizar Comisiones (Comisión = $5 por almohada)
+                // 5. Renderizar Comisiones
                 let htmlComisiones = '';
                 let totalPendienteComision = 0;
                 let totalPagadaComision = 0;
@@ -530,7 +531,7 @@ if(listaInventario.length === 0) {
                 listaVentas.forEach(item => {
                     const cantAlmohadas = parseInt(item.cantidad || 1);
                     const comisionTotalVenta = cantAlmohadas * 5;
-                    const estadoComision = item.estadoComision || 'Pendiente'; // 'Pendiente' o 'Pagada'
+                    const estadoComision = item.estadoComision || 'Pendiente';
 
                     if(estadoComision === 'Pagada') {
                         totalPagadaComision += comisionTotalVenta;
@@ -558,7 +559,6 @@ if(listaInventario.length === 0) {
                 document.getElementById('comision-pagada').innerText = `$${totalPagadaComision.toFixed(2)}`;
                 document.getElementById('tabla-comisiones-cuerpo').innerHTML = htmlComisiones || '<tr><td colspan="6" class="p-4 text-center text-slate-400">Sin comisiones registradas</td></tr>';
 
-                // Fechas por defecto
                 const hoy = new Date().toISOString().split('T')[0];
                 document.getElementById('pago-fecha').value = hoy;
                 document.getElementById('inv-fecha').value = hoy;
@@ -570,14 +570,37 @@ if(listaInventario.length === 0) {
             }
         }
 
-        // Cambiar estado de comisión (Pendiente <-> Pagada)
+        // FUNCIÓN DE RESPALDO DE DATOS (JSON)
+        window.descargarRespaldoJSON = () => {
+            try {
+                const datosRespaldo = {
+                    fechaRespaldo: new Date().toISOString(),
+                    clientes: listaClientes,
+                    ventas: listaVentas,
+                    cobros: listaPagos,
+                    inventario: listaInventario
+                };
+
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(datosRespaldo, null, 2));
+                const downloadAnchor = document.createElement('a');
+                downloadAnchor.setAttribute("href", dataStr);
+                downloadAnchor.setAttribute("download", `respaldo_crm_ethan_${new Date().toISOString().split('T')[0]}.json`);
+                document.body.appendChild(downloadAnchor);
+                downloadAnchor.click();
+                downloadAnchor.remove();
+                alert("¡Respaldo de datos descargado con éxito!");
+            } catch (error) {
+                console.error(error);
+                alert("Hubo un error al generar el respaldo.");
+            }
+        };
+
         window.toggleEstadoComision = async (idVenta, estadoActual) => {
             const nuevoEstado = estadoActual === 'Pendiente' ? 'Pagada' : 'Pendiente';
             await updateDoc(doc(db, "ventas_ethan", idVenta), { estadoComision: nuevoEstado });
             sincronizarDatos();
         }
 
-        // Gestión de Inventario / Compras
         window.guardarCompraInventario = async (e) => {
             e.preventDefault();
             const id = document.getElementById('inv-id').value;
@@ -647,7 +670,6 @@ if(listaInventario.length === 0) {
             if(confirm("¿Eliminar este pago?")) { await deleteDoc(doc(db, "cobros_ethan", id)); sincronizarDatos(); }
         }
 
-        // Modales Clientes y Ventas
         window.abrirModalCliente = () => { document.getElementById('form-cliente').reset(); document.getElementById('m-id').value = ''; document.getElementById('modal-cliente').classList.remove('hidden'); }
         window.cerrarModalCliente = () => document.getElementById('modal-cliente').classList.add('hidden');
         window.guardarCliente = async (e) => {
