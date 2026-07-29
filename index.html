@@ -53,7 +53,7 @@
                 </div>
             </nav>
         </div>
-        <div class="p-4 border-t border-slate-800 text-xs text-slate-500">Comercial Ethan Cloud v3.5</div>
+        <div class="p-4 border-t border-slate-800 text-xs text-slate-500">Comercial Ethan Cloud v3.6</div>
     </aside>
 
     <!-- Contenido Principal -->
@@ -115,6 +115,16 @@
                             <i class="fa-solid fa-hand-holding-dollar text-emerald-500"></i>
                         </div>
                         <h3 id="dash-total-cobrado" class="text-3xl font-bold mt-1 text-emerald-600">$0.00</h3>
+                    </div>
+
+                    <!-- NUEVA TARJETA DE UTILIDAD NETA (EXCLUYENDO COMBUSTIBLE) -->
+                    <div onclick="cambiarVista('finanzas')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden border-l-4 border-l-indigo-600">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Utilidad Neta (Mes)*</span>
+                            <i class="fa-solid fa-chart-line text-indigo-600"></i>
+                        </div>
+                        <h3 id="dash-utilidad-neta" class="text-3xl font-bold mt-1 text-indigo-600">$0.00</h3>
+                        <span class="text-[10px] text-slate-400 block mt-1">*Sin incluir gasto de combustible</span>
                     </div>
 
                     <div onclick="cambiarVista('pagos')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden">
@@ -462,14 +472,12 @@
                 </div>
                 
                 <div class="space-y-4">
-                    <!-- Cabecera del Historial con las 2 ventanitas solicitadas -->
                     <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
                         <div>
                             <h2 class="font-bold text-slate-800 text-base">Historial de Combustible</h2>
                             <p id="info-filtro-combustible" class="text-xs text-slate-500 mt-0.5">Mostrando todos los registros</p>
                         </div>
 
-                        <!-- Las 2 Ventanitas: Semana Anterior y Semana Actual -->
                         <div class="flex items-center gap-3 w-full lg:w-auto overflow-x-auto pb-1 lg:pb-0">
                             <div class="bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 flex flex-col min-w-[130px]">
                                 <span class="text-[10px] uppercase font-semibold text-slate-400">Semana Anterior</span>
@@ -949,6 +957,32 @@
                 document.getElementById('fin-comb-total').innerText = `$${combustibleTotal.toFixed(2)}`;
                 document.getElementById('dash-gasto-combustible').innerText = `$${combustibleTotal.toFixed(2)}`;
                 
+                // CÁLCULO DE LA UTILIDAD NETA DEL MES (EXCLUYENDO COMBUSTIBLE)
+                // Se consideran las ventas del mes menos el costo de la mercadería vendida y otros gastos que NO sean combustible.
+                let ventasMesTotal = 0;
+                let costoMercaderiaMes = 0;
+                let otrosGastosMesSinCombustible = 0;
+
+                listaVentas.forEach(v => {
+                    if(v.fecha && v.fecha.startsWith(mesActualStr)) {
+                        ventasMesTotal += parseFloat(v.total || (v.cantidad * 40));
+                        const cantV = parseInt(v.cantidad || 1);
+                        costoMercaderiaMes += cantV * costoPromedio;
+                    }
+                });
+
+                listaMovimientos.forEach(m => {
+                    if(m.fecha && m.fecha.startsWith(mesActualStr) && m.tipo === 'Salida') {
+                        if(m.categoria !== 'Combustible') {
+                            otrosGastosMesSinCombustible += parseFloat(m.monto || 0);
+                        }
+                    }
+                });
+
+                // Utilidad Neta del Mes = Ventas del Mes - Costo de la Mercadería - Gastos (excluyendo combustible)
+                let utilidadNetaMes = ventasMesTotal - costoMercaderiaMes - otrosGastosMesSinCombustible;
+                document.getElementById('dash-utilidad-neta').innerText = `$${utilidadNetaMes.toFixed(2)}`;
+
                 const porcGastoComb = gasMes > 0 ? ((combustibleTotal / gasMes) * 100).toFixed(1) : '0';
                 document.getElementById('fin-porc-comb').innerText = `${porcGastoComb}%`;
 
@@ -977,23 +1011,18 @@
             }
         }
 
-        // FUNCIÓN AUXILIAR PARA OBTENER LOS RANGOS DE FECHA DE LA SEMANA ACTUAL Y ANTERIOR
         function obtenerRangosSemanales() {
             const ahora = new Date();
-            // Ajustar para considerar el día actual (Lunes a Domingo o formato estándar)
-            const diaSemana = ahora.getDay() === 0 ? 6 : ahora.getDay() - 1; // 0 para lunes, 6 para domingo
+            const diaSemana = ahora.getDay() === 0 ? 6 : ahora.getDay() - 1; 
             
-            // Inicio de semana actual (Lunes)
             const inicioSemanaActual = new Date(ahora);
             inicioSemanaActual.setDate(ahora.getDate() - diaSemana);
             inicioSemanaActual.setHours(0, 0, 0, 0);
 
-            // Fin de semana actual (Domingo)
             const finSemanaActual = new Date(inicioSemanaActual);
             finSemanaActual.setDate(inicioSemanaActual.getDate() + 6);
             finSemanaActual.setHours(23, 59, 59, 999);
 
-            // Semana Anterior (Lunes a Domingo de la semana pasada)
             const inicioSemanaAnterior = new Date(inicioSemanaActual);
             inicioSemanaAnterior.setDate(inicioSemanaActual.getDate() - 7);
 
@@ -1003,15 +1032,11 @@
             return { inicioSemanaActual, finSemanaActual, inicioSemanaAnterior, finSemanaAnterior };
         }
 
-        // FUNCIÓN PARA RENDERIZAR Y FILTRAR COMBUSTIBLE Y CALCULAR LAS SEMANAS
         window.renderizarHistorialCombustible = () => {
             const filtroMesInput = document.getElementById('filtro-mes-combustible').value;
             let htmlComb = '';
             
-            // Filtrar solo los movimientos de categoría Combustible
             let listaCombustible = listaMovimientos.filter(m => m.categoria === 'Combustible');
-
-            // Calcular totales de semana actual y anterior basados en la lista completa de combustible
             const { inicioSemanaActual, finSemanaActual, inicioSemanaAnterior, finSemanaAnterior } = obtenerRangosSemanales();
             let totalSemanaActual = 0;
             let totalSemanaAnterior = 0;
@@ -1029,11 +1054,9 @@
                 }
             });
 
-            // Actualizar los valores en las 2 ventanitas
             document.getElementById('comb-total-sem-actual').innerText = `$${totalSemanaActual.toFixed(2)}`;
             document.getElementById('comb-total-sem-anterior').innerText = `$${totalSemanaAnterior.toFixed(2)}`;
 
-            // Si hay un filtro de mes seleccionado (formato "YYYY-MM")
             if(filtroMesInput) {
                 listaCombustible = listaCombustible.filter(m => m.fecha && m.fecha.startsWith(filtroMesInput));
                 document.getElementById('info-filtro-combustible').innerText = `Filtrado por el mes: ${filtroMesInput}`;
