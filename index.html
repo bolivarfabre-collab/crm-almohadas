@@ -24,18 +24,14 @@
     <main class="flex-1 p-4 md:p-8 max-w-6xl mx-auto w-full space-y-6">
         
         <!-- Tarjetas de Resumen Rápido -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow">
-                <p class="text-slate-400 text-sm">Clientes Activos</p>
-                <h3 id="total-clientes" class="text-2xl font-bold mt-1 text-white">7</h3>
+                <p class="text-slate-400 text-sm">Clientes Registrados</p>
+                <h3 id="total-clientes" class="text-2xl font-bold mt-1 text-white">0</h3>
             </div>
             <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow">
-                <p class="text-slate-400 text-sm">Ventas Totales (Jul)</p>
-                <h3 class="text-2xl font-bold mt-1 text-emerald-400">$480.00</h3>
-            </div>
-            <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow">
-                <p class="text-slate-400 text-sm">Saldo Pendiente</p>
-                <h3 class="text-2xl font-bold mt-1 text-rose-400">$430.00</h3>
+                <p class="text-slate-400 text-sm">Deuda Total Acumulada</p>
+                <h3 id="total-deuda" class="text-2xl font-bold mt-1 text-rose-400">$0.00</h3>
             </div>
             <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow">
                 <p class="text-slate-400 text-sm">Estado del Sistema</p>
@@ -43,14 +39,40 @@
             </div>
         </div>
 
+        <!-- Formulario para Agregar Cliente Directo a Firebase -->
+        <div class="bg-slate-800 rounded-xl border border-slate-700 p-6 shadow-md">
+            <h2 class="text-lg font-semibold flex items-center gap-2 mb-4">
+                <i class="fa-solid fa-user-plus text-emerald-400"></i> Agregar Nuevo Cliente a la Nube
+            </h2>
+            <form id="form-cliente" onsubmit="agregarCliente(event)" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Nombre Completo</label>
+                    <input type="text" id="input-nombre" required placeholder="Ej. Rosa Galarza" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Artículo / Detalle</label>
+                    <input type="text" id="input-articulo" required placeholder="Ej. Almohada" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Deuda Pendiente ($)</label>
+                    <input type="number" step="0.01" id="input-deuda" required placeholder="80.00" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none focus:border-indigo-500">
+                </div>
+                <div class="md:col-span-3 flex justify-end">
+                    <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">
+                        <i class="fa-solid fa-floppy-disk"></i> Guardar en Firebase
+                    </button>
+                </div>
+            </form>
+        </div>
+
         <!-- Sección de Clientes / Créditos -->
         <div class="bg-slate-800 rounded-xl border border-slate-700 p-6 shadow-md">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-lg font-semibold flex items-center gap-2">
-                    <i class="fa-solid fa-users text-indigo-400"></i> Directorio de Clientes y Créditos (Julio 2026)
+                    <i class="fa-solid fa-users text-indigo-400"></i> Directorio en la Nube
                 </h2>
                 <button onclick="cargarDatosDesdeFirebase()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm transition font-medium">
-                    <i class="fa-solid fa-rotate mr-1"></i> Actualizar Datos
+                    <i class="fa-solid fa-rotate mr-1"></i> Recargar
                 </button>
             </div>
 
@@ -59,14 +81,13 @@
                     <thead>
                         <tr class="border-b border-slate-700 text-slate-400 text-xs uppercase">
                             <th class="p-3">Nombre</th>
-                            <th class="p-3">Artículo / Detalle</th>
-                            <th class="p-3">Vendedor</th>
-                            <th class="p-3">Estado Deuda</th>
+                            <th class="p-3">Artículo</th>
+                            <th class="p-3">Deuda Pendiente</th>
                         </tr>
                     </thead>
                     <tbody id="tabla-clientes-body" class="divide-y divide-slate-700/50 text-sm">
                         <tr>
-                            <td colspan="4" class="p-4 text-center text-slate-400">Cargando registros desde la nube...</td>
+                            <td colspan="3" class="p-4 text-center text-slate-400">Cargando registros...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -75,10 +96,10 @@
 
     </main>
 
-    <!-- Script de Conexión a Firebase (Modular SDK) -->
+    <!-- Script de Conexión y Gestión de Firebase -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDwgvrnx4iXLl4l7g6vBmMPrVUAojrBiA",
@@ -93,6 +114,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        // Función para cargar datos desde Firestore
         async function cargarDatosDesdeFirebase() {
             const badge = document.getElementById('status-conexion');
             const tbody = document.getElementById('tabla-clientes-body');
@@ -104,29 +126,30 @@
                 const querySnapshot = await getDocs(collection(db, "clientes_ethan"));
                 let filasHTML = "";
                 let contador = 0;
+                let sumaDeuda = 0;
 
                 querySnapshot.forEach((doc) => {
                     contador++;
                     const data = doc.data();
-                    // Determinamos vendedor según el registro histórico (Estefanía por Bolívar, resto por George por defecto)
-                    let vendedor = data.nombre && data.nombre.includes("Estefanía") ? "Bolívar" : "George";
-                    
+                    const deudaNum = parseFloat(data.deuda) || 0;
+                    sumaDeuda += deudaNum;
+
                     filasHTML += `
                         <tr class="hover:bg-slate-700/30 transition">
                             <td class="p-3 font-medium text-white">${data.nombre || 'Sin nombre'}</td>
-                            <td class="p-3 text-slate-300">${data.articulo || 'Almohada a crédito'}</td>
-                            <td class="p-3 text-indigo-300">${vendedor}</td>
-                            <td class="p-3 font-semibold text-rose-400">Pendiente</td>
+                            <td class="p-3 text-slate-300">${data.articulo || 'N/D'}</td>
+                            <td class="p-3 font-semibold text-rose-400">$${deudaNum.toFixed(2)}</td>
                         </tr>
                     `;
                 });
 
                 if (contador === 0) {
-                    filasHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400">No se encontraron registros en clientes_ethan.</td></tr>`;
+                    filasHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-400">No hay clientes registrados todavía.</td></tr>`;
                 }
 
                 tbody.innerHTML = filasHTML;
                 document.getElementById('total-clientes').innerText = contador;
+                document.getElementById('total-deuda').innerText = `$${sumaDeuda.toFixed(2)}`;
 
                 badge.className = "text-xs px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
                 badge.innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i> Conectado a la Nube';
@@ -135,12 +158,36 @@
                 console.error("Error al obtener documentos: ", error);
                 badge.className = "text-xs px-3 py-1 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30";
                 badge.innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-1"></i> Error de Conexión';
-                tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-rose-400">Error al cargar datos. Verifica tu conexión.</td></tr>`;
+            }
+        }
+
+        // Función para agregar un cliente directamente a Firestore
+        async function agregarCliente(event) {
+            event.preventDefault();
+            const nombre = document.getElementById('input-nombre').value;
+            const articulo = document.getElementById('input-articulo').value;
+            const deuda = parseFloat(document.getElementById('input-deuda').value);
+
+            try {
+                await addDoc(collection(db, "clientes_ethan"), {
+                    nombre: nombre,
+                    articulo: articulo,
+                    deuda: deuda
+                });
+
+                // Limpiar formulario y recargar tabla
+                document.getElementById('form-cliente').reset();
+                alert("¡Cliente guardado exitosamente en Firebase!");
+                cargarDatosDesdeFirebase();
+            } catch (e) {
+                console.error("Error al agregar documento: ", e);
+                alert("Hubo un error al guardar en la nube.");
             }
         }
 
         window.onload = cargarDatosDesdeFirebase;
         window.cargarDatosDesdeFirebase = cargarDatosDesdeFirebase;
+        window.agregarCliente = agregarCliente;
     </script>
 </body>
 </html>
