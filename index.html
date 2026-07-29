@@ -53,7 +53,7 @@
                 </div>
             </nav>
         </div>
-        <div class="p-4 border-t border-slate-800 text-xs text-slate-500">Comercial Ethan Cloud v3.7</div>
+        <div class="p-4 border-t border-slate-800 text-xs text-slate-500">Comercial Ethan Cloud v3.8</div>
     </aside>
 
     <!-- Contenido Principal -->
@@ -127,7 +127,7 @@
                         <span class="text-[10px] text-slate-400 block mt-1">*Sin incluir gasto de combustible</span>
                     </div>
 
-                    <!-- 10. UTILIDAD HISTÓRICA (NUEVA TARJETA) -->
+                    <!-- UTILIDAD HISTÓRICA -->
                     <div onclick="cambiarVista('finanzas')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-emerald-500 transition relative overflow-hidden border-l-4 border-l-emerald-600">
                         <div class="flex items-center justify-between mb-2">
                             <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Utilidad Histórica (Total)</span>
@@ -430,17 +430,24 @@
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-600 mb-1">Categoría</label>
-                            <select id="mov-cat" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2">
+                            <select id="mov-cat" onchange="verificarCategoriaPersonal(this)" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2">
                                 <option value="Combustible">Combustible</option>
-                                <option value="Alimentacion">Alimentación</option>
-                                <option value="Mantenimiento">Mantenimiento</option>
-                                <option value="Ventas Negocio">Ventas Negocio</option>
-                                <option value="Otro">Otro</option>
+                                <option value="Gastos Personales">Gastos Personales</option>
+                                <option value="Deudas">Deudas</option>
+                                <option value="Mantenimiento vehiculo">Mantenimiento vehiculo</option>
+                                <option value="Indriver">Indriver</option>
+                                <option value="Colchones">Colchones</option>
+                                <option value="Agregar Manual">Agregar manualmente...</option>
                             </select>
+                        </div>
+                        <!-- Campo manual dinámico -->
+                        <div id="contenedor-cat-manual" class="sm:col-span-4 hidden">
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Especifique nueva categoría</label>
+                            <input type="text" id="mov-cat-manual" placeholder="Escriba la nueva categoría..." class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2">
                         </div>
                         <div class="sm:col-span-3">
                             <label class="block text-xs font-semibold text-slate-600 mb-1">Descripción / Observación</label>
-                            <input type="text" id="mov-obs" placeholder="Ej: Gasolina camioneta, almuerzo..." class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2">
+                            <input type="text" id="mov-obs" placeholder="Ej: Abono, compra de víveres..." class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2">
                         </div>
                         <div class="flex items-end">
                             <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white p-2 rounded-lg font-medium shadow-sm transition">Guardar Movimiento</button>
@@ -666,6 +673,17 @@
             const flecha = document.getElementById('icono-flecha-respaldo');
             submenu.classList.toggle('hidden');
             flecha.classList.toggle('rotate-180');
+        }
+
+        window.verificarCategoriaPersonal = (select) => {
+            const contManual = document.getElementById('contenedor-cat-manual');
+            if(select.value === 'Agregar Manual') {
+                contManual.classList.remove('hidden');
+                document.getElementById('mov-cat-manual').required = true;
+            } else {
+                contManual.classList.add('hidden');
+                document.getElementById('mov-cat-manual').required = false;
+            }
         }
 
         window.sincronizarDatos = async () => {
@@ -896,7 +914,7 @@
                 });
                 document.getElementById('tabla-calendario-cuerpo').innerHTML = htmlCal || '<tr><td colspan="6" class="p-4 text-center text-slate-400">Sin fechas de pago programadas</td></tr>';
 
-                // Finanzas Personales & Movimientos
+                // Finanzas Personales & Movimientos (INDULGENTE: Carga de su propia colección separada)
                 const snapMov = await getDocs(collection(db, "movimientos_personales_ethan"));
                 listaMovimientos = [];
                 snapMov.forEach(d => listaMovimientos.push({ id: d.id, ...d.data() }));
@@ -943,7 +961,7 @@
                     `;
                 });
 
-                document.getElementById('tabla-movimientos-cuerpo').innerHTML = htmlMov || '<tr><td colspan="6" class="p-4 text-center text-slate-400">Sin movimientos registrados.</td></tr>';
+                document.getElementById('tabla-movimientos-cuerpo').innerHTML = htmlMov || '<tr><td colspan="6" class="p-4 text-center text-slate-400">Sin movimientos personales registrados.</td></tr>';
                 
                 // Renderizar historial de combustible y calcular totales de semana actual / anterior
                 renderizarHistorialCombustible();
@@ -1119,16 +1137,28 @@
 
         window.guardarMovimientoPersonal = async (e) => {
             e.preventDefault();
+            let categoriaFinal = document.getElementById('mov-cat').value;
+            if(categoriaFinal === 'Agregar Manual') {
+                categoriaFinal = document.getElementById('mov-cat-manual').value.trim();
+                if(!categoriaFinal) {
+                    alert("Por favor especifique la categoría manual.");
+                    return;
+                }
+            }
+
             const data = {
                 fecha: document.getElementById('mov-fecha').value,
                 tipo: document.getElementById('mov-tipo').value,
                 monto: parseFloat(document.getElementById('mov-monto').value) || 0,
-                categoria: document.getElementById('mov-cat').value,
+                categoria: categoriaFinal,
                 descripcion: document.getElementById('mov-obs').value
             };
             await addDoc(collection(db, "movimientos_personales_ethan"), data);
             document.getElementById('mov-monto').value = '';
             document.getElementById('mov-obs').value = '';
+            document.getElementById('mov-cat-manual').value = '';
+            document.getElementById('contenedor-cat-manual').classList.add('hidden');
+            document.getElementById('mov-cat').value = 'Combustible';
             sincronizarDatos();
             alert("¡Movimiento personal guardado con éxito!");
         }
