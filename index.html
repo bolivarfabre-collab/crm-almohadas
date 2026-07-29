@@ -28,7 +28,7 @@
                 <a href="#" onclick="sincronizarDatos()" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition text-amber-400"><i class="fa-solid fa-rotate w-5"></i> Sincronizar Nube</a>
             </nav>
         </div>
-        <div class="p-4 border-t border-slate-800 text-xs text-slate-500">Comercial Ethan Cloud v2.6</div>
+        <div class="p-4 border-t border-slate-800 text-xs text-slate-500">Comercial Ethan Cloud v2.7</div>
     </aside>
 
     <!-- Contenido Principal -->
@@ -61,14 +61,14 @@
             <!-- CLIENTES -->
             <div id="vista-clientes" class="space-y-4 hidden">
                 <div class="flex justify-between items-center bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                    <h2 class="font-bold text-slate-800 text-base">Directorio de Clientes</h2>
+                    <h2 class="font-bold text-slate-800 text-base">Directorio de Clientes (Haz clic en un nombre para ver detalles)</h2>
                     <button onclick="abrirModalCliente()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition"><i class="fa-solid fa-user-plus"></i> Registrar Cliente</button>
                 </div>
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
                     <table class="w-full text-left border-collapse text-sm">
                         <thead>
                             <tr class="bg-[#0B132B] text-white text-xs uppercase">
-                                <th class="p-3">Nombre</th><th class="p-3">Dirección</th><th class="p-3">Teléfono</th><th class="p-3">Cant.</th><th class="p-3">Saldo</th><th class="p-3 text-center">Acciones</th>
+                                <th class="p-3">Nombre</th><th class="p-3">Dirección</th><th class="p-3">Teléfono</th><th class="p-3">Saldo</th><th class="p-3 text-center">Acciones</th>
                             </tr>
                         </thead>
                         <tbody id="tabla-clientes-cuerpo" class="divide-y divide-slate-100"></tbody>
@@ -128,20 +128,22 @@
         </main>
     </div>
 
-    <!-- MODAL CLIENTE -->
+    <!-- MODAL CLIENTE (Registrar / Editar) -->
     <div id="modal-cliente" class="fixed inset-0 bg-black/50 backdrop-blur-xs hidden flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 border border-slate-100">
             <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-                <h3 class="font-bold text-slate-800 text-lg">Registrar Cliente</h3>
+                <h3 id="modal-cliente-titulo" class="font-bold text-slate-800 text-lg">Registrar Cliente</h3>
                 <button onclick="cerrarModalCliente()" class="text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <form id="form-cliente" onsubmit="guardarCliente(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                <input type="hidden" id="m-id">
                 <div class="sm:col-span-2">
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Nombre Completo</label>
                     <input type="text" id="m-nombre" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 focus:outline-none">
                 </div>
                 <div><label class="block text-xs font-semibold text-slate-600 mb-1">Teléfono</label><input type="text" id="m-telefono" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"></div>
                 <div><label class="block text-xs font-semibold text-slate-600 mb-1">Dirección</label><input type="text" id="m-direccion" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"></div>
+                <div><label class="block text-xs font-semibold text-slate-600 mb-1">Saldo Deuda ($)</label><input type="number" step="0.01" id="m-saldo" value="0.00" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"></div>
                 <div class="sm:col-span-2 flex justify-end gap-2 pt-3 border-t border-slate-100">
                     <button type="button" onclick="cerrarModalCliente()" class="px-4 py-2 rounded-lg border border-slate-200 text-slate-600">Cancelar</button>
                     <button type="submit" class="px-4 py-2 rounded-lg bg-emerald-600 text-white font-medium">Guardar</button>
@@ -150,14 +152,15 @@
         </div>
     </div>
 
-    <!-- MODAL NUEVA VENTA (Actualizado con todas tus opciones) -->
+    <!-- MODAL VENTA (Registrar / Editar) -->
     <div id="modal-venta" class="fixed inset-0 bg-black/50 backdrop-blur-xs hidden flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-4 border border-slate-100 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-                <h3 class="font-bold text-slate-800 text-lg">Registrar Nueva Venta</h3>
+                <h3 id="modal-venta-titulo" class="font-bold text-slate-800 text-lg">Registrar Nueva Venta</h3>
                 <button onclick="cerrarModalVenta()" class="text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <form onsubmit="guardarVenta(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                <input type="hidden" id="v-id">
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Fecha</label>
                     <input type="date" id="v-fecha" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2">
@@ -224,9 +227,40 @@
                 </div>
                 <div class="sm:col-span-2 flex justify-end gap-2 pt-3 border-t border-slate-100">
                     <button type="button" onclick="cerrarModalVenta()" class="px-4 py-2 rounded-lg border border-slate-200 text-slate-600">Cancelar</button>
-                    <button type="submit" class="px-4 py-2 rounded-lg bg-emerald-600 text-white font-medium">Registrar Venta</button>
+                    <button type="submit" class="px-4 py-2 rounded-lg bg-emerald-600 text-white font-medium">Guardar Venta</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- MODAL DETALLES DEL CLIENTE (Al hacer clic en su nombre) -->
+    <div id="modal-detalle-cliente" class="fixed inset-0 bg-black/50 backdrop-blur-xs hidden flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-4 border border-slate-100 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h3 id="det-nombre-cliente" class="font-bold text-slate-800 text-lg">Detalles del Cliente</h3>
+                <button onclick="cerrarModalDetalle()" class="text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="grid grid-cols-3 gap-4 text-sm bg-slate-50 p-4 rounded-xl border border-slate-100">
+                <div><p class="text-xs text-slate-400 font-semibold uppercase">Teléfono</p><p id="det-tel" class="font-medium text-slate-800">-</p></div>
+                <div><p class="text-xs text-slate-400 font-semibold uppercase">Dirección</p><p id="det-dir" class="font-medium text-slate-800">-</p></div>
+                <div><p class="text-xs text-slate-400 font-semibold uppercase">Saldo / Deuda Total</p><p id="det-saldo" class="font-bold text-rose-600">$0.00</p></div>
+            </div>
+            <div>
+                <h4 class="font-bold text-slate-700 text-sm mb-2">Historial de Ventas y Compras</h4>
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-slate-800 text-white uppercase">
+                                <th class="p-2">Fecha</th><th class="p-2">Cant.</th><th class="p-2">Total ($)</th><th class="p-2">Tipo</th><th class="p-2">Vendedor</th><th class="p-2">Cuota ($)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-detalles-ventas" class="divide-y divide-slate-100"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="flex justify-end pt-2">
+                <button onclick="cerrarModalDetalle()" class="px-4 py-2 rounded-lg bg-slate-900 text-white text-sm font-medium">Cerrar</button>
+            </div>
         </div>
     </div>
 
@@ -280,13 +314,13 @@
 
                     htmlClientes += `
                         <tr class="hover:bg-slate-50 border-b border-slate-100">
-                            <td class="p-3 font-medium text-slate-900">${item.nombre || ''}</td>
+                            <td class="p-3 font-medium text-indigo-600 cursor-pointer hover:underline" onclick="verDetalleCliente('${item.id}')">${item.nombre || ''}</td>
                             <td class="p-3 text-slate-600">${item.direccion || '-'}</td>
                             <td class="p-3 text-slate-600">${item.telefono || '-'}</td>
-                            <td class="p-3 text-slate-600">${item.cantidad || 1}</td>
                             <td class="p-3 font-semibold text-rose-600">$${saldo.toFixed(2)}</td>
                             <td class="p-3 text-center space-x-2">
-                                <button onclick="eliminarCliente('${item.id}')" class="text-rose-600"><i class="fa-solid fa-trash"></i></button>
+                                <button onclick="editarCliente('${item.id}')" class="text-indigo-600 hover:text-indigo-800"><i class="fa-solid fa-pen"></i></button>
+                                <button onclick="eliminarCliente('${item.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
                             </td>
                         </tr>
                     `;
@@ -296,7 +330,7 @@
                     }
                 });
 
-                document.getElementById('tabla-clientes-cuerpo').innerHTML = htmlClientes || '<tr><td colspan="6" class="p-4 text-center text-slate-400">Sin clientes</td></tr>';
+                document.getElementById('tabla-clientes-cuerpo').innerHTML = htmlClientes || '<tr><td colspan="5" class="p-4 text-center text-slate-400">Sin clientes</td></tr>';
                 document.getElementById('v-cliente-select').innerHTML = htmlSelectCliente;
                 document.getElementById('cobro-cliente').innerHTML = htmlSelectCobro;
                 document.getElementById('dash-clientes').innerText = listaClientes.length;
@@ -323,8 +357,9 @@
                             <td class="p-3 text-slate-600">$${total.toFixed(2)}</td>
                             <td class="p-3"><span class="px-2 py-1 text-xs rounded-full ${item.tipo === 'Contado' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">${item.tipo || 'Crédito'}</span></td>
                             <td class="p-3 text-slate-600">${item.vendedor || '-'}</td>
-                            <td class="p-3 text-center">
-                                <button onclick="eliminarVenta('${item.id}')" class="text-rose-600"><i class="fa-solid fa-trash"></i></button>
+                            <td class="p-3 text-center space-x-2">
+                                <button onclick="editarVenta('${item.id}')" class="text-indigo-600 hover:text-indigo-800"><i class="fa-solid fa-pen"></i></button>
+                                <button onclick="eliminarVenta('${item.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
                             </td>
                         </tr>
                     `;
@@ -341,14 +376,74 @@
             }
         }
 
-        window.abrirModalCliente = () => { document.getElementById('form-cliente').reset(); document.getElementById('modal-cliente').classList.remove('hidden'); }
+        // Modales de Clientes
+        window.abrirModalCliente = () => {
+            document.getElementById('form-cliente').reset();
+            document.getElementById('m-id').value = '';
+            document.getElementById('modal-cliente-titulo').innerText = "Registrar Cliente";
+            document.getElementById('modal-cliente').classList.remove('hidden');
+        }
         window.cerrarModalCliente = () => document.getElementById('modal-cliente').classList.add('hidden');
-        
+
+        window.editarCliente = (id) => {
+            const c = listaClientes.find(x => x.id === id);
+            if(!c) return;
+            document.getElementById('m-id').value = c.id;
+            document.getElementById('m-nombre').value = c.nombre || '';
+            document.getElementById('m-telefono').value = c.telefono || '';
+            document.getElementById('m-direccion').value = c.direccion || '';
+            document.getElementById('m-saldo').value = c.saldo || 0;
+            document.getElementById('modal-cliente-titulo').innerText = "Editar Cliente";
+            document.getElementById('modal-cliente').classList.remove('hidden');
+        }
+
+        window.guardarCliente = async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('m-id').value;
+            const data = {
+                nombre: document.getElementById('m-nombre').value,
+                telefono: document.getElementById('m-telefono').value,
+                direccion: document.getElementById('m-direccion').value,
+                saldo: parseFloat(document.getElementById('m-saldo').value) || 0
+            };
+            if(id) {
+                await updateDoc(doc(db, "clientes_ethan", id), data);
+            } else {
+                await addDoc(collection(db, "clientes_ethan"), data);
+            }
+            cerrarModalCliente();
+            sincronizarDatos();
+        }
+
+        // Modales de Ventas
         window.abrirModalVenta = () => {
             document.getElementById('v-fecha').value = new Date().toISOString().split('T')[0];
+            document.getElementById('v-id').value = '';
+            document.getElementById('modal-venta-titulo').innerText = "Registrar Nueva Venta";
             document.getElementById('modal-venta').classList.remove('hidden');
         }
         window.cerrarModalVenta = () => document.getElementById('modal-venta').classList.add('hidden');
+
+        window.editarVenta = (id) => {
+            const v = listaVentas.find(x => x.id === id);
+            if(!v) return;
+            document.getElementById('v-id').value = v.id;
+            document.getElementById('v-fecha').value = v.fecha || '';
+            document.getElementById('v-cliente-select').value = v.clienteId || '';
+            document.getElementById('v-telefono').value = v.telefono || '';
+            document.getElementById('v-direccion').value = v.direccion || '';
+            document.getElementById('v-vendedor').value = v.vendedor || 'George';
+            document.getElementById('v-cantidad').value = v.cantidad || 1;
+            document.getElementById('v-precio').value = v.precioUnitario || 40;
+            document.getElementById('v-total').value = v.total || 40;
+            document.getElementById('v-tipo').value = v.tipo || 'Crédito';
+            document.getElementById('v-forma-pago').value = v.formaPago || 'Semanal';
+            document.getElementById('v-cuota').value = v.cuota || 10;
+            document.getElementById('v-proximo-pago').value = v.proximoPago || '';
+            document.getElementById('v-obs').value = v.observaciones || '';
+            document.getElementById('modal-venta-titulo').innerText = "Editar Venta";
+            document.getElementById('modal-venta').classList.remove('hidden');
+        }
 
         window.autocompletarCliente = (select) => {
             const cliente = listaClientes.find(c => c.id === select.value);
@@ -367,21 +462,9 @@
             document.getElementById('v-total').value = (cant * precio).toFixed(2);
         }
 
-        window.guardarCliente = async (e) => {
-            e.preventDefault();
-            const data = {
-                nombre: document.getElementById('m-nombre').value,
-                telefono: document.getElementById('m-telefono').value,
-                direccion: document.getElementById('m-direccion').value,
-                saldo: 0
-            };
-            await addDoc(collection(db, "clientes_ethan"), data);
-            cerrarModalCliente();
-            sincronizarDatos();
-        }
-
         window.guardarVenta = async (e) => {
             e.preventDefault();
+            const id = document.getElementById('v-id').value;
             const select = document.getElementById('v-cliente-select');
             const clienteNombre = select.options[select.selectedIndex].text;
             const total = parseFloat(document.getElementById('v-total').value);
@@ -389,6 +472,7 @@
 
             const data = {
                 fecha: document.getElementById('v-fecha').value,
+                clienteId: select.value,
                 nombre: clienteNombre,
                 telefono: document.getElementById('v-telefono').value,
                 direccion: document.getElementById('v-direccion').value,
@@ -403,21 +487,51 @@
                 observaciones: document.getElementById('v-obs').value
             };
 
-            await addDoc(collection(db, "ventas_ethan"), data);
-
-            // Si es a crédito, se actualiza la deuda del cliente automáticamente
-            if(tipo === 'Crédito' && select.value) {
-                const clienteObj = listaClientes.find(c => c.id === select.value);
-                if(clienteObj) {
-                    const nuevoSaldo = (parseFloat(clienteObj.saldo) || 0) + total;
-                    await updateDoc(doc(db, "clientes_ethan", select.value), { saldo: nuevoSaldo });
+            if(id) {
+                await updateDoc(doc(db, "ventas_ethan", id), data);
+            } else {
+                await addDoc(collection(db, "ventas_ethan"), data);
+                if(tipo === 'Crédito' && select.value) {
+                    const clienteObj = listaClientes.find(c => c.id === select.value);
+                    if(clienteObj) {
+                        const nuevoSaldo = (parseFloat(clienteObj.saldo) || 0) + total;
+                        await updateDoc(doc(db, "clientes_ethan", select.value), { saldo: nuevoSaldo });
+                    }
                 }
             }
 
             cerrarModalVenta();
             sincronizarDatos();
-            alert("¡Venta registrada con éxito!");
+            alert("¡Venta guardada con éxito!");
         }
+
+        // Ver Detalles del Cliente
+        window.verDetalleCliente = (id) => {
+            const cliente = listaClientes.find(c => c.id === id);
+            if(!cliente) return;
+            document.getElementById('det-nombre-cliente').innerText = cliente.nombre || 'Cliente';
+            document.getElementById('det-tel').innerText = cliente.telefono || 'Sin teléfono';
+            document.getElementById('det-dir').innerText = cliente.direccion || 'Sin dirección';
+            document.getElementById('det-saldo').innerText = `$${(parseFloat(cliente.saldo) || 0).toFixed(2)}`;
+
+            const ventasCliente = listaVentas.filter(v => v.clienteId === id || v.nombre === cliente.nombre);
+            let htmlVentasDet = '';
+            ventasCliente.forEach(v => {
+                htmlVentasDet += `
+                    <tr class="border-b border-slate-100">
+                        <td class="p-2">${v.fecha || '-'}</td>
+                        <td class="p-2">${v.cantidad || 1}</td>
+                        <td class="p-2 font-medium">$${(parseFloat(v.total) || 0).toFixed(2)}</td>
+                        <td class="p-2">${v.tipo || 'Crédito'}</td>
+                        <td class="p-2">${v.vendedor || '-'}</td>
+                        <td class="p-2 font-semibold text-indigo-600">$${(parseFloat(v.cuota) || 0).toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+            document.getElementById('tabla-detalles-ventas').innerHTML = htmlVentasDet || '<tr><td colspan="6" class="p-3 text-center text-slate-400">No hay ventas registradas para este cliente.</td></tr>';
+            document.getElementById('modal-detalle-cliente').classList.remove('hidden');
+        }
+        window.cerrarModalDetalle = () => document.getElementById('modal-detalle-cliente').classList.add('hidden');
 
         window.eliminarCliente = async (id) => {
             if(confirm("¿Eliminar cliente?")) { await deleteDoc(doc(db, "clientes_ethan", id)); sincronizarDatos(); }
