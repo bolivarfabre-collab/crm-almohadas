@@ -28,7 +28,7 @@
                 <a href="#" onclick="sincronizarDatos()" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition text-amber-400"><i class="fa-solid fa-rotate w-5"></i> Sincronizar Nube</a>
             </nav>
         </div>
-        <div class="p-4 border-t border-slate-800 text-xs text-slate-500">Comercial Ethan Cloud v2.5</div>
+        <div class="p-4 border-t border-slate-800 text-xs text-slate-500">Comercial Ethan Cloud v2.6</div>
     </aside>
 
     <!-- Contenido Principal -->
@@ -62,13 +62,13 @@
             <div id="vista-clientes" class="space-y-4 hidden">
                 <div class="flex justify-between items-center bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
                     <h2 class="font-bold text-slate-800 text-base">Directorio de Clientes</h2>
-                    <button onclick="abrirModalCliente()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition"><i class="fa-solid fa-user-plus"></i> Registrar / Editar Cliente</button>
+                    <button onclick="abrirModalCliente()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition"><i class="fa-solid fa-user-plus"></i> Registrar Cliente</button>
                 </div>
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
                     <table class="w-full text-left border-collapse text-sm">
                         <thead>
                             <tr class="bg-[#0B132B] text-white text-xs uppercase">
-                                <th class="p-3">Nombre</th><th class="p-3">Dirección</th><th class="p-3">Teléfono</th><th class="p-3">Cant.</th><th class="p-3">Total</th><th class="p-3">Saldo</th><th class="p-3">Estado</th><th class="p-3 text-center">Acciones</th>
+                                <th class="p-3">Nombre</th><th class="p-3">Dirección</th><th class="p-3">Teléfono</th><th class="p-3">Cant.</th><th class="p-3">Saldo</th><th class="p-3 text-center">Acciones</th>
                             </tr>
                         </thead>
                         <tbody id="tabla-clientes-cuerpo" class="divide-y divide-slate-100"></tbody>
@@ -132,19 +132,16 @@
     <div id="modal-cliente" class="fixed inset-0 bg-black/50 backdrop-blur-xs hidden flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 border border-slate-100">
             <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-                <h3 class="font-bold text-slate-800 text-lg">Registrar / Editar Cliente</h3>
+                <h3 class="font-bold text-slate-800 text-lg">Registrar Cliente</h3>
                 <button onclick="cerrarModalCliente()" class="text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <form id="form-cliente" onsubmit="guardarCliente(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-                <input type="hidden" id="edit-id">
                 <div class="sm:col-span-2">
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Nombre Completo</label>
                     <input type="text" id="m-nombre" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 focus:outline-none">
                 </div>
                 <div><label class="block text-xs font-semibold text-slate-600 mb-1">Teléfono</label><input type="text" id="m-telefono" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"></div>
                 <div><label class="block text-xs font-semibold text-slate-600 mb-1">Dirección</label><input type="text" id="m-direccion" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"></div>
-                <div><label class="block text-xs font-semibold text-slate-600 mb-1">Cantidad Almohadas</label><input type="number" id="m-cantidad" value="1" min="1" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"></div>
-                <div><label class="block text-xs font-semibold text-slate-600 mb-1">Deuda Pendiente ($)</label><input type="number" step="0.01" id="m-saldo" value="0.00" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"></div>
                 <div class="sm:col-span-2 flex justify-end gap-2 pt-3 border-t border-slate-100">
                     <button type="button" onclick="cerrarModalCliente()" class="px-4 py-2 rounded-lg border border-slate-200 text-slate-600">Cancelar</button>
                     <button type="submit" class="px-4 py-2 rounded-lg bg-emerald-600 text-white font-medium">Guardar</button>
@@ -153,17 +150,78 @@
         </div>
     </div>
 
-    <!-- MODAL VENTA -->
+    <!-- MODAL NUEVA VENTA (Actualizado con todas tus opciones) -->
     <div id="modal-venta" class="fixed inset-0 bg-black/50 backdrop-blur-xs hidden flex items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 border border-slate-100">
+        <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-4 border border-slate-100 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b border-slate-100 pb-3">
                 <h3 class="font-bold text-slate-800 text-lg">Registrar Nueva Venta</h3>
                 <button onclick="cerrarModalVenta()" class="text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <form onsubmit="guardarVenta(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-                <div class="sm:col-span-2"><label class="block text-xs font-semibold text-slate-600 mb-1">Nombre del Cliente</label><input type="text" id="v-cliente" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"></div>
-                <div><label class="block text-xs font-semibold text-slate-600 mb-1">Cantidad</label><input type="number" id="v-cantidad" value="1" min="1" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"></div>
-                <div><label class="block text-xs font-semibold text-slate-600 mb-1">Vendedor</label><select id="v-vendedor" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"><option value="George">George</option><option value="Bolívar">Bolívar</option></select></div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Fecha</label>
+                    <input type="date" id="v-fecha" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Cliente</label>
+                    <select id="v-cliente-select" required onchange="autocompletarCliente(this)" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 focus:outline-none">
+                        <option value="">Seleccione cliente...</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Teléfono</label>
+                    <input type="text" id="v-telefono" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2" readonly>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Dirección</label>
+                    <input type="text" id="v-direccion" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2" readonly>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Vendedor</label>
+                    <select id="v-vendedor" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2">
+                        <option value="George">George</option>
+                        <option value="Bolívar">Bolívar</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Cantidad Almohadas</label>
+                    <input type="number" id="v-cantidad" value="1" min="1" oninput="calcularTotalVenta()" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Precio Unitario ($)</label>
+                    <input type="number" step="0.01" id="v-precio" value="40.00" oninput="calcularTotalVenta()" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Valor Total ($)</label>
+                    <input type="text" id="v-total" value="40.00" class="w-full bg-slate-100 border border-slate-200 rounded-lg p-2 font-bold text-emerald-600" readonly>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Tipo de Venta</label>
+                    <select id="v-tipo" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2">
+                        <option value="Crédito">Crédito</option>
+                        <option value="Contado">Contado</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Forma de Pago</label>
+                    <select id="v-forma-pago" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2">
+                        <option value="Semanal">Semanal</option>
+                        <option value="Quincenal">Quincenal</option>
+                        <option value="Mensual">Mensual</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Valor Cuota ($)</label>
+                    <input type="number" step="0.01" id="v-cuota" value="10.00" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Próximo Pago (Fecha)</label>
+                    <input type="date" id="v-proximo-pago" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2">
+                </div>
+                <div class="sm:col-span-2">
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Observaciones</label>
+                    <input type="text" id="v-obs" placeholder="Ej: Paga los días lunes..." class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2">
+                </div>
                 <div class="sm:col-span-2 flex justify-end gap-2 pt-3 border-t border-slate-100">
                     <button type="button" onclick="cerrarModalVenta()" class="px-4 py-2 rounded-lg border border-slate-200 text-slate-600">Cancelar</button>
                     <button type="submit" class="px-4 py-2 rounded-lg bg-emerald-600 text-white font-medium">Registrar Venta</button>
@@ -190,6 +248,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         let listaClientes = [];
+        let listaVentas = [];
 
         window.cambiarVista = (v) => {
             ['dashboard', 'clientes', 'ventas', 'cobros', 'comisiones'].forEach(id => {
@@ -206,46 +265,75 @@
             const dot = document.getElementById('status-dot');
             dot.className = "w-3 h-3 rounded-full bg-amber-500 animate-pulse";
             try {
-                const querySnapshot = await getDocs(collection(db, "clientes_ethan"));
+                // Cargar Clientes
+                const snapClientes = await getDocs(collection(db, "clientes_ethan"));
                 listaClientes = [];
-                let totalDeuda = 0, totalAlmohadas = 0;
-                let htmlClientes = '', htmlSelectCobro = '<option value="">Seleccione...</option>';
+                let htmlClientes = '', htmlSelectCliente = '<option value="">Seleccione cliente...</option>';
+                let htmlSelectCobro = '<option value="">Seleccione...</option>';
+                let totalDeuda = 0;
 
-                querySnapshot.forEach(d => {
+                snapClientes.forEach(d => {
                     const item = { id: d.id, ...d.data() };
                     listaClientes.push(item);
                     const saldo = parseFloat(item.saldo || 0);
-                    const cant = parseInt(item.cantidad || 1);
                     totalDeuda += saldo;
-                    totalAlmohadas += cant;
 
                     htmlClientes += `
                         <tr class="hover:bg-slate-50 border-b border-slate-100">
                             <td class="p-3 font-medium text-slate-900">${item.nombre || ''}</td>
                             <td class="p-3 text-slate-600">${item.direccion || '-'}</td>
                             <td class="p-3 text-slate-600">${item.telefono || '-'}</td>
-                            <td class="p-3 text-slate-600">${cant}</td>
-                            <td class="p-3 text-slate-600">$${(cant * 40).toFixed(2)}</td>
+                            <td class="p-3 text-slate-600">${item.cantidad || 1}</td>
                             <td class="p-3 font-semibold text-rose-600">$${saldo.toFixed(2)}</td>
-                            <td class="p-3">${saldo > 0 ? '<span class="text-amber-600 font-semibold">Atrasado</span>' : '<span class="text-emerald-600 font-semibold">Al día</span>'}</td>
                             <td class="p-3 text-center space-x-2">
-                                <button onclick="editarCliente('${item.id}')" class="text-indigo-600"><i class="fa-solid fa-pen"></i></button>
                                 <button onclick="eliminarCliente('${item.id}')" class="text-rose-600"><i class="fa-solid fa-trash"></i></button>
                             </td>
                         </tr>
                     `;
+                    htmlSelectCliente += `<option value="${item.id}">${item.nombre}</option>`;
                     if(saldo > 0) {
                         htmlSelectCobro += `<option value="${item.id}">${item.nombre} (Deuda: $${saldo})</option>`;
                     }
                 });
 
-                document.getElementById('tabla-clientes-cuerpo').innerHTML = htmlClientes || '<tr><td colspan="8" class="p-4 text-center text-slate-400">Sin registros</td></tr>';
+                document.getElementById('tabla-clientes-cuerpo').innerHTML = htmlClientes || '<tr><td colspan="6" class="p-4 text-center text-slate-400">Sin clientes</td></tr>';
+                document.getElementById('v-cliente-select').innerHTML = htmlSelectCliente;
                 document.getElementById('cobro-cliente').innerHTML = htmlSelectCobro;
                 document.getElementById('dash-clientes').innerText = listaClientes.length;
-                document.getElementById('dash-almohadas').innerText = totalAlmohadas;
-                document.getElementById('dash-ventas-totales').innerText = `$${(totalAlmohadas * 40).toFixed(2)}`;
                 document.getElementById('dash-deuda').innerText = `$${totalDeuda.toFixed(2)}`;
-                
+
+                // Cargar Ventas
+                const snapVentas = await getDocs(collection(db, "ventas_ethan"));
+                listaVentas = [];
+                let htmlVentas = '', totalAlmohadas = 0, totalVentasVal = 0;
+
+                snapVentas.forEach(d => {
+                    const item = { id: d.id, ...d.data() };
+                    listaVentas.push(item);
+                    const cant = parseInt(item.cantidad || 1);
+                    const total = parseFloat(item.total || (cant * 40));
+                    totalAlmohadas += cant;
+                    totalVentasVal += total;
+
+                    htmlVentas += `
+                        <tr class="hover:bg-slate-50 border-b border-slate-100">
+                            <td class="p-3 text-slate-600">${item.fecha || '-'}</td>
+                            <td class="p-3 font-medium text-slate-900">${item.nombre || ''}</td>
+                            <td class="p-3 text-slate-600">${cant}</td>
+                            <td class="p-3 text-slate-600">$${total.toFixed(2)}</td>
+                            <td class="p-3"><span class="px-2 py-1 text-xs rounded-full ${item.tipo === 'Contado' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">${item.tipo || 'Crédito'}</span></td>
+                            <td class="p-3 text-slate-600">${item.vendedor || '-'}</td>
+                            <td class="p-3 text-center">
+                                <button onclick="eliminarVenta('${item.id}')" class="text-rose-600"><i class="fa-solid fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                document.getElementById('tabla-ventas-cuerpo').innerHTML = htmlVentas || '<tr><td colspan="7" class="p-4 text-center text-slate-400">Sin ventas registradas</td></tr>';
+                document.getElementById('dash-almohadas').innerText = totalAlmohadas;
+                document.getElementById('dash-ventas-totales').innerText = `$${totalVentasVal.toFixed(2)}`;
+
                 dot.className = "w-3 h-3 rounded-full bg-emerald-500";
             } catch(e) {
                 console.error(e);
@@ -253,54 +341,90 @@
             }
         }
 
-        window.abrirModalCliente = () => { document.getElementById('form-cliente').reset(); document.getElementById('edit-id').value = ''; document.getElementById('modal-cliente').classList.remove('hidden'); }
+        window.abrirModalCliente = () => { document.getElementById('form-cliente').reset(); document.getElementById('modal-cliente').classList.remove('hidden'); }
         window.cerrarModalCliente = () => document.getElementById('modal-cliente').classList.add('hidden');
-        window.abrirModalVenta = () => document.getElementById('modal-venta').classList.remove('hidden');
+        
+        window.abrirModalVenta = () => {
+            document.getElementById('v-fecha').value = new Date().toISOString().split('T')[0];
+            document.getElementById('modal-venta').classList.remove('hidden');
+        }
         window.cerrarModalVenta = () => document.getElementById('modal-venta').classList.add('hidden');
+
+        window.autocompletarCliente = (select) => {
+            const cliente = listaClientes.find(c => c.id === select.value);
+            if(cliente) {
+                document.getElementById('v-telefono').value = cliente.telefono || '';
+                document.getElementById('v-direccion').value = cliente.direccion || '';
+            } else {
+                document.getElementById('v-telefono').value = '';
+                document.getElementById('v-direccion').value = '';
+            }
+        }
+
+        window.calcularTotalVenta = () => {
+            const cant = parseFloat(document.getElementById('v-cantidad').value) || 0;
+            const precio = parseFloat(document.getElementById('v-precio').value) || 0;
+            document.getElementById('v-total').value = (cant * precio).toFixed(2);
+        }
 
         window.guardarCliente = async (e) => {
             e.preventDefault();
-            const id = document.getElementById('edit-id').value;
             const data = {
                 nombre: document.getElementById('m-nombre').value,
                 telefono: document.getElementById('m-telefono').value,
                 direccion: document.getElementById('m-direccion').value,
-                cantidad: parseInt(document.getElementById('m-cantidad').value) || 1,
-                saldo: parseFloat(document.getElementById('m-saldo').value) || 0
+                saldo: 0
             };
-            if(id) await updateDoc(doc(db, "clientes_ethan", id), data);
-            else await addDoc(collection(db, "clientes_ethan"), data);
+            await addDoc(collection(db, "clientes_ethan"), data);
             cerrarModalCliente();
             sincronizarDatos();
         }
 
         window.guardarVenta = async (e) => {
             e.preventDefault();
+            const select = document.getElementById('v-cliente-select');
+            const clienteNombre = select.options[select.selectedIndex].text;
+            const total = parseFloat(document.getElementById('v-total').value);
+            const tipo = document.getElementById('v-tipo').value;
+
             const data = {
-                nombre: document.getElementById('v-cliente').value,
+                fecha: document.getElementById('v-fecha').value,
+                nombre: clienteNombre,
+                telefono: document.getElementById('v-telefono').value,
+                direccion: document.getElementById('v-direccion').value,
+                vendedor: document.getElementById('v-vendedor').value,
                 cantidad: parseInt(document.getElementById('v-cantidad').value) || 1,
-                saldo: (parseInt(document.getElementById('v-cantidad').value) || 1) * 40,
-                vendedor: document.getElementById('v-vendedor').value
+                precioUnitario: parseFloat(document.getElementById('v-precio').value) || 40,
+                total: total,
+                tipo: tipo,
+                formaPago: document.getElementById('v-forma-pago').value,
+                cuota: parseFloat(document.getElementById('v-cuota').value) || 0,
+                proximoPago: document.getElementById('v-proximo-pago').value,
+                observaciones: document.getElementById('v-obs').value
             };
-            await addDoc(collection(db, "clientes_ethan"), data);
+
+            await addDoc(collection(db, "ventas_ethan"), data);
+
+            // Si es a crédito, se actualiza la deuda del cliente automáticamente
+            if(tipo === 'Crédito' && select.value) {
+                const clienteObj = listaClientes.find(c => c.id === select.value);
+                if(clienteObj) {
+                    const nuevoSaldo = (parseFloat(clienteObj.saldo) || 0) + total;
+                    await updateDoc(doc(db, "clientes_ethan", select.value), { saldo: nuevoSaldo });
+                }
+            }
+
             cerrarModalVenta();
             sincronizarDatos();
+            alert("¡Venta registrada con éxito!");
         }
 
         window.eliminarCliente = async (id) => {
-            if(confirm("¿Eliminar registro?")) { await deleteDoc(doc(db, "clientes_ethan", id)); sincronizarDatos(); }
+            if(confirm("¿Eliminar cliente?")) { await deleteDoc(doc(db, "clientes_ethan", id)); sincronizarDatos(); }
         }
 
-        window.editarCliente = (id) => {
-            const c = listaClientes.find(x => x.id === id);
-            if(!c) return;
-            document.getElementById('edit-id').value = c.id;
-            document.getElementById('m-nombre').value = c.nombre || '';
-            document.getElementById('m-telefono').value = c.telefono || '';
-            document.getElementById('m-direccion').value = c.direccion || '';
-            document.getElementById('m-cantidad').value = c.cantidad || 1;
-            document.getElementById('m-saldo').value = c.saldo || 0;
-            document.getElementById('modal-cliente').classList.remove('hidden');
+        window.eliminarVenta = async (id) => {
+            if(confirm("¿Eliminar venta?")) { await deleteDoc(doc(db, "ventas_ethan", id)); sincronizarDatos(); }
         }
 
         window.registrarCobro = async (e) => {
