@@ -27,19 +27,37 @@
                 
                 <p class="px-3 text-[10px] tracking-wider text-slate-500 uppercase font-semibold mt-4 mb-1">Sistema & Respaldos</p>
                 <a href="#" onclick="sincronizarDatos()" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition text-amber-400"><i class="fa-solid fa-rotate w-5"></i> Sincronizar Nube</a>
-                <a href="#" onclick="descargarRespaldoJSON()" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition text-emerald-400"><i class="fa-solid fa-cloud-arrow-down w-5"></i> Descargar Respaldo JSON</a>
                 
-                <!-- BOTÓN PARA CARGAR EL ARCHIVO JSON -->
-                <label class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition text-cyan-400 cursor-pointer">
-                    <i class="fa-solid fa-cloud-arrow-up w-5"></i> Cargar Respaldo JSON
-                    <input type="file" id="input-cargar-json" accept=".json" onchange="restaurarRespaldoJSON(event)" class="hidden">
-                </label>
+                <!-- BOTÓN PRINCIPAL "RESPALDO" CON MENÚ DESPLEGABLE -->
+                <div class="relative">
+                    <button onclick="toggleMenuRespaldo()" class="w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-slate-800/60 transition text-emerald-400 font-medium">
+                        <span class="flex items-center gap-3"><i class="fa-solid fa-database w-5"></i> Respaldo</span>
+                        <i id="icono-flecha-respaldo" class="fa-solid fa-chevron-down text-xs transition-transform"></i>
+                    </button>
+                    
+                    <!-- Submenú que se despliega al hacer clic -->
+                    <div id="submenu-respaldo" class="hidden pl-4 pr-1 py-1 space-y-1 mt-1 bg-slate-950/40 rounded-lg border border-slate-800/60">
+                        <!-- 1. Descargar Respaldo JSON -->
+                        <a href="#" onclick="descargarRespaldoJSON()" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-800/80 transition text-emerald-300 text-xs">
+                            <i class="fa-solid fa-cloud-arrow-down w-4"></i> Descargar JSON
+                        </a>
+                        
+                        <!-- 2. Cargar Respaldo JSON -->
+                        <label class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-800/80 transition text-cyan-300 text-xs cursor-pointer">
+                            <i class="fa-solid fa-cloud-arrow-up w-4"></i> Cargar JSON
+                            <input type="file" id="input-cargar-json" accept=".json" onchange="restaurarRespaldoJSON(event)" class="hidden">
+                        </label>
 
-                <!-- BOTÓN PARA DESCARGAR ESTE CÓDIGO HTML -->
-                <a href="#" onclick="descargarCodigoHTML()" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition text-indigo-400"><i class="fa-solid fa-file-code w-5"></i> Descargar Código HTML</a>
+                        <!-- 3. Descargar Código HTML -->
+                        <a href="#" onclick="descargarCodigoHTML()" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-800/80 transition text-indigo-300 text-xs">
+                            <i class="fa-solid fa-file-code w-4"></i> Descargar Código HTML
+                        </a>
+                    </div>
+                </div>
+
             </nav>
         </div>
-        <div class="p-4 border-t border-slate-800 text-xs text-slate-500">Comercial Ethan Cloud v3.1</div>
+        <div class="p-4 border-t border-slate-800 text-xs text-slate-500">Comercial Ethan Cloud v3.2</div>
     </aside>
 
     <!-- Contenido Principal -->
@@ -362,6 +380,14 @@
             if(activeNav) activeNav.className = "flex items-center gap-3 px-3 py-2 rounded-lg bg-indigo-900/50 text-white font-medium";
         }
 
+        // FUNCIONALIDAD PARA ABRIR/CERRAR EL MENÚ DESPLEGABLE DE RESPALDO
+        window.toggleMenuRespaldo = () => {
+            const submenu = document.getElementById('submenu-respaldo');
+            const flecha = document.getElementById('icono-flecha-respaldo');
+            submenu.classList.toggle('hidden');
+            flecha.classList.toggle('rotate-180');
+        }
+
         window.sincronizarDatos = async () => {
             const dot = document.getElementById('status-dot');
             dot.className = "w-3 h-3 rounded-full bg-amber-500 animate-pulse";
@@ -578,7 +604,7 @@
             }
         }
 
-        // 1. DESCARGAR RESPALDO JSON
+        // DESCARGAR RESPALDO JSON
         window.descargarRespaldoJSON = () => {
             try {
                 const datosRespaldo = {
@@ -602,7 +628,7 @@
             }
         };
 
-        // 2. CARGAR Y LEER ARCHIVO JSON
+        // CARGAR Y LEER ARCHIVO JSON
         window.restaurarRespaldoJSON = (event) => {
             const archivo = event.target.files[0];
             if (!archivo) return;
@@ -616,7 +642,6 @@
                         listaPagos = contenido.cobros || [];
                         listaInventario = contenido.inventario || [];
                         alert("¡Respaldo cargado con éxito en la vista previa del sistema!");
-                        // Aquí puedes actualizar la interfaz con los datos leídos del JSON si lo deseas de forma local
                     } else {
                         alert("El archivo JSON no tiene el formato correcto.");
                     }
@@ -628,7 +653,7 @@
             lector.readAsText(archivo);
         };
 
-        // 3. DESCARGAR ESTE CÓDIGO HTML COMPLETO
+        // DESCARGAR ESTE CÓDIGO HTML COMPLETO
         window.descargarCodigoHTML = () => {
             try {
                 const codigoActual = document.documentElement.outerHTML;
