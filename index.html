@@ -3,287 +3,1354 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comercial Ethan - CRM y Control Financiero</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>CRM COLCHONES & FINANZAS (Editable)</title>
     <style>
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
+        :root {
+            --primary: #0A192F;
+            --white: #FFFFFF;
+            --green: #27AE60;
+            --red: #E74C3C;
+            --blue: #2980B9;
+            --yellow: #F39C12;
+            --bg: #F4F7F6;
+            --text: #333333;
+            --border: #DDDDDD;
+            --hover: #112240;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { display: flex; height: 100vh; background-color: var(--bg); color: var(--text); overflow: hidden; }
+
+        /* Sidebar */
+        aside { width: 250px; background-color: var(--primary); color: var(--white); display: flex; flex-direction: column; transition: 0.3s; z-index: 20;}
+        aside h2 { padding: 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 18px; letter-spacing: 1px;}
+        aside nav { flex: 1; overflow-y: auto; }
+        aside nav a { display: block; padding: 12px 20px; color: var(--white); text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.05); transition: 0.2s; cursor: pointer; font-size: 14px;}
+        aside nav a:hover, aside nav a.active { background-color: var(--hover); border-left: 4px solid var(--green); }
+        .nav-header { padding: 10px 20px; font-size: 11px; text-transform: uppercase; color: #8892B0; font-weight: bold; margin-top: 10px;}
+
+        /* Main Content */
+        main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        header { background: var(--white); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); z-index: 10; }
+        .search-bar input { padding: 8px 15px; width: 300px; border: 1px solid var(--border); border-radius: 4px; outline: none; }
+        .header-actions button { padding: 8px 12px; margin-left: 10px; border: none; border-radius: 4px; cursor: pointer; background: var(--primary); color: var(--white); font-weight: bold;}
+        .header-actions button.btn-export { background: var(--green); }
+        
+        #content { flex: 1; padding: 20px; overflow-y: auto; }
+        .view-section { display: none; }
+        .view-section.active { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Dashboard Cards */
+        .dashboard-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .card { background: var(--white); padding: 15px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 4px solid var(--primary); }
+        .card.income { border-left-color: var(--green); }
+        .card.debt { border-left-color: var(--red); }
+        .card.fuel { border-left-color: var(--yellow); }
+        .card.balance { border-left-color: var(--blue); }
+        .card h3 { font-size: 12px; color: #666; margin-bottom: 8px; text-transform: uppercase;}
+        .card p { font-size: 20px; font-weight: bold; }
+
+        /* Chart */
+        .chart-container { background: var(--white); padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-top: 20px; height: 300px; display: flex; align-items: flex-end; gap: 10px; justify-content: space-around; }
+        .bar-wrapper { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; width: 15%; height: 100%; position: relative;}
+        .bar { width: 100%; background: var(--primary); transition: height 0.5s; border-radius: 4px 4px 0 0; position: relative;}
+        .bar-val { position: absolute; top: -25px; font-size: 12px; font-weight: bold; width: 100%; text-align: center;}
+        .bar-label { margin-top: 10px; font-size: 11px; text-align: center; color: #555; height: 20px;}
+
+        /* Tables & Forms */
+        .panel { background: var(--white); padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .panel h3 { margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { font-size: 12px; font-weight: bold; margin-bottom: 5px; color: #555; }
+        .form-group input, .form-group select { padding: 8px; border: 1px solid var(--border); border-radius: 4px; outline: none; }
+        .btn { padding: 8px 12px; background: var(--primary); color: var(--white); border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; }
+        .btn.success { background: var(--green); }
+        .btn.danger { background: var(--red); }
+        .btn.warning { background: var(--yellow); color: #000; }
+        .btn.info { background: var(--blue); }
+        
+        .table-responsive { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 12px; }
+        th, td { border: 1px solid var(--border); padding: 8px 10px; text-align: left; }
+        th { background: var(--primary); color: var(--white); }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        .status-green { color: var(--green); font-weight: bold; }
+        .status-red { color: var(--red); font-weight: bold; }
+        .status-yellow { color: var(--yellow); font-weight: bold; }
+
+        /* Modal Ventana Flotante */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 100; justify-content: center; align-items: center; }
+        .modal-overlay.active { display: flex; }
+        .modal-content { background: var(--white); padding: 25px; border-radius: 8px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+
+        /* Filtros de Pestañas */
+        .filter-buttons { display: flex; gap: 10px; margin-bottom: 15px; }
+        .filter-btn { padding: 6px 14px; background: #e0e0e0; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; color: #333; }
+        .filter-btn.active { background: var(--primary); color: var(--white); }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            aside { width: 100%; height: auto; display: block; overflow-x: auto; }
+            aside h2, .nav-header { display: none; }
+            aside nav { display: flex; flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+            aside nav a { white-space: nowrap; padding: 10px; border-left: none; border-bottom: 4px solid transparent; }
+            aside nav a:hover, aside nav a.active { border-left: none; border-bottom: 4px solid var(--green); }
+            header { flex-direction: column; gap: 10px; }
+            .search-bar input { width: 100%; }
+        }
     </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col md:flex-row">
+<body>
 
-    <!-- SIDEBAR DE NAVEGACIÓN -->
-    <aside class="w-full md:w-64 bg-slate-800 border-r border-slate-700 p-6 flex flex-col justify-between shrink-0">
-        <div>
-            <div class="mb-8">
-                <h1 class="text-2xl font-black text-amber-400 tracking-wide">COMERCIAL ETHAN</h1>
-                <p class="text-xs text-slate-400 mt-1">Gestión de Almohadas y Colchones</p>
-            </div>
-            <nav class="space-y-2">
-                <button onclick="cambiarTab('dashboard', this)" class="tab-btn w-full text-left px-4 py-3 rounded-xl font-semibold bg-amber-500 text-slate-950 transition flex items-center gap-3">
-                    📊 Dashboard
-                </button>
-                <button onclick="cambiarTab('inventario', this)" class="tab-btn w-full text-left px-4 py-3 rounded-xl font-semibold text-slate-300 hover:bg-slate-700 transition flex items-center gap-3">
-                    🛏️ Inventario
-                </button>
-                <button onclick="cambiarTab('clientes', this)" class="tab-btn w-full text-left px-4 py-3 rounded-xl font-semibold text-slate-300 hover:bg-slate-700 transition flex items-center gap-3">
-                    👥 Clientes y Créditos
-                </button>
-                <button onclick="cambiarTab('gastos', this)" class="tab-btn w-full text-left px-4 py-3 rounded-xl font-semibold text-slate-300 hover:bg-slate-700 transition flex items-center gap-3">
-                    💸 Gastos Diarios
-                </button>
-            </nav>
-        </div>
-        <div class="mt-8 pt-4 border-t border-slate-700">
-            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 w-full justify-center">
-                <span class="w-2 h-2 mr-2 bg-emerald-500 rounded-full animate-pulse"></span> Nube Sincronizada
-            </span>
-        </div>
+    <aside>
+        <h2>COMERCIAL ETHAN</h2>
+        <nav>
+            <div class="nav-header">Negocio (Colchones)</div>
+            <a onclick="nav('dashboard')" class="active" id="nav-dashboard">Dashboard General</a>
+            <a onclick="nav('clientes')" id="nav-clientes">Clientes</a>
+            <a onclick="nav('ventas')" id="nav-ventas">Ventas</a>
+            <a onclick="nav('cobros')" id="nav-cobros">Cobros & Cuotas</a>
+            <a onclick="nav('comisiones')" id="nav-comisiones">Comisiones</a>
+            <a onclick="nav('inventario')" id="nav-inventario">Inventario (Colchones)</a>
+            <a onclick="nav('calendario')" id="nav-calendario">Calendario de Cobros</a>
+            
+            <div class="nav-header">Finanzas Personales</div>
+            <a onclick="nav('finanzas')" id="nav-finanzas">Dashboard Financiero</a>
+            <a onclick="nav('entradas_salidas')" id="nav-entradas_salidas">Entradas / Salidas</a>
+            <a onclick="nav('combustible')" id="nav-combustible">Control Combustible</a>
+
+            <div class="nav-header">Sistema</div>
+            <a onclick="nav('config')" id="nav-config">Backup / Config</a>
+        </nav>
     </aside>
 
-    <!-- CONTENIDO PRINCIPAL -->
-    <main class="flex-1 p-6 md:p-10 overflow-y-auto">
-        
-        <!-- SECCIÓN: DASHBOARD -->
-        <div id="tab-dashboard" class="tab-content active space-y-8">
-            <header class="flex justify-between items-center bg-slate-800 p-6 rounded-2xl border border-slate-700">
-                <div>
-                    <h2 class="text-2xl font-bold text-white">Resumen General</h2>
-                    <p class="text-slate-400 text-sm">Control financiero en tiempo real</p>
-                </div>
-            </header>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 shadow">
-                    <p class="text-slate-400 text-xs font-semibold uppercase">Total Clientes</p>
-                    <h3 id="stat-clientes" class="text-3xl font-black mt-2 text-white">0</h3>
-                </div>
-                <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 shadow">
-                    <p class="text-slate-400 text-xs font-semibold uppercase">Ventas Totales</p>
-                    <h3 id="stat-ventas" class="text-3xl font-black mt-2 text-amber-400">$0.00</h3>
-                </div>
-                <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 shadow">
-                    <p class="text-slate-400 text-xs font-semibold uppercase">Créditos por Cobrar</p>
-                    <h3 id="stat-cobros" class="text-3xl font-black mt-2 text-blue-400">$0.00</h3>
-                </div>
-                <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 shadow">
-                    <p class="text-slate-400 text-xs font-semibold uppercase">Gastos Operativos</p>
-                    <h3 id="stat-gastos" class="text-3xl font-black mt-2 text-rose-400">$0.00</h3>
-                </div>
+    <main>
+        <header>
+            <div class="search-bar">
+                <input type="text" id="global-search" placeholder="🔍 Buscar cliente globalmente..." onkeyup="searchGlobal()">
             </div>
-
-            <!-- TABLA DE ACTIVIDAD RECIENTE -->
-            <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow">
-                <h3 class="text-lg font-bold mb-4 text-white">Actividad Reciente en la Nube</h3>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm text-slate-300">
-                        <thead class="bg-slate-900 text-slate-400 uppercase text-xs">
-                            <tr>
-                                <th class="p-3">Categoría</th>
-                                <th class="p-3">Detalle</th>
-                                <th class="p-3">Monto</th>
-                                <th class="p-3">Acción</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabla-dashboard" class="divide-y divide-slate-700"></tbody>
-                    </table>
-                </div>
+            <div class="header-actions">
+                <button class="btn-export" onclick="exportExcel()">⬇ Exportar Excel</button>
+                <button onclick="window.print()">🖨 Exportar PDF</button>
             </div>
+        </header>
+
+        <div id="content">
+            
+            <!-- DASHBOARD NEGOCIO -->
+            <section id="view-dashboard" class="view-section active">
+                <div class="dashboard-cards">
+                    <div class="card"><h3>Clientes Activos</h3><p id="dash-clientes">0</p></div>
+                    <div class="card"><h3>Colchones Vendidos</h3><p id="dash-vendidas">0</p></div>
+                    <div class="card"><h3>Inventario Disp.</h3><p id="dash-inventario">0</p></div>
+                    <div class="card fuel"><h3>Gasto Combustible (Mes)</h3><p id="dash-combustible-mes">$0.00</p></div>
+                    <div class="card income"><h3>Ventas Totales</h3><p id="dash-ventas">$0.00</p></div>
+                    <div class="card income"><h3>Total Cobrado</h3><p id="dash-cobrado">$0.00</p></div>
+                    <div class="card debt"><h3>Saldo Pendiente</h3><p id="dash-saldo">$0.00</p></div>
+                    <div class="card debt"><h3>Comisiones Pendientes</h3><p id="dash-comisiones">$0.00</p></div>
+                </div>
+                <div class="panel">
+                    <h3>Progreso de Ingresos vs Deuda (Negocio)</h3>
+                    <div class="chart-container" id="dash-chart"></div>
+                </div>
+            </section>
+
+            <!-- FINANZAS: DASHBOARD FINANCIERO -->
+            <section id="view-finanzas" class="view-section">
+                <h3 style="margin-bottom: 15px; color: var(--primary);">Resumen Financiero Personal</h3>
+                
+                <h4 style="margin: 15px 0 10px; color: var(--green);">Dinero Recibido (Entradas)</h4>
+                <div class="dashboard-cards">
+                    <div class="card income"><h3>Hoy</h3><p id="f-in-hoy">$0.00</p></div>
+                    <div class="card income"><h3>Esta Semana</h3><p id="f-in-sem">$0.00</p></div>
+                    <div class="card income"><h3>Este Mes</h3><p id="f-in-mes">$0.00</p></div>
+                </div>
+
+                <h4 style="margin: 15px 0 10px; color: var(--red);">Dinero Gastado (Salidas)</h4>
+                <div class="dashboard-cards">
+                    <div class="card debt"><h3>Hoy</h3><p id="f-out-hoy">$0.00</p></div>
+                    <div class="card debt"><h3>Esta Semana</h3><p id="f-out-sem">$0.00</p></div>
+                    <div class="card debt"><h3>Este Mes</h3><p id="f-out-mes">$0.00</p></div>
+                </div>
+
+                <h4 style="margin: 15px 0 10px; color: var(--blue);">Balance (Entradas - Salidas)</h4>
+                <div class="dashboard-cards">
+                    <div class="card balance"><h3>Balance Diario</h3><p id="f-bal-hoy">$0.00</p></div>
+                    <div class="card balance"><h3>Balance Semanal</h3><p id="f-bal-sem">$0.00</p></div>
+                    <div class="card balance"><h3>Balance Mensual</h3><p id="f-bal-mes">$0.00</p></div>
+                </div>
+
+                <div class="dashboard-cards">
+                    <div class="card fuel"><h3>Combustible Acumulado (Total)</h3><p id="f-fuel-total">$0.00</p></div>
+                    <div class="card fuel"><h3>% Gasto en Combustible</h3><p id="f-fuel-percent">0%</p></div>
+                </div>
+
+                <div class="panel">
+                    <h3>Gráfico de Ingresos vs Egresos Personales (Este Mes)</h3>
+                    <div class="chart-container" id="finanzas-chart"></div>
+                </div>
+            </section>
+
+            <!-- FINANZAS: ENTRADAS Y SALIDAS -->
+            <section id="view-entradas_salidas" class="view-section">
+                <div class="panel">
+                    <h3 id="form-finanza-title">Registrar Movimiento Financiero</h3>
+                    <form id="form-finanzas" onsubmit="saveFinanzas(event)">
+                        <input type="hidden" id="fin-edit-id">
+                        <div class="form-grid">
+                            <div class="form-group"><label>Tipo</label>
+                                <select id="fin-tipo" required onchange="updateFinCategorias()">
+                                    <option value="entrada">Entrada (Ingreso)</option>
+                                    <option value="salida">Salida (Gasto)</option>
+                                </select>
+                            </div>
+                            <div class="form-group"><label>Fecha</label><input type="date" id="fin-fecha" required></div>
+                            <div class="form-group"><label>Categoría</label>
+                                <select id="fin-categoria" required></select>
+                            </div>
+                            <div class="form-group"><label>Concepto (Descripción)</label><input type="text" id="fin-concepto" required></div>
+                            <div class="form-group"><label>Valor ($)</label><input type="number" step="0.01" id="fin-valor" required></div>
+                        </div>
+                        <button type="submit" class="btn success" id="btn-save-finanza">Guardar Registro</button>
+                        <button type="button" class="btn" style="display:none;" id="btn-cancel-finanza" onclick="resetFinanzaForm()">Cancelar Edición</button>
+                    </form>
+                </div>
+
+                <div class="panel">
+                    <h3>Historial de Movimientos</h3>
+                    <div class="table-responsive">
+                        <table id="table-finanzas">
+                            <thead><tr><th>Fecha</th><th>Tipo</th><th>Categoría</th><th>Concepto</th><th>Valor</th><th>Acciones</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- COMBUSTIBLE -->
+            <section id="view-combustible" class="view-section">
+                <div class="dashboard-cards">
+                    <div class="card fuel"><h3>Total Mensual</h3><p id="c-mes">$0.00</p></div>
+                </div>
+
+                <div class="panel">
+                    <h3 id="form-comb-title">Registrar Carga de Combustible</h3>
+                    <form id="form-combustible" onsubmit="saveCombustible(event)">
+                        <input type="hidden" id="comb-edit-id">
+                        <div class="form-grid">
+                            <div class="form-group"><label>Fecha</label><input type="date" id="comb-fecha" required></div>
+                            <div class="form-group"><label>Vehículo</label><input type="text" id="comb-vehiculo" value="Camioneta" required></div>
+                            <div class="form-group"><label>Valor Gastado ($)</label><input type="number" step="0.01" id="comb-valor" required></div>
+                            <div class="form-group"><label>Kilometraje (Opcional)</label><input type="number" id="comb-km"></div>
+                            <div class="form-group"><label>Observaciones</label><input type="text" id="comb-obs"></div>
+                        </div>
+                        <button type="submit" class="btn warning" id="btn-save-comb">Registrar Combustible</button>
+                        <button type="button" class="btn" style="display:none;" id="btn-cancel-comb" onclick="resetCombForm()">Cancelar Edición</button>
+                    </form>
+                </div>
+
+                <div class="panel">
+                    <h3>Historial de Combustible</h3>
+                    <div class="table-responsive">
+                        <table id="table-combustible">
+                            <thead><tr><th>Fecha</th><th>Vehículo</th><th>Valor</th><th>Kilometraje</th><th>Obs</th><th>Acciones</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CLIENTES -->
+            <section id="view-clientes" class="view-section">
+                <div class="panel">
+                    <h3>
+                        Directorio de Clientes
+                        <button class="btn success" onclick="openClienteModal()">➕ Registrar / Editar Cliente</button>
+                    </h3>
+
+                    <!-- Botones de Filtro -->
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" id="f-btn-todos" onclick="setClienteFilter('todos')">Todos</button>
+                        <button class="filter-btn" id="f-btn-activos" onclick="setClienteFilter('activos')">Activos (Con Deuda)</button>
+                        <button class="filter-btn" id="f-btn-cancelados" onclick="setClienteFilter('cancelados')">Cancelados (Al Día / 0)</button>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table id="table-clientes">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th><th>Dirección</th><th>Teléfono</th>
+                                    <th>Cant.</th><th>Total</th><th>Abonado</th><th>Saldo</th>
+                                    <th>Pagos</th><th>F. Último Pago</th><th>Estado</th><th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VENTAS -->
+            <section id="view-ventas" class="view-section">
+                <div class="panel">
+                    <h3>
+                        Historial de Ventas
+                        <button class="btn success" onclick="openVentaModal()">➕ Registrar Venta</button>
+                    </h3>
+                    <div class="table-responsive">
+                        <table id="table-ventas">
+                            <thead><tr><th>Fecha</th><th>Cliente</th><th>Cant.</th><th>P. Unit</th><th>Total</th><th>Tipo</th><th>Vendedor</th><th>Acciones</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- COBROS -->
+            <section id="view-cobros" class="view-section">
+                <div class="panel">
+                    <h3 id="form-cobro-title">Registrar Cobro</h3>
+                    <form id="form-cobro" onsubmit="saveCobro(event)">
+                        <input type="hidden" id="c-edit-id">
+                        <div class="form-grid">
+                            <div class="form-group"><label>Fecha</label><input type="date" id="c-fecha" required></div>
+                            <div class="form-group"><label>Seleccionar Cliente con Deuda</label>
+                                <select id="c-cliente" required onchange="loadSaldoCliente()"></select>
+                            </div>
+                            <div class="form-group"><label>Saldo Actual ($)</label><input type="text" id="c-saldo-actual" readonly></div>
+                            <div class="form-group"><label>Monto a Cobrar ($)</label><input type="number" step="0.01" id="c-monto" required min="0.01"></div>
+                            <div class="form-group"><label>Nuevo Próximo Pago (Opcional)</label><input type="date" id="c-prox-pago"></div>
+                            <div class="form-group"><label>Observaciones</label><input type="text" id="c-obs"></div>
+                        </div>
+                        <button type="submit" class="btn success" id="btn-save-cobro">Registrar Pago</button>
+                        <button type="button" class="btn" style="display:none;" id="btn-cancel-cobro" onclick="resetCobroForm()">Cancelar</button>
+                    </form>
+                </div>
+                <div class="panel">
+                    <h3>Historial de Cobros</h3>
+                    <div class="table-responsive">
+                        <table id="table-cobros">
+                            <thead><tr><th>Fecha</th><th>Cliente</th><th>Monto</th><th>Saldo Ant.</th><th>Saldo Nuevo</th><th>Obs</th><th>Acciones</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- COMISIONES -->
+            <section id="view-comisiones" class="view-section">
+                <div class="panel">
+                    <h3>Gestión de Comisiones</h3>
+                    <div class="form-grid">
+                        <div class="card"><h3>Pendientes de Pago</h3><p id="com-pendientes" class="status-red">$0.00</p></div>
+                        <div class="card"><h3>Comisiones Pagadas</h3><p id="com-pagadas" class="status-green">$0.00</p></div>
+                    </div>
+                    <br>
+                    <div class="table-responsive">
+                        <table id="table-comisiones">
+                            <thead><tr><th>Vendedor</th><th>Cliente</th><th>Venta</th><th>Comisión</th><th>Estado</th><th>Acción</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- INVENTARIO -->
+            <section id="view-inventario" class="view-section">
+                <div class="panel">
+                    <h3 id="form-inv-title">Ingresar Mercadería (Colchones)</h3>
+                    <form id="form-inv" onsubmit="saveInv(event)">
+                        <input type="hidden" id="i-edit-id">
+                        <div class="form-grid">
+                            <div class="form-group"><label>Fecha</label><input type="date" id="i-fecha" required></div>
+                            <div class="form-group"><label>Cantidad Comprada</label><input type="number" id="i-cant" required min="1"></div>
+                            <div class="form-group"><label>Costo Total de Compra ($)</label><input type="number" step="0.01" id="i-costo" required></div>
+                        </div>
+                        <button type="submit" class="btn" id="btn-save-inv">Registrar Compra</button>
+                        <button type="button" class="btn" style="display:none;" id="btn-cancel-inv" onclick="resetInvForm()">Cancelar</button>
+                    </form>
+                </div>
+                <div class="dashboard-cards">
+                    <div class="card"><h3>Stock Disponible</h3><p id="inv-stock">0</p></div>
+                    <div class="card"><h3>Costo Promedio Unitario</h3><p id="inv-costo-u">$0.00</p></div>
+                    <div class="card"><h3>Valor Total Inventario</h3><p id="inv-valor">$0.00</p></div>
+                </div>
+                <div class="panel">
+                    <h3>Historial de Compras</h3>
+                    <div class="table-responsive">
+                        <table id="table-inv-historial">
+                            <thead><tr><th>Fecha</th><th>Cantidad</th><th>Costo Total</th><th>Costo Unitario</th><th>Acciones</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CALENDARIO DE COBROS -->
+            <section id="view-calendario" class="view-section">
+                <div class="panel">
+                    <h3>Estado de Cobros</h3>
+                    <div class="table-responsive">
+                        <table id="table-calendario">
+                            <thead><tr><th>Estado</th><th>Fecha Programada</th><th>Cliente</th><th>Teléfono</th><th>Dirección</th><th>Saldo</th><th>Forma Pago</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CONFIGURACION / BACKUP -->
+            <section id="view-config" class="view-section">
+                <div class="panel">
+                    <h3>Copias de Seguridad (Backup)</h3>
+                    <button class="btn success" onclick="exportBackup()">📥 Crear Copia de Seguridad</button>
+                    <hr style="margin: 20px 0; border: 0; border-top: 1px solid var(--border);">
+                    <h3>Restaurar Copia de Seguridad</h3>
+                    <input type="file" id="file-backup" accept=".json" class="form-group" style="margin-bottom:10px;">
+                    <button class="btn danger" onclick="importBackup()">📤 Restaurar Datos</button>
+                    <hr style="margin: 20px 0; border: 0; border-top: 1px solid var(--border);">
+                    <button class="btn danger" onclick="if(confirm('¿BORRAR TODO? Esto es irreversible.')){localStorage.clear(); location.reload();}">Borrar Todo el Sistema</button>
+                </div>
+            </section>
+
         </div>
-
-        <!-- SECCIÓN: INVENTARIO -->
-        <div id="tab-inventario" class="tab-content space-y-6">
-            <header class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
-                <h2 class="text-2xl font-bold text-white">Control de Inventario (Colchones y Almohadas)</h2>
-            </header>
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 h-fit space-y-4">
-                    <h3 class="font-bold text-amber-400">Agregar Producto</h3>
-                    <input type="text" id="inv-nombre" placeholder="Nombre del artículo" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white">
-                    <input type="number" id="inv-stock" placeholder="Cantidad en stock" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white">
-                    <input type="number" step="0.01" id="inv-precio" placeholder="Precio de venta ($)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white">
-                    <button onclick="guardarInventario()" class="w-full bg-amber-500 hover:bg-amber-600 font-bold text-slate-950 p-3 rounded-lg transition">Guardar Producto</button>
-                </div>
-                <div class="lg:col-span-2 bg-slate-800 p-6 rounded-2xl border border-slate-700">
-                    <table class="w-full text-left text-sm text-slate-300">
-                        <thead class="bg-slate-900 text-slate-400 uppercase text-xs">
-                            <tr>
-                                <th class="p-3">Artículo</th>
-                                <th class="p-3">Stock</th>
-                                <th class="p-3">Precio</th>
-                                <th class="p-3">Acción</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabla-inventario" class="divide-y divide-slate-700"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- SECCIÓN: CLIENTES Y CRÉDITOS -->
-        <div id="tab-clientes" class="tab-content space-y-6">
-            <header class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
-                <h2 class="text-2xl font-bold text-white">Clientes y Cobranza a Crédito</h2>
-            </header>
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 h-fit space-y-4">
-                    <h3 class="font-bold text-amber-400">Registrar Cliente / Crédito</h3>
-                    <input type="text" id="cli-nombre" placeholder="Nombre del cliente" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white">
-                    <input type="text" id="cli-articulo" placeholder="Artículo llevado" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white">
-                    <input type="number" step="0.01" id="cli-deuda" placeholder="Monto total a crédito ($)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white">
-                    <button onclick="guardarCliente()" class="w-full bg-amber-500 hover:bg-amber-600 font-bold text-slate-950 p-3 rounded-lg transition">Registrar Crédito</button>
-                </div>
-                <div class="lg:col-span-2 bg-slate-800 p-6 rounded-2xl border border-slate-700">
-                    <table class="w-full text-left text-sm text-slate-300">
-                        <thead class="bg-slate-900 text-slate-400 uppercase text-xs">
-                            <tr>
-                                <th class="p-3">Cliente</th>
-                                <th class="p-3">Artículo</th>
-                                <th class="p-3">Deuda Pendiente</th>
-                                <th class="p-3">Acción</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabla-clientes" class="divide-y divide-slate-700"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- SECCIÓN: GASTOS DIARIOS -->
-        <div id="tab-gastos" class="tab-content space-y-6">
-            <header class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
-                <h2 class="text-2xl font-bold text-white">Control de Gastos Diarios (Gasolina, etc.)</h2>
-            </header>
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 h-fit space-y-4">
-                    <h3 class="font-bold text-amber-400">Registrar Gasto</h3>
-                    <input type="text" id="gas-desc" placeholder="Descripción (Ej. Gasolina camioneta)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white">
-                    <input type="number" step="0.01" id="gas-monto" placeholder="Monto ($)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white">
-                    <button onclick="guardarGasto()" class="w-full bg-amber-500 hover:bg-amber-600 font-bold text-slate-950 p-3 rounded-lg transition">Registrar Gasto</button>
-                </div>
-                <div class="lg:col-span-2 bg-slate-800 p-6 rounded-2xl border border-slate-700">
-                    <table class="w-full text-left text-sm text-slate-300">
-                        <thead class="bg-slate-900 text-slate-400 uppercase text-xs">
-                            <tr>
-                                <th class="p-3">Descripción</th>
-                                <th class="p-3">Monto</th>
-                                <th class="p-3">Acción</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabla-gastos" class="divide-y divide-slate-700"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
     </main>
 
-    <!-- LÓGICA Y CONEXIÓN FIREBASE -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    <!-- VENTANA MODAL PARA CLIENTE -->
+    <div class="modal-overlay" id="modal-cliente">
+        <div class="modal-content">
+            <h3 id="form-cliente-title" style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+                Registrar / Editar Cliente
+                <button class="btn danger" onclick="closeClienteModal()" style="padding: 2px 8px;">✕</button>
+            </h3>
+            <form id="form-cliente-directo" onsubmit="saveClienteDirecto(event)">
+                <input type="hidden" id="cli-edit-id">
+                <div class="form-grid">
+                    <div class="form-group"><label>Fecha de Registro</label><input type="date" id="cli-fecha" required></div>
+                    <div class="form-group"><label>Nombre Completo</label><input type="text" id="cli-nombre" required></div>
+                    <div class="form-group"><label>Teléfono</label><input type="text" id="cli-telefono"></div>
+                    <div class="form-group"><label>Dirección</label><input type="text" id="cli-direccion"></div>
+                    <div class="form-group"><label>Vendedor Asignado</label>
+                        <select id="cli-vendedor" required>
+                            <option value="George">George</option>
+                            <option value="Bolívar">Bolívar</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Forma de Pago</label>
+                        <select id="cli-forma-pago">
+                            <option value="Semanal">Semanal</option>
+                            <option value="Quincenal">Quincenal</option>
+                            <option value="Mensual">Mensual</option>
+                            <option value="Diario">Diario</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Saldo / Deuda Inicial ($)</label><input type="number" step="0.01" id="cli-saldo" value="0.00"></div>
+                    <div class="form-group"><label>Observaciones / Notas</label><input type="text" id="cli-obs"></div>
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 15px;">
+                    <button type="button" class="btn" onclick="closeClienteModal()">Cancelar</button>
+                    <button type="submit" class="btn success" id="btn-save-cli">Guardar Cliente</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyDwgvrnx4iXL4l7g6vBmPRVUAuojrBiA",
-            authDomain: "crm-almohadas.firebaseapp.com",
-            projectId: "crm-almohadas",
-            storageBucket: "crm-almohadas.firebasestorage.app",
-            messagingSenderId: "908140665373",
-            appId: "1:908140665373:web:dd25aa031f843be63144f4",
-            measurementId: "G-80YSWZHK35"
+    <!-- VENTANA MODAL PARA VENTA -->
+    <div class="modal-overlay" id="modal-venta">
+        <div class="modal-content">
+            <h3 id="form-venta-title" style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+                Registrar Nueva Venta
+                <button class="btn danger" onclick="closeVentaModal()" style="padding: 2px 8px;">✕</button>
+            </h3>
+            <form id="form-venta" onsubmit="saveVenta(event)">
+                <input type="hidden" id="v-edit-id">
+                <div class="form-grid">
+                    <div class="form-group"><label>Fecha</label><input type="date" id="v-fecha" required></div>
+                    <div class="form-group"><label>Nombre Cliente</label><input type="text" id="v-cliente" required></div>
+                    <div class="form-group"><label>Dirección</label><input type="text" id="v-direccion"></div>
+                    <div class="form-group"><label>Teléfono</label><input type="text" id="v-telefono"></div>
+                    <div class="form-group"><label>Vendedor</label>
+                        <select id="v-vendedor" required>
+                            <option value="George">George</option>
+                            <option value="Bolívar">Bolívar</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Cantidad Colchones</label><input type="number" id="v-cantidad" min="1" value="1" required oninput="calcVenta()"></div>
+                    <div class="form-group"><label>Precio Unitario ($)</label><input type="number" step="0.01" id="v-precio" value="120.00" required oninput="calcVenta()"></div>
+                    <div class="form-group"><label>Valor Total</label><input type="text" id="v-total" value="120.00" readonly></div>
+                    <div class="form-group"><label>Tipo de Venta</label>
+                        <select id="v-tipo" onchange="toggleCredito()"><option value="Crédito">Crédito</option><option value="Contado">Contado</option></select>
+                    </div>
+                    <div class="form-group"><label>Abono Inicial ($)</label><input type="number" step="0.01" id="v-abono" value="0" required></div>
+                </div>
+                <div class="form-grid" id="credito-fields">
+                    <div class="form-group"><label>Forma de Pago</label>
+                        <select id="v-forma-pago"><option value="Semanal">Semanal</option><option value="Quincenal">Quincenal</option><option value="Diario">Diario</option><option value="Mensual">Mensual</option></select>
+                    </div>
+                    <div class="form-group"><label>Valor Cuota ($)</label><input type="number" step="0.01" id="v-cuota" value="20"></div>
+                    <div class="form-group"><label>Próximo Pago</label><input type="date" id="v-prox-pago"></div>
+                </div>
+                <div class="form-group" style="margin-bottom:15px;"><label>Observaciones</label><input type="text" id="v-obs"></div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 15px;">
+                    <button type="button" class="btn" onclick="closeVentaModal()">Cancelar</button>
+                    <button type="submit" class="btn success" id="btn-save-venta">Registrar Venta</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let initialClientes = [
+            { id: 'C1', fecha: '2026-07-01', nombre: 'Carlos Mendoza', direccion: 'Av. Guasmo Sur', telefono: '0991112223', vendedor: 'Bolívar', colchones: 1, precioUnitario: 120, totalVentas: 120, abonado: 0, saldo: 120, formaPago: 'Semanal', cuota: 20, proxPago: '2026-08-04', estado: 'Al día', obs: 'Colchón 2 plazas' },
+            { id: 'C2', fecha: '2026-07-01', nombre: 'María Suárez', direccion: 'Bastión Popular', telefono: '0984445566', vendedor: 'George', colchones: 1, precioUnitario: 140, totalVentas: 140, abonado: 0, saldo: 140, formaPago: 'Semanal', cuota: 25, proxPago: '2026-08-04', estado: 'Al día', obs: 'Ortopédico' }
+        ];
+
+        let initialVentas = initialClientes.map(c => ({
+            id: c.id, fecha: c.fecha, cliente: c.nombre, vendedor: c.vendedor,
+            cantidad: c.colchones, precio: c.precioUnitario, total: c.totalVentas, tipo: 'Crédito', abono: 0
+        }));
+
+        let initialComisiones = [
+            { id: 'COM1', fecha: '2026-07-01', vendedor: 'Bolívar', cliente: 'Carlos Mendoza', ventaTotal: 120, monto: 15, estado: 'Pendiente' },
+            { id: 'COM2', fecha: '2026-07-01', vendedor: 'George', cliente: 'María Suárez', ventaTotal: 140, monto: 15, estado: 'Pendiente' }
+        ];
+
+        let initialInventario = {
+            historial: [
+                { id: 'INV1', fecha: '2026-06-01', cant: 10, costo: 700.00, costoU: 70.00 }
+            ]
         };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        let initialCobros = [];
 
-        window.cambiarTab = function(tabId, btn) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(el => {
-                el.classList.remove('bg-amber-500', 'text-slate-950');
-                el.classList.add('text-slate-300', 'hover:bg-slate-700');
+        let initialFinanzas = [
+            { id: 'F1', tipo: 'salida', categoria: 'Negocio', fecha: '2026-06-01', valor: 700.00, concepto: 'Compra inventario (10 colchones)' }
+        ];
+
+        let db = {
+            clientes: JSON.parse(localStorage.getItem('colchones_clientes')) || initialClientes,
+            ventas: JSON.parse(localStorage.getItem('colchones_ventas')) || initialVentas,
+            cobros: JSON.parse(localStorage.getItem('colchones_cobros')) || initialCobros,
+            comisiones: JSON.parse(localStorage.getItem('colchones_comisiones')) || initialComisiones,
+            inventario: JSON.parse(localStorage.getItem('colchones_inventario')) || initialInventario,
+            finanzas: JSON.parse(localStorage.getItem('colchones_finanzas')) || initialFinanzas
+        };
+
+        let clienteFiltroActual = 'todos';
+
+        const CATEGORIAS_ENTRADA = ['Venta de colchones/artículos', 'Otros ingresos'];
+        const CATEGORIAS_SALIDA = ['Gasolina', 'Alimentación', 'Negocio', 'Otros'];
+
+        function saveDB() {
+            localStorage.setItem('colchones_clientes', JSON.stringify(db.clientes));
+            localStorage.setItem('colchones_ventas', JSON.stringify(db.ventas));
+            localStorage.setItem('colchones_cobros', JSON.stringify(db.cobros));
+            localStorage.setItem('colchones_comisiones', JSON.stringify(db.comisiones));
+            localStorage.setItem('colchones_inventario', JSON.stringify(db.inventario));
+            localStorage.setItem('colchones_finanzas', JSON.stringify(db.finanzas));
+            renderAll();
+        }
+
+        function nav(view) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('aside nav a').forEach(el => el.classList.remove('active'));
+            document.getElementById(`view-${view}`).classList.add('active');
+            let navLink = document.getElementById(`nav-${view}`);
+            if(navLink) navLink.classList.add('active');
+            
+            if(view === 'cobros') loadClientesDeudores();
+            if(view === 'entradas_salidas') updateFinCategorias();
+        }
+
+        function renderAll() {
+            sincronizarClientesConCobros();
+            renderDashboard();
+            renderFinanzas();
+            renderCombustible();
+            renderClientes();
+            renderVentas();
+            renderCobros();
+            renderComisiones();
+            renderInventario();
+            renderCalendario();
+            
+            const today = new Date().toISOString().split('T')[0];
+            ['v-fecha', 'c-fecha', 'i-fecha', 'fin-fecha', 'comb-fecha', 'cli-fecha'].forEach(id => {
+                let el = document.getElementById(id);
+                if(el && !el.value) el.value = today;
             });
-            document.getElementById('tab-' + tabId).classList.add('active');
-            btn.classList.add('bg-amber-500', 'text-slate-950');
-            btn.classList.remove('text-slate-300', 'hover:bg-slate-700');
-        };
+        }
 
-        window.guardarInventario = async function() {
-            const nombre = document.getElementById('inv-nombre').value;
-            const stock = parseInt(document.getElementById('inv-stock').value) || 0;
-            const precio = parseFloat(document.getElementById('inv-precio').value) || 0;
-            if(!nombre) return alert("Ingresa el nombre del artículo");
-            await addDoc(collection(db, "inventario_ethan"), { nombre, stock, precio });
-            document.getElementById('inv-nombre').value = '';
-            document.getElementById('inv-stock').value = '';
-            document.getElementById('inv-precio').value = '';
-        };
+        function sincronizarClientesConCobros() {
+            db.clientes.forEach(cli => {
+                let cobrosCli = db.cobros.filter(cb => cb.clienteId === cli.id || cb.cliente === cli.nombre);
+                let totalCobradoHistorial = cobrosCli.reduce((sum, cb) => sum + parseFloat(cb.monto || 0), 0);
+                let ventaOriginal = db.ventas.find(v => v.id === cli.id);
+                let abonoInicial = ventaOriginal ? parseFloat(ventaOriginal.abono || 0) : 0;
+                let totalAbonado = abonoInicial + totalCobradoHistorial;
+                
+                let totalVenta = parseFloat(cli.totalVentas || (cli.colchones * (cli.precioUnitario || 120)));
+                if(totalVenta === 0 && cli.saldo > 0) {
+                    totalVenta = cli.saldo + totalAbonado;
+                }
 
-        window.guardarCliente = async function() {
-            const nombre = document.getElementById('cli-nombre').value;
-            const articulo = document.getElementById('cli-articulo').value;
-            const deuda = parseFloat(document.getElementById('cli-deuda').value) || 0;
-            if(!nombre) return alert("Ingresa el nombre del cliente");
-            await addDoc(collection(db, "clientes_ethan"), { nombre, articulo, deuda });
-            document.getElementById('cli-nombre').value = '';
-            document.getElementById('cli-articulo').value = '';
-            document.getElementById('cli-deuda').value = '';
-        };
+                cli.abonado = totalAbonado;
+                cli.saldo = Math.max(0, totalVenta - totalAbonado);
+                if(cli.saldo === 0) {
+                    cli.estado = 'Cancelado';
+                }
+            });
+        }
 
-        window.guardarGasto = async function() {
-            const desc = document.getElementById('gas-desc').value;
-            const monto = parseFloat(document.getElementById('gas-monto').value) || 0;
-            if(!desc) return alert("Ingresa la descripción del gasto");
-            await addDoc(collection(db, "gastos_ethan"), { descripcion: desc, monto });
-            document.getElementById('gas-desc').value = '';
-            document.getElementById('gas-monto').value = '';
-        };
+        const formatMoney = (num) => '$' + parseFloat(num || 0).toFixed(2);
+        const generateID = () => 'ID' + Math.floor(Math.random() * 1000000);
+        function getRealDate(dateStr) { return new Date(dateStr + 'T12:00:00'); } 
+        const today = new Date(); 
 
-        window.eliminarDoc = async function(coleccion, id) {
-            if(confirm("¿Eliminar este registro?")) {
-                await deleteDoc(doc(db, coleccion, id));
+        function isSameDay(dStr) { return dStr === today.toISOString().split('T')[0]; }
+        function isSameMonth(dStr) { 
+            let d = getRealDate(dStr);
+            return d.getMonth() === today.getMonth() && d.getFullYear() === today.getFullYear(); 
+        }
+
+        // ================= FINANZAS Y GASTOS =================
+        function updateFinCategorias() {
+            let tipo = document.getElementById('fin-tipo').value;
+            let sel = document.getElementById('fin-categoria');
+            sel.innerHTML = '';
+            let arr = tipo === 'entrada' ? CATEGORIAS_ENTRADA : CATEGORIAS_SALIDA;
+            arr.forEach(c => sel.innerHTML += `<option value="${c}">${c}</option>`);
+        }
+
+        function saveFinanzas(e) {
+            e.preventDefault();
+            let editId = document.getElementById('fin-edit-id').value;
+            let rec = {
+                id: editId || generateID(),
+                tipo: document.getElementById('fin-tipo').value,
+                fecha: document.getElementById('fin-fecha').value,
+                categoria: document.getElementById('fin-categoria').value,
+                concepto: document.getElementById('fin-concepto').value,
+                valor: parseFloat(document.getElementById('fin-valor').value)
+            };
+            if(editId) {
+                let idx = db.finanzas.findIndex(f => f.id === editId);
+                if(idx !== -1) db.finanzas[idx] = rec;
+            } else {
+                db.finanzas.push(rec);
             }
-        };
+            saveDB();
+            resetFinanzaForm();
+            alert('Registro financiero guardado');
+        }
 
-        // Escuchas en tiempo real
-        onSnapshot(collection(db, "inventario_ethan"), (snapshot) => {
-            const tabla = document.getElementById('tabla-inventario');
-            tabla.innerHTML = '';
-            snapshot.forEach(docSnap => {
-                const d = docSnap.data();
-                tabla.innerHTML += `<tr class="hover:bg-slate-750"><td class="p-3 font-medium">${d.nombre}</td><td class="p-3">${d.stock}</td><td class="p-3 text-amber-400">$${d.precio.toFixed(2)}</td><td class="p-3"><button onclick="eliminarDoc('inventario_ethan', '${docSnap.id}')" class="text-rose-400 text-xs bg-rose-500/10 px-2 py-1 rounded border border-rose-500/20">Eliminar</button></td></tr>`;
+        function editFinanza(id) {
+            let f = db.finanzas.find(x => x.id === id);
+            if(!f) return;
+            document.getElementById('fin-edit-id').value = f.id;
+            document.getElementById('fin-tipo').value = f.tipo;
+            updateFinCategorias();
+            document.getElementById('fin-fecha').value = f.fecha;
+            document.getElementById('fin-categoria').value = f.categoria;
+            document.getElementById('fin-concepto').value = f.concepto;
+            document.getElementById('fin-valor').value = f.valor;
+            document.getElementById('form-finanza-title').innerText = "Editar Movimiento Financiero";
+            document.getElementById('btn-save-finanza').innerText = "Actualizar Registro";
+            document.getElementById('btn-cancel-finanza').style.display = "inline-block";
+            nav('entradas_salidas');
+        }
+
+        function resetFinanzaForm() {
+            document.getElementById('form-finanzas').reset();
+            document.getElementById('fin-edit-id').value = '';
+            document.getElementById('form-finanza-title').innerText = "Registrar Movimiento Financiero";
+            document.getElementById('btn-save-finanza').innerText = "Guardar Registro";
+            document.getElementById('btn-cancel-finanza').style.display = "none";
+            updateFinCategorias();
+        }
+
+        function deleteFinanza(id) {
+            if(confirm('¿Eliminar este registro financiero?')) {
+                db.finanzas = db.finanzas.filter(f => f.id !== id);
+                saveDB();
+            }
+        }
+
+        function renderFinanzas() {
+            let inHoy=0, inSem=0, inMes=0, outHoy=0, outSem=0, outMes=0, fuelTotal=0, totalGastos=0;
+            let tbody = document.querySelector('#table-finanzas tbody');
+            if(tbody) tbody.innerHTML = '';
+            let sorted = [...db.finanzas].sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
+
+            sorted.forEach(f => {
+                let v = parseFloat(f.valor);
+                if(f.tipo === 'entrada') {
+                    if(isSameDay(f.fecha)) inHoy += v;
+                    if(isSameMonth(f.fecha)) inMes += v;
+                } else {
+                    totalGastos += v;
+                    if(f.categoria === 'Gasolina') fuelTotal += v;
+                    if(isSameDay(f.fecha)) outHoy += v;
+                    if(isSameMonth(f.fecha)) outMes += v;
+                }
+                let c = f.tipo === 'entrada' ? 'status-green' : 'status-red';
+                let t = f.tipo === 'entrada' ? 'Ingreso' : 'Gasto';
+                if(tbody) {
+                    tbody.innerHTML += `<tr>
+                        <td>${f.fecha}</td><td class="${c}">${t}</td><td>${f.categoria}</td><td>${f.concepto}</td>
+                        <td class="${c}">${formatMoney(v)}</td>
+                        <td>
+                            <button class="btn info" style="padding:4px 6px;" onclick="editFinanza('${f.id}')">✏️</button>
+                            <button class="btn danger" style="padding:4px 6px;" onclick="deleteFinanza('${f.id}')">🗑️</button>
+                        </td>
+                    </tr>`;
+                }
             });
-        });
 
-        onSnapshot(collection(db, "clientes_ethan"), (snapshot) => {
-            const tabla = document.getElementById('tabla-clientes');
-            const tablaDash = document.getElementById('tabla-dashboard');
-            tabla.innerHTML = '';
-            let totalCli = 0;
-            let totalCob = 0;
+            if(document.getElementById('f-in-hoy')) {
+                document.getElementById('f-in-hoy').innerText = formatMoney(inHoy);
+                document.getElementById('f-in-mes').innerText = formatMoney(inMes);
+                document.getElementById('f-out-hoy').innerText = formatMoney(outHoy);
+                document.getElementById('f-out-mes').innerText = formatMoney(outMes);
+                document.getElementById('f-bal-hoy').innerText = formatMoney(inHoy - outHoy);
+                document.getElementById('f-bal-mes').innerText = formatMoney(inMes - outMes);
+                document.getElementById('f-fuel-total').innerText = formatMoney(fuelTotal);
+                let p = totalGastos > 0 ? (fuelTotal / totalGastos * 100).toFixed(1) : 0;
+                document.getElementById('f-fuel-percent').innerText = p + '%';
+            }
+        }
 
-            snapshot.forEach(docSnap => {
-                const d = docSnap.data();
-                totalCli++;
-                totalCob += d.deuda;
-                tabla.innerHTML += `<tr class="hover:bg-slate-750"><td class="p-3 font-medium">${d.nombre}</td><td class="p-3">${d.articulo}</td><td class="p-3 text-blue-400 font-bold">$${d.deuda.toFixed(2)}</td><td class="p-3"><button onclick="eliminarDoc('clientes_ethan', '${docSnap.id}')" class="text-rose-400 text-xs bg-rose-500/10 px-2 py-1 rounded border border-rose-500/20">Eliminar</button></td></tr>`;
+        // ================= COMBUSTIBLE =================
+        function saveCombustible(e) {
+            e.preventDefault();
+            let editId = document.getElementById('comb-edit-id').value;
+            let rec = {
+                id: editId || generateID(), tipo: 'salida', categoria: 'Gasolina', 
+                fecha: document.getElementById('comb-fecha').value,
+                concepto: document.getElementById('comb-obs').value || 'Gasolina',
+                valor: parseFloat(document.getElementById('comb-valor').value),
+                vehiculo: document.getElementById('comb-vehiculo').value,
+                km: document.getElementById('comb-km').value
+            };
+            if(editId) {
+                let idx = db.finanzas.findIndex(f => f.id === editId);
+                if(idx !== -1) db.finanzas[idx] = rec;
+            } else {
+                db.finanzas.push(rec);
+            }
+            saveDB();
+            resetCombForm();
+            alert('Combustible guardado');
+        }
+
+        function editCombustible(id) {
+            let f = db.finanzas.find(x => x.id === id);
+            if(!f) return;
+            document.getElementById('comb-edit-id').value = f.id;
+            document.getElementById('comb-fecha').value = f.fecha;
+            document.getElementById('comb-vehiculo').value = f.vehiculo || 'Camioneta';
+            document.getElementById('comb-valor').value = f.valor;
+            document.getElementById('comb-km').value = f.km || '';
+            document.getElementById('comb-obs').value = f.concepto;
+            document.getElementById('form-comb-title').innerText = "Editar Carga de Combustible";
+            document.getElementById('btn-save-comb').innerText = "Actualizar";
+            document.getElementById('btn-cancel-comb').style.display = "inline-block";
+            nav('combustible');
+        }
+
+        function resetCombForm() {
+            document.getElementById('form-combustible').reset();
+            document.getElementById('comb-edit-id').value = '';
+            document.getElementById('form-comb-title').innerText = "Registrar Carga de Combustible";
+            document.getElementById('btn-save-comb').innerText = "Registrar Combustible";
+            document.getElementById('btn-cancel-comb').style.display = "none";
+        }
+
+        function renderCombustible() {
+            let fuel = db.finanzas.filter(f => f.categoria === 'Gasolina');
+            let cMes=0;
+            let tbody = document.querySelector('#table-combustible tbody');
+            if(tbody) tbody.innerHTML = '';
+            fuel.forEach(f => {
+                let v = parseFloat(f.valor);
+                if(isSameMonth(f.fecha)) cMes += v;
+                if(tbody) {
+                    tbody.innerHTML += `<tr>
+                        <td>${f.fecha}</td><td>${f.vehiculo || 'Camioneta'}</td><td class="status-yellow">${formatMoney(v)}</td><td>${f.km || '-'}</td><td>${f.concepto}</td>
+                        <td>
+                            <button class="btn info" style="padding:4px 6px;" onclick="editCombustible('${f.id}')">✏️</button>
+                            <button class="btn danger" style="padding:4px 6px;" onclick="deleteFinanza('${f.id}')">🗑️</button>
+                        </td>
+                    </tr>`;
+                }
             });
-            document.getElementById('stat-clientes').innerText = totalCli;
-            document.getElementById('stat-cobros').innerText = `$${totalCob.toFixed(2)}`;
-            document.getElementById('stat-ventas').innerText = `$${totalCob.toFixed(2)}`;
-        });
+            if(document.getElementById('c-mes')) {
+                document.getElementById('c-mes').innerText = formatMoney(cMes);
+                document.getElementById('dash-combustible-mes').innerText = formatMoney(cMes);
+            }
+        }
 
-        onSnapshot(collection(db, "gastos_ethan"), (snapshot) => {
-            const tabla = document.getElementById('tabla-gastos');
-            tabla.innerHTML = '';
-            let totalGas = 0;
-            snapshot.forEach(docSnap => {
-                const d = docSnap.data();
-                totalGas += d.monto;
-                tabla.innerHTML += `<tr class="hover:bg-slate-750"><td class="p-3 font-medium">${d.descripcion}</td><td class="p-3 text-rose-400 font-bold">$${d.monto.toFixed(2)}</td><td class="p-3"><button onclick="eliminarDoc('gastos_ethan', '${docSnap.id}')" class="text-rose-400 text-xs bg-rose-500/10 px-2 py-1 rounded border border-rose-500/20">Eliminar</button></td></tr>`;
+        // ================= DASHBOARD =================
+        function renderDashboard() {
+            let activos = db.clientes.filter(c => c.saldo > 0).length;
+            let vendidas = db.ventas.reduce((sum, v) => sum + parseInt(v.cantidad), 0);
+            let totalVentas = db.ventas.reduce((sum, v) => sum + parseFloat(v.total), 0);
+            let totalCobrado = db.cobros.reduce((sum, c) => sum + parseFloat(c.monto), 0) + db.ventas.reduce((sum,v) => sum + parseFloat(v.abono||0), 0);
+            let saldoPend = db.clientes.reduce((sum, c) => sum + parseFloat(c.saldo), 0);
+            let comPend = db.comisiones.filter(c => c.estado === 'Pendiente').reduce((sum, c) => sum + parseFloat(c.monto), 0);
+            
+            if(document.getElementById('dash-clientes')) {
+                document.getElementById('dash-clientes').innerText = activos;
+                document.getElementById('dash-vendidas').innerText = vendidas;
+                let totalInvComprado = db.inventario.historial.reduce((s, h) => s + parseInt(h.cant), 0);
+                let stockActual = totalInvComprado - vendidas;
+                document.getElementById('dash-inventario').innerText = stockActual >= 0 ? stockActual : 0;
+                document.getElementById('dash-ventas').innerText = formatMoney(totalVentas);
+                document.getElementById('dash-cobrado').innerText = formatMoney(totalCobrado);
+                document.getElementById('dash-saldo').innerText = formatMoney(saldoPend);
+                document.getElementById('dash-comisiones').innerText = formatMoney(comPend);
+
+                let maxVal = Math.max(totalVentas, totalCobrado, saldoPend, 1);
+                document.getElementById('dash-chart').innerHTML = `
+                    <div class="bar-wrapper"><div class="bar" style="height: ${(totalVentas/maxVal)*100}%; background-color: var(--primary);"><div class="bar-val">${formatMoney(totalVentas)}</div></div><div class="bar-label">Ventas</div></div>
+                    <div class="bar-wrapper"><div class="bar" style="height: ${(totalCobrado/maxVal)*100}%; background-color: var(--green);"><div class="bar-val">${formatMoney(totalCobrado)}</div></div><div class="bar-label">Cobrado</div></div>
+                    <div class="bar-wrapper"><div class="bar" style="height: ${(saldoPend/maxVal)*100}%; background-color: var(--red);"><div class="bar-val">${formatMoney(saldoPend)}</div></div><div class="bar-label">Deuda</div></div>
+                `;
+            }
+        }
+
+        // ================= CLIENTES MODAL & GESTIÓN =================
+        function openClienteModal() {
+            resetClienteForm();
+            document.getElementById('modal-cliente').classList.add('active');
+        }
+
+        function closeClienteModal() {
+            document.getElementById('modal-cliente').classList.remove('active');
+        }
+
+        function setClienteFilter(tipo) {
+            clienteFiltroActual = tipo;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`f-btn-${tipo}`).classList.add('active');
+            renderClientes();
+        }
+
+        function updateClienteFormaPago(id, val) {
+            let cli = db.clientes.find(c => c.id === id);
+            if(cli) {
+                cli.formaPago = val;
+                saveDB();
+            }
+        }
+
+        function saveClienteDirecto(e) {
+            e.preventDefault();
+            let editId = document.getElementById('cli-edit-id').value;
+            let saldoVal = parseFloat(document.getElementById('cli-saldo').value) || 0;
+            let cliObj = {
+                id: editId || generateID(),
+                fecha: document.getElementById('cli-fecha').value,
+                nombre: document.getElementById('cli-nombre').value.trim(),
+                direccion: document.getElementById('cli-direccion').value,
+                telefono: document.getElementById('cli-telefono').value,
+                vendedor: document.getElementById('cli-vendedor').value,
+                colchones: 0, precioUnitario: 120, totalVentas: saldoVal, abonado: 0, 
+                saldo: saldoVal,
+                formaPago: document.getElementById('cli-forma-pago').value, 
+                cuota: 20, proxPago: '', 
+                estado: (saldoVal > 0 ? 'Al día' : 'Pagado'),
+                obs: document.getElementById('cli-obs').value
+            };
+
+            if(editId) {
+                let idx = db.clientes.findIndex(c => c.id === editId);
+                if(idx !== -1) {
+                    cliObj.colchones = db.clientes[idx].colchones;
+                    cliObj.totalVentas = db.clientes[idx].totalVentas || saldoVal;
+                    cliObj.abonado = db.clientes[idx].abonado;
+                    db.clientes[idx] = cliObj;
+                }
+            } else {
+                db.clientes.push(cliObj);
+            }
+            saveDB();
+            closeClienteModal();
+            alert('Cliente guardado exitosamente');
+        }
+
+        function editCliente(id) {
+            let c = db.clientes.find(x => x.id === id);
+            if(!c) return;
+            document.getElementById('cli-edit-id').value = c.id;
+            document.getElementById('cli-fecha').value = c.fecha;
+            document.getElementById('cli-nombre').value = c.nombre;
+            document.getElementById('cli-telefono').value = c.telefono || '';
+            document.getElementById('cli-direccion').value = c.direccion || '';
+            document.getElementById('cli-vendedor').value = c.vendedor;
+            document.getElementById('cli-forma-pago').value = c.formaPago || 'Semanal';
+            document.getElementById('cli-saldo').value = c.saldo;
+            document.getElementById('cli-obs').value = c.obs || '';
+            document.getElementById('form-cliente-title').innerHTML = `Editar Cliente <button class="btn danger" onclick="closeClienteModal()" style="padding: 2px 8px;">✕</button>`;
+            document.getElementById('btn-save-cli').innerText = "Actualizar Cliente";
+            document.getElementById('modal-cliente').classList.add('active');
+        }
+
+        function resetClienteForm() {
+            document.getElementById('form-cliente-directo').reset();
+            document.getElementById('cli-edit-id').value = '';
+            document.getElementById('form-cliente-title').innerHTML = `Registrar / Editar Cliente <button class="btn danger" onclick="closeClienteModal()" style="padding: 2px 8px;">✕</button>`;
+            document.getElementById('btn-save-cli').innerText = "Guardar Cliente";
+        }
+
+        function deleteCliente(id) {
+            if(confirm('¿Eliminar este cliente?')) {
+                db.clientes = db.clientes.filter(c => c.id !== id);
+                saveDB();
+            }
+        }
+
+        function renderClientes() {
+            let tbody = document.querySelector('#table-clientes tbody'); 
+            if(tbody) {
+                tbody.innerHTML = '';
+                
+                let filtrados = db.clientes.filter(c => {
+                    if(clienteFiltroActual === 'activos') return c.saldo > 0;
+                    if(clienteFiltroActual === 'cancelados') return c.saldo <= 0;
+                    return true;
+                });
+
+                filtrados.forEach((c) => {
+                    let sc = c.saldo <= 0 ? 'status-green' : (c.estado === 'Atrasado' ? 'status-red' : '');
+                    
+                    let cobrosCli = db.cobros.filter(cb => cb.clienteId === c.id || cb.cliente === c.nombre);
+                    let ultimoPagoFecha = cobrosCli.length > 0 ? cobrosCli[cobrosCli.length - 1].fecha : (c.fecha || '-');
+
+                    tbody.innerHTML += `<tr>
+                        <td><b>${c.nombre}</b></td><td>${c.direccion || '-'}</td><td>${c.telefono || '-'}</td>
+                        <td>${c.colchones}</td><td>${formatMoney(c.totalVentas)}</td>
+                        <td>${formatMoney(c.abonado)}</td><td class="status-red">${formatMoney(c.saldo)}</td>
+                        <td>
+                            <select onchange="updateClienteFormaPago('${c.id}', this.value)" style="padding:4px; border-radius:4px; border:1px solid var(--border);">
+                                <option value="Semanal" ${c.formaPago==='Semanal'?'selected':''}>Semanal</option>
+                                <option value="Quincenal" ${c.formaPago==='Quincenal'?'selected':''}>Quincenal</option>
+                                <option value="Mensual" ${c.formaPago==='Mensual'?'selected':''}>Mensual</option>
+                                <option value="Diario" ${c.formaPago==='Diario'?'selected':''}>Diario</option>
+                            </select>
+                        </td>
+                        <td>${ultimoPagoFecha}</td>
+                        <td class="${sc}">${c.saldo <= 0 ? 'Cancelado' : (c.estado || 'Al día')}</td>
+                        <td>
+                            <button class="btn info" style="padding:4px 6px;" onclick="editCliente('${c.id}')">✏️</button>
+                            <button class="btn danger" style="padding:4px 6px;" onclick="deleteCliente('${c.id}')">🗑️</button>
+                        </td>
+                    </tr>`;
+                });
+            }
+        }
+
+        // ================= VENTAS MODAL & GESTIÓN =================
+        function openVentaModal() {
+            resetVentaForm();
+            document.getElementById('modal-venta').classList.add('active');
+        }
+
+        function closeVentaModal() {
+            document.getElementById('modal-venta').classList.remove('active');
+        }
+
+        function toggleCredito() {
+            let tipo = document.getElementById('v-tipo').value;
+            document.getElementById('credito-fields').style.display = tipo === 'Crédito' ? 'grid' : 'none';
+        }
+        function calcVenta() {
+            let c = document.getElementById('v-cantidad').value || 0;
+            let p = document.getElementById('v-precio').value || 0;
+            document.getElementById('v-total').value = (c * p).toFixed(2);
+        }
+
+        function saveVenta(e) {
+            e.preventDefault();
+            let editId = document.getElementById('v-edit-id').value;
+            let cant = parseInt(document.getElementById('v-cantidad').value);
+            let total = parseFloat(document.getElementById('v-total').value);
+            let abono = parseFloat(document.getElementById('v-abono').value);
+            let tipo = document.getElementById('v-tipo').value;
+            let saldo = tipo === 'Contado' ? 0 : (total - abono);
+            let nombreCli = document.getElementById('v-cliente').value.trim();
+            let vendedor = document.getElementById('v-vendedor').value;
+
+            let venta = {
+                id: editId || generateID(), 
+                fecha: document.getElementById('v-fecha').value,
+                cliente: nombreCli, vendedor: vendedor, cantidad: cant,
+                precio: document.getElementById('v-precio').value, total: total, tipo: tipo, abono: abono
+            };
+
+            if(editId) {
+                let idx = db.ventas.findIndex(v => v.id === editId);
+                if(idx !== -1) db.ventas[idx] = venta;
+            } else {
+                db.ventas.push(venta);
+                if(vendedor) {
+                    db.comisiones.push({
+                        id: generateID(), fecha: venta.fecha, vendedor: vendedor,
+                        cliente: nombreCli, ventaTotal: total, monto: 15, estado: 'Pendiente'
+                    });
+                }
+            }
+
+            let cliIdx = db.clientes.findIndex(c => c.id === venta.id);
+            let cliObj = {
+                id: venta.id, fecha: venta.fecha, nombre: nombreCli,
+                direccion: document.getElementById('v-direccion').value, telefono: document.getElementById('v-telefono').value,
+                vendedor: vendedor, colchones: cant, precioUnitario: venta.precio,
+                totalVentas: total, abonado: 0, saldo: total,
+                formaPago: tipo === 'Crédito' ? document.getElementById('v-forma-pago').value : 'Contado',
+                cuota: tipo === 'Crédito' ? document.getElementById('v-cuota').value : 0,
+                proxPago: tipo === 'Crédito' ? document.getElementById('v-prox-pago').value : '',
+                estado: saldo > 0 ? 'Al día' : 'Cancelado', obs: document.getElementById('v-obs').value
+            };
+            if(cliIdx !== -1) {
+                db.clientes[cliIdx] = cliObj;
+            } else {
+                db.clientes.push(cliObj);
+            }
+
+            if(abono > 0) {
+                db.cobros.push({
+                    id: generateID(),
+                    fecha: venta.fecha,
+                    cliente: nombreCli,
+                    clienteId: cliObj.id,
+                    monto: abono,
+                    saldoAnt: total,
+                    saldoNuevo: total - abono,
+                    obs: 'Abono inicial en venta'
+                });
+                db.finanzas.push({ 
+                    id: generateID(), tipo: 'entrada', categoria: 'Venta de colchones/artículos', 
+                    fecha: venta.fecha, valor: abono, concepto: `Abono inicial de ${nombreCli}` 
+                });
+            }
+
+            saveDB(); 
+            closeVentaModal();
+            alert('Venta guardada con éxito'); 
+        }
+
+        function editVenta(id) {
+            let v = db.ventas.find(x => x.id === id);
+            if(!v) return;
+            let c = db.clientes.find(x => x.id === id) || {};
+            document.getElementById('v-edit-id').value = v.id;
+            document.getElementById('v-fecha').value = v.fecha;
+            document.getElementById('v-cliente').value = v.cliente;
+            document.getElementById('v-direccion').value = c.direccion || '';
+            document.getElementById('v-telefono').value = c.telefono || '';
+            document.getElementById('v-vendedor').value = v.vendedor;
+            document.getElementById('v-cantidad').value = v.cantidad;
+            document.getElementById('v-precio').value = v.precio;
+            document.getElementById('v-total').value = v.total;
+            document.getElementById('v-tipo').value = v.tipo;
+            document.getElementById('v-abono').value = v.abono || 0;
+            toggleCredito();
+            document.getElementById('form-venta-title').innerHTML = `Editar Venta <button class="btn danger" onclick="closeVentaModal()" style="padding: 2px 8px;">✕</button>`;
+            document.getElementById('btn-save-venta').innerText = "Actualizar Venta";
+            document.getElementById('modal-venta').classList.add('active');
+        }
+
+        function resetVentaForm() {
+            let form = document.getElementById('form-venta');
+            if(form) form.reset();
+            document.getElementById('v-edit-id').value = '';
+            document.getElementById('form-venta-title').innerHTML = `Registrar Nueva Venta <button class="btn danger" onclick="closeVentaModal()" style="padding: 2px 8px;">✕</button>`;
+            document.getElementById('btn-save-venta').innerText = "Registrar Venta";
+            calcVenta();
+        }
+
+        function deleteVenta(id) {
+            if(confirm('¿Eliminar esta venta? Se eliminará también el registro del cliente asociado.')) {
+                db.ventas = db.ventas.filter(v => v.id !== id);
+                db.clientes = db.clientes.filter(c => c.id !== id);
+                saveDB();
+            }
+        }
+
+        function renderVentas() {
+            let tbody = document.querySelector('#table-ventas tbody'); 
+            if(tbody) {
+                tbody.innerHTML = '';
+                [...db.ventas].sort((a,b) => new Date(b.fecha) - new Date(a.fecha)).forEach(v => {
+                    tbody.innerHTML += `<tr>
+                        <td>${v.fecha}</td><td>${v.cliente}</td><td>${v.cantidad}</td><td>${formatMoney(v.precio)}</td><td>${formatMoney(v.total)}</td><td>${v.tipo}</td><td>${v.vendedor}</td>
+                        <td>
+                            <button class="btn info" style="padding:4px 6px;" onclick="editVenta('${v.id}')">✏️</button>
+                            <button class="btn danger" style="padding:4px 6px;" onclick="deleteVenta('${v.id}')">🗑️</button>
+                        </td>
+                    </tr>`;
+                });
+            }
+        }
+
+        // ================= COBROS =================
+        function loadClientesDeudores() {
+            let select = document.getElementById('c-cliente'); 
+            if(select) {
+                select.innerHTML = '<option value="">Seleccione...</option>';
+                db.clientes.forEach(c => {
+                    select.innerHTML += `<option value="${c.id}">${c.nombre} (Saldo: ${formatMoney(c.saldo)})</option>`;
+                });
+            }
+        }
+        function loadSaldoCliente() {
+            let id = document.getElementById('c-cliente').value;
+            let cli = db.clientes.find(c => c.id === id);
+            if(cli) document.getElementById('c-saldo-actual').value = cli.saldo.toFixed(2);
+        }
+
+        function saveCobro(e) {
+            e.preventDefault();
+            let editId = document.getElementById('c-edit-id').value;
+            let cliId = document.getElementById('c-cliente').value;
+            let cli = db.clientes.find(c => c.id === cliId);
+            let monto = parseFloat(document.getElementById('c-monto').value);
+            if(!cli) return;
+
+            let saldoAnt = cli.saldo;
+            let saldoNuevo = Math.max(0, saldoAnt - monto);
+
+            let cobroObj = {
+                id: editId || generateID(), 
+                fecha: document.getElementById('c-fecha').value, 
+                cliente: cli.nombre, clienteId: cli.id, monto: monto, 
+                saldoAnt: saldoAnt, saldoNuevo: saldoNuevo, 
+                obs: document.getElementById('c-obs').value
+            };
+
+            if(editId) {
+                let idx = db.cobros.findIndex(c => c.id === editId);
+                if(idx !== -1) {
+                    db.cobros[idx] = cobroObj;
+                }
+            } else {
+                db.cobros.push(cobroObj);
+                db.finanzas.push({ 
+                    id: generateID(), tipo: 'entrada', categoria: 'Venta de colchones/artículos', 
+                    fecha: document.getElementById('c-fecha').value, valor: monto, concepto: `Cobro a ${cli.nombre}` 
+                });
+            }
+
+            if(document.getElementById('c-prox-pago').value) {
+                cli.proxPago = document.getElementById('c-prox-pago').value;
+            }
+
+            saveDB(); 
+            resetCobroForm();
+            alert('Cobro guardado con éxito'); 
+        }
+
+        function editCobro(id) {
+            let c = db.cobros.find(x => x.id === id);
+            if(!c) return;
+            
+            nav('cobros');
+            document.getElementById('c-edit-id').value = c.id;
+            document.getElementById('c-fecha').value = c.fecha;
+            
+            let select = document.getElementById('c-cliente');
+            select.value = c.clienteId || '';
+            if(!select.value) {
+                let found = db.clientes.find(cli => cli.nombre === c.cliente);
+                if(found) select.value = found.id;
+            }
+            loadSaldoCliente();
+            
+            document.getElementById('c-monto').value = c.monto;
+            document.getElementById('c-obs').value = c.obs || '';
+            
+            document.getElementById('form-cobro-title').innerText = "Editar Cobro";
+            document.getElementById('btn-save-cobro').innerText = "Actualizar Pago";
+            document.getElementById('btn-cancel-cobro').style.display = "inline-block";
+        }
+
+        function deleteCobro(id) {
+            if(confirm('¿Eliminar este cobro?')) {
+                db.cobros = db.cobros.filter(c => c.id !== id);
+                saveDB();
+            }
+        }
+
+        function resetCobroForm() {
+            document.getElementById('form-cobro').reset();
+            document.getElementById('c-edit-id').value = '';
+            document.getElementById('form-cobro-title').innerText = "Registrar Cobro";
+            document.getElementById('btn-save-cobro').innerText = "Registrar Pago";
+            document.getElementById('btn-cancel-cobro').style.display = "none";
+            loadClientesDeudores();
+        }
+
+        function renderCobros() {
+            let tbody = document.querySelector('#table-cobros tbody'); 
+            if(tbody) {
+                tbody.innerHTML = '';
+                [...db.cobros].sort((a,b) => new Date(b.fecha) - new Date(a.fecha)).forEach(c => {
+                    tbody.innerHTML += `<tr>
+                        <td>${c.fecha}</td><td>${c.cliente}</td><td class="status-green">${formatMoney(c.monto)}</td><td>${formatMoney(c.saldoAnt)}</td><td>${formatMoney(c.saldoNuevo)}</td><td>${c.obs || '-'}</td>
+                        <td>
+                            <button class="btn info" style="padding:4px 6px;" onclick="editCobro('${c.id}')">✏️</button>
+                            <button class="btn danger" style="padding:4px 6px;" onclick="deleteCobro('${c.id}')">🗑️</button>
+                        </td>
+                    </tr>`;
+                });
+            }
+        }
+
+        // ================= COMISIONES =================
+        function toggleComisionStatus(id) { 
+            let com = db.comisiones.find(c => c.id === id); 
+            com.estado = com.estado === 'Pendiente' ? 'Pagada' : 'Pendiente'; 
+            saveDB(); 
+        }
+        function renderComisiones() {
+            let tbody = document.querySelector('#table-comisiones tbody'); 
+            if(tbody) {
+                tbody.innerHTML = ''; 
+                let pend = 0, pag = 0;
+                db.comisiones.forEach(c => {
+                    c.estado === 'Pendiente' ? pend += c.monto : pag += c.monto;
+                    tbody.innerHTML += `<tr><td>${c.vendedor}</td><td>${c.cliente}</td><td>${formatMoney(c.ventaTotal)}</td><td><b>${formatMoney(c.monto)}</b></td><td class="${c.estado==='Pendiente'?'status-red':'status-green'}">${c.estado}</td><td><button class="btn" onclick="toggleComisionStatus('${c.id}')">Marcar</button></td></tr>`;
+                });
+                document.getElementById('com-pendientes').innerText = formatMoney(pend); 
+                document.getElementById('com-pagadas').innerText = formatMoney(pag);
+            }
+        }
+
+        // ================= INVENTARIO =================
+        function saveInv(e) {
+            e.preventDefault();
+            let editId = document.getElementById('i-edit-id').value;
+            let cant = parseInt(document.getElementById('i-cant').value); 
+            let costo = parseFloat(document.getElementById('i-costo').value);
+            let invObj = {
+                id: editId || generateID(),
+                fecha: document.getElementById('i-fecha').value, 
+                cant: cant, costo: costo, costoU: (costo/cant)
+            };
+
+            if(editId) {
+                let idx = db.inventario.historial.findIndex(h => h.id === editId);
+                if(idx !== -1) db.inventario.historial[idx] = invObj;
+            } else {
+                db.inventario.historial.push(invObj);
+                db.finanzas.push({ 
+                    id: generateID(), tipo: 'salida', categoria: 'Negocio', 
+                    fecha: invObj.fecha, valor: costo, concepto: `Compra inventario (${cant} colchones)` 
+                });
+            }
+            saveDB(); 
+            resetInvForm();
+        }
+
+        function editInv(id) {
+            let h = db.inventario.historial.find(x => x.id === id);
+            if(!h) return;
+            document.getElementById('i-edit-id').value = h.id;
+            document.getElementById('i-fecha').value = h.fecha;
+            document.getElementById('i-cant').value = h.cant;
+            document.getElementById('i-costo').value = h.costo;
+            document.getElementById('form-inv-title').innerText = "Editar Compra de Inventario";
+            document.getElementById('btn-save-inv').innerText = "Actualizar Compra";
+            document.getElementById('btn-cancel-inv').style.display = "inline-block";
+            nav('inventario');
+        }
+
+        function resetInvForm() {
+            document.getElementById('form-inv').reset();
+            document.getElementById('i-edit-id').value = '';
+            document.getElementById('form-inv-title').innerText = "Ingresar Mercadería (Colchones)";
+            document.getElementById('btn-save-inv').innerText = "Registrar Compra";
+            document.getElementById('btn-cancel-inv').style.display = "none";
+        }
+
+        function deleteInv(id) {
+            if(confirm('¿Eliminar este registro de compra?')) {
+                db.inventario.historial = db.inventario.historial.filter(h => h.id !== id);
+                saveDB();
+            }
+        }
+
+        function renderInventario() {
+            let tCosto=0, tCant=0;
+            let tbody = document.querySelector('#table-inv-historial tbody'); 
+            if(tbody) {
+                tbody.innerHTML = '';
+                db.inventario.historial.forEach(h => {
+                    tCosto += parseFloat(h.costo); 
+                    tCant += parseInt(h.cant);
+                    tbody.innerHTML += `<tr>
+                        <td>${h.fecha}</td><td>${h.cant}</td><td>${formatMoney(h.costo)}</td><td>${formatMoney(h.costoU)}</td>
+                        <td>
+                            <button class="btn info" style="padding:4px 6px;" onclick="editInv('${h.id}')">✏️</button>
+                            <button class="btn danger" style="padding:4px 6px;" onclick="deleteInv('${h.id}')">🗑️</button>
+                        </td>
+                    </tr>`;
+                });
+            }
+            let cProm = tCant ? tCosto/tCant : 70.00;
+            let vendidas = db.ventas.reduce((sum, v) => sum + parseInt(v.cantidad), 0);
+            let stockDisp = tCant - vendidas;
+            if(document.getElementById('inv-stock')) {
+                document.getElementById('inv-stock').innerText = stockDisp >= 0 ? stockDisp : 0;
+                document.getElementById('inv-costo-u').innerText = formatMoney(cProm);
+                document.getElementById('inv-valor').innerText = formatMoney(stockDisp * cProm);
+            }
+        }
+
+        function renderCalendario() {
+            let tbody = document.querySelector('#table-calendario tbody'); 
+            if(tbody) {
+                tbody.innerHTML = '';
+                let deudores = db.clientes.filter(c => c.saldo > 0 && c.proxPago).sort((a,b) => new Date(a.proxPago) - new Date(b.proxPago));
+                let h = new Date(); h.setHours(0,0,0,0);
+                deudores.forEach(c => {
+                    let fP = new Date(c.proxPago + 'T12:00:00'); fP.setHours(0,0,0,0);
+                    let diff = Math.ceil((fP - h)/(1000*60*60*24));
+                    let badge = diff < 0 ? '<span style="background:var(--red); color:white; padding:3px; border-radius:4px;">Atrasado</span>' : (diff===0 ? '<span style="background:var(--green); color:white; padding:3px; border-radius:4px;">Hoy</span>' : (diff<=7 ? '<span style="background:var(--yellow); color:black; padding:3px; border-radius:4px;">Esta Semana</span>' : '<span>Futuro</span>'));
+                    tbody.innerHTML += `<tr><td>${badge}</td><td><b>${c.proxPago}</b></td><td>${c.nombre}</td><td>${c.telefono || '-'}</td><td>${c.direccion || '-'}</td><td class="status-red">${formatMoney(c.saldo)}</td><td>${c.formaPago}</td></tr>`;
+                });
+            }
+        }
+
+        function searchGlobal() {
+            let q = document.getElementById('global-search').value.toLowerCase();
+            if(q.length < 2) return renderAll();
+            nav('clientes');
+            document.querySelector('#table-clientes tbody').querySelectorAll('tr').forEach(r => {
+                r.style.display = r.innerText.toLowerCase().includes(q) ? '' : 'none';
             });
-            document.getElementById('stat-gastos').innerText = `$${totalGas.toFixed(2)}`;
-        });
+        }
+
+        function exportBackup() {
+            let a = document.createElement('a');
+            a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db));
+            a.download = "CRM_Colchones_Finanzas_Backup.json";
+            document.body.appendChild(a); a.click(); a.remove();
+        }
+        function importBackup() {
+            let file = document.getElementById('file-backup').files[0];
+            if(!file) return alert('Seleccione archivo');
+            let reader = new FileReader();
+            reader.onload = e => { try { db = JSON.parse(e.target.result); saveDB(); alert('Restaurado!'); location.reload(); } catch(err){alert('Error!');} };
+            reader.readAsText(file);
+        }
+        function exportExcel() { alert('Función de exportación base implementada.'); }
+
+        renderAll();
     </script>
 </body>
 </html>
