@@ -53,7 +53,7 @@
                 </div>
             </nav>
         </div>
-        <div class="p-4 border-t border-slate-800 text-xs text-slate-500">Comercial Ethan Cloud v3.3</div>
+        <div class="p-4 border-t border-slate-800 text-xs text-slate-500">Comercial Ethan Cloud v3.4</div>
     </aside>
 
     <!-- Contenido Principal -->
@@ -73,11 +73,10 @@
 
         <main class="flex-1 overflow-y-auto p-6 space-y-6">
             
-            <!-- DASHBOARD GENERAL (8 Tarjetas Con Paleta de Colores Claros Original) -->
+            <!-- DASHBOARD GENERAL -->
             <div id="vista-dashboard" class="space-y-6">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     
-                    <!-- 1. Clientes Activos -->
                     <div onclick="cambiarVista('clientes')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden">
                         <div class="flex items-center justify-between mb-2">
                             <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Clientes Activos</span>
@@ -86,7 +85,6 @@
                         <h3 id="dash-clientes" class="text-3xl font-bold mt-1 text-slate-900">0</h3>
                     </div>
 
-                    <!-- 2. Almohadas Vendidas -->
                     <div onclick="cambiarVista('ventas')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden">
                         <div class="flex items-center justify-between mb-2">
                             <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Almohadas Vendidas</span>
@@ -95,7 +93,6 @@
                         <h3 id="dash-almohadas-vendidas" class="text-3xl font-bold mt-1 text-emerald-600">0</h3>
                     </div>
 
-                    <!-- 3. Stock Disponible -->
                     <div onclick="cambiarVista('inventario')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden">
                         <div class="flex items-center justify-between mb-2">
                             <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Stock Disponible</span>
@@ -104,7 +101,6 @@
                         <h3 id="dash-stock" class="text-3xl font-bold mt-1 text-amber-600">0</h3>
                     </div>
 
-                    <!-- 4. Ventas Totales -->
                     <div onclick="cambiarVista('ventas')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden">
                         <div class="flex items-center justify-between mb-2">
                             <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Ventas Totales</span>
@@ -113,7 +109,6 @@
                         <h3 id="dash-ventas-totales" class="text-3xl font-bold mt-1 text-emerald-600">$0.00</h3>
                     </div>
 
-                    <!-- 5. Total Cobrado -->
                     <div onclick="cambiarVista('pagos')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden">
                         <div class="flex items-center justify-between mb-2">
                             <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Cobrado</span>
@@ -122,7 +117,6 @@
                         <h3 id="dash-total-cobrado" class="text-3xl font-bold mt-1 text-emerald-600">$0.00</h3>
                     </div>
 
-                    <!-- 6. Saldo Pendiente (Deuda) -->
                     <div onclick="cambiarVista('pagos')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden">
                         <div class="flex items-center justify-between mb-2">
                             <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Saldo Pendiente (Deuda)</span>
@@ -131,7 +125,6 @@
                         <h3 id="dash-deuda" class="text-3xl font-bold mt-1 text-rose-600">$0.00</h3>
                     </div>
 
-                    <!-- 7. Comisiones Pendientes -->
                     <div onclick="cambiarVista('comisiones')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden">
                         <div class="flex items-center justify-between mb-2">
                             <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Comisiones Pendientes</span>
@@ -140,7 +133,6 @@
                         <h3 id="dash-comisiones-pendientes" class="text-3xl font-bold mt-1 text-purple-600">$0.00</h3>
                     </div>
 
-                    <!-- 8. Gasto Combustible (Mes) -->
                     <div onclick="cambiarVista('combustible')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden">
                         <div class="flex items-center justify-between mb-2">
                             <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Gasto Combustible (Mes)</span>
@@ -395,7 +387,7 @@
                 </div>
             </div>
 
-            <!-- ENTRADAS / SALIDAS PERSONALES -->
+            <!-- ENTRADAS / SALIDAS PERSONALES (Limpio) -->
             <div id="vista-movimientos" class="space-y-6 hidden">
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
                     <h2 class="font-bold text-slate-800 text-base">Registrar Movimiento Personal</h2>
@@ -450,7 +442,7 @@
                 </div>
             </div>
 
-            <!-- CONTROL COMBUSTIBLE -->
+            <!-- CONTROL COMBUSTIBLE (Limpio) -->
             <div id="vista-combustible" class="space-y-6 hidden">
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
                     <h2 class="font-bold text-slate-800 text-base">Registro Rápido de Combustible (Camioneta)</h2>
@@ -639,12 +631,6 @@
                 listaInventario = [];
                 snapInv.forEach(d => listaInventario.push({ id: d.id, ...d.data() }));
 
-                if(listaInventario.length === 0) {
-                    listaInventario = [
-                        { id: 'compra-1', fecha: '2026-07-17', cantidad: 5, costoTotal: 69.00 },
-                        { id: 'compra-2', fecha: '2026-07-21', cantidad: 7, costoTotal: 96.60 }
-                    ];
-                }
                 let totalComprado = 0;
                 let costoTotalGasto = 0;
                 let htmlInv = '';
@@ -690,7 +676,6 @@
                 document.getElementById('card-costo-prom').innerText = `$${costoPromedio.toFixed(2)}`;
                 document.getElementById('card-val-inv').innerText = `$${valorTotalInventario.toFixed(2)}`;
                 
-                // Actualizar métricas Dashboard
                 document.getElementById('dash-stock').innerText = stockDisponible;
                 document.getElementById('dash-ventas-totales').innerText = `$${totalVentasValGral.toFixed(2)}`;
                 document.getElementById('dash-almohadas-vendidas').innerText = totalAlmohadasVendidas;
@@ -865,20 +850,13 @@
                 });
                 document.getElementById('tabla-calendario-cuerpo').innerHTML = htmlCal || '<tr><td colspan="6" class="p-4 text-center text-slate-400">Sin fechas de pago programadas</td></tr>';
 
-                // Finanzas Personales & Movimientos
+                // Finanzas Personales & Movimientos (Limpio de datos predeterminados)
                 const snapMov = await getDocs(collection(db, "movimientos_personales_ethan"));
                 listaMovimientos = [];
                 snapMov.forEach(d => listaMovimientos.push({ id: d.id, ...d.data() }));
 
-                if(listaMovimientos.length === 0) {
-                    listaMovimientos = [
-                        { id: 'm-1', fecha: '2026-07-23', tipo: 'Salida', categoria: 'Combustible', monto: 4.00, descripcion: 'Gasolina' },
-                        { id: 'm-2', fecha: '2026-07-24', tipo: 'Salida', categoria: 'Combustible', monto: 11.00, descripcion: 'Gasolina camioneta' },
-                        { id: 'm-3', fecha: '2026-07-20', tipo: 'Entrada', categoria: 'Ventas Negocio', monto: 242.00, descripcion: 'Cobros y ventas colchones' }
-                    ];
-                }
-
                 let htmlMov = '';
+                let htmlComb = '';
                 let ingHoy = 0, ingSem = 0, ingMes = 0;
                 let gasHoy = 0, gasSem = 0, gasMes = 0;
                 let combustibleTotal = 0;
@@ -893,6 +871,15 @@
 
                     if(m.categoria === 'Combustible') {
                         combustibleTotal += montoNum;
+                        htmlComb += `
+                            <tr class="hover:bg-slate-50 border-b border-slate-100">
+                                <td class="p-3 text-slate-600">${m.fecha || '-'}</td>
+                                <td class="p-3 font-medium text-slate-800">${m.categoria || '-'}</td>
+                                <td class="p-3 font-semibold text-amber-600">$${montoNum.toFixed(2)}</td>
+                                <td class="p-3 text-slate-500">${m.descripcion || '-'}</td>
+                                <td class="p-3 text-center"><button onclick="eliminarMovimiento('${m.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button></td>
+                            </tr>
+                        `;
                     }
 
                     if(m.tipo === 'Entrada') {
@@ -917,8 +904,8 @@
                     `;
                 });
 
-                document.getElementById('tabla-movimientos-cuerpo').innerHTML = htmlMov || '<tr><td colspan="6" class="p-4 text-center text-slate-400">Sin movimientos registrados</td></tr>';
-                document.getElementById('tabla-combustible-cuerpo').innerHTML = htmlMov || '<tr><td colspan="5" class="p-4 text-center text-slate-400">Sin combustible registrado</td></tr>';
+                document.getElementById('tabla-movimientos-cuerpo').innerHTML = htmlMov || '<tr><td colspan="6" class="p-4 text-center text-slate-400">Sin movimientos registrados. Agrega tus entradas o salidas arriba.</td></tr>';
+                document.getElementById('tabla-combustible-cuerpo').innerHTML = htmlComb || '<tr><td colspan="5" class="p-4 text-center text-slate-400">Sin registros de combustible. Agrega tus cargas arriba.</td></tr>';
 
                 document.getElementById('fin-ing-hoy').innerText = `$${ingHoy.toFixed(2)}`;
                 document.getElementById('fin-ing-sem').innerText = `$${ingSem.toFixed(2)}`;
@@ -939,17 +926,17 @@
                 document.getElementById('fin-comb-total').innerText = `$${combustibleTotal.toFixed(2)}`;
                 document.getElementById('dash-gasto-combustible').innerText = `$${combustibleTotal.toFixed(2)}`;
                 
-                const porcGastoComb = gasMes > 0 ? ((combustibleTotal / gasMes) * 100).toFixed(1) : '35.5';
+                const porcGastoComb = gasMes > 0 ? ((combustibleTotal / gasMes) * 100).toFixed(1) : '0';
                 document.getElementById('fin-porc-comb').innerText = `${porcGastoComb}%`;
 
                 const contenedorGrafico = document.getElementById('contenedor-grafico-finanzas');
                 contenedorGrafico.innerHTML = `
                     <div class="flex flex-col items-center gap-2 h-full justify-end">
-                        <div class="w-12 bg-emerald-500 rounded-t-lg transition-all duration-500" style="height: ${Math.min(100, (ingMes > 0 ? (ingMes/300)*100 : 80))}%;"></div>
+                        <div class="w-12 bg-emerald-500 rounded-t-lg transition-all duration-500" style="height: ${Math.min(100, (ingMes > 0 ? (ingMes/300)*100 : 0))}%;"></div>
                         <span class="text-xs font-semibold text-slate-500">Ingresos</span>
                     </div>
                     <div class="flex flex-col items-center gap-2 h-full justify-end">
-                        <div class="w-12 bg-rose-500 rounded-t-lg transition-all duration-500" style="height: ${Math.min(100, (gasMes > 0 ? (gasMes/300)*100 : 60))}%;"></div>
+                        <div class="w-12 bg-rose-500 rounded-t-lg transition-all duration-500" style="height: ${Math.min(100, (gasMes > 0 ? (gasMes/300)*100 : 0))}%;"></div>
                         <span class="text-xs font-semibold text-slate-500">Gastos</span>
                     </div>
                 `;
