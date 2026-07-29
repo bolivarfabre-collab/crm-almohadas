@@ -3,289 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRM COMERCIAL ETHAN - Almohadas & Finanzas</title>
-    <style>
-        :root {
-            --primary: #0A192F;
-            --white: #FFFFFF;
-            --green: #27AE60;
-            --red: #E74C3C;
-            --blue: #2980B9;
-            --yellow: #F39C12;
-            --bg: #F4F7F6;
-            --text: #333333;
-            --border: #DDDDDD;
-            --hover: #112240;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { display: flex; height: 100vh; background-color: var(--bg); color: var(--text); overflow: hidden; }
-
-        /* Sidebar */
-        aside { width: 250px; background-color: var(--primary); color: var(--white); display: flex; flex-direction: column; transition: 0.3s; z-index: 20;}
-        aside h2 { padding: 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 18px; letter-spacing: 1px;}
-        aside nav { flex: 1; overflow-y: auto; }
-        aside nav a { display: block; padding: 12px 20px; color: var(--white); text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.05); transition: 0.2s; cursor: pointer; font-size: 14px;}
-        aside nav a:hover, aside nav a.active { background-color: var(--hover); border-left: 4px solid var(--green); }
-        .nav-header { padding: 10px 20px; font-size: 11px; text-transform: uppercase; color: #8892B0; font-weight: bold; margin-top: 10px;}
-
-        /* Main Content */
-        main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-        header { background: var(--white); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); z-index: 10; }
-        .search-bar input { padding: 8px 15px; width: 300px; border: 1px solid var(--border); border-radius: 4px; outline: none; }
-        .header-actions button { padding: 8px 12px; margin-left: 10px; border: none; border-radius: 4px; cursor: pointer; background: var(--primary); color: var(--white); font-weight: bold;}
-        .header-actions button.btn-export { background: var(--green); }
-        
-        #content { flex: 1; padding: 20px; overflow-y: auto; }
-        .view-section { display: none; }
-        .view-section.active { display: block; animation: fadeIn 0.3s; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Dashboard Cards */
-        .dashboard-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
-        .card { background: var(--white); padding: 15px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 4px solid var(--primary); }
-        .card.income { border-left-color: var(--green); }
-        .card.debt { border-left-color: var(--red); }
-        .card.fuel { border-left-color: var(--yellow); }
-        .card.balance { border-left-color: var(--blue); }
-        .card h3 { font-size: 12px; color: #666; margin-bottom: 8px; text-transform: uppercase;}
-        .card p { font-size: 20px; font-weight: bold; }
-
-        /* Tables & Forms */
-        .panel { background: var(--white); padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        .panel h3 { margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px; }
-        .form-group { display: flex; flex-direction: column; }
-        .form-group label { font-size: 12px; font-weight: bold; margin-bottom: 5px; color: #555; }
-        .form-group input, .form-group select { padding: 8px; border: 1px solid var(--border); border-radius: 4px; outline: none; }
-        .btn { padding: 8px 12px; background: var(--primary); color: var(--white); border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; }
-        .btn.success { background: var(--green); }
-        .btn.danger { background: var(--red); }
-        .btn.warning { background: var(--yellow); color: #000; }
-        
-        .table-responsive { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 12px; }
-        th, td { border: 1px solid var(--border); padding: 8px 10px; text-align: left; }
-        th { background: var(--primary); color: var(--white); }
-        tr:nth-child(even) { background-color: #f9f9f9; }
-        .status-green { color: var(--green); font-weight: bold; }
-        .status-red { color: var(--red); font-weight: bold; }
-
-        /* Modal Ventana Flotante */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 100; justify-content: center; align-items: center; }
-        .modal-overlay.active { display: flex; }
-        .modal-content { background: var(--white); padding: 25px; border-radius: 8px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-
-        .filter-buttons { display: flex; gap: 10px; margin-bottom: 15px; }
-        .filter-btn { padding: 6px 14px; background: #e0e0e0; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; color: #333; }
-        .filter-btn.active { background: var(--primary); color: var(--white); }
-
-        @media (max-width: 768px) {
-            body { flex-direction: column; }
-            aside { width: 100%; height: auto; display: block; overflow-x: auto; }
-            aside h2, .nav-header { display: none; }
-            aside nav { display: flex; flex-wrap: nowrap; overflow-x: auto; }
-            aside nav a { white-space: nowrap; padding: 10px; border-left: none; border-bottom: 4px solid transparent; }
-            aside nav a:hover, aside nav a.active { border-left: none; border-bottom: 4px solid var(--green); }
-            header { flex-direction: column; gap: 10px; }
-            .search-bar input { width: 100%; }
-        }
-    </style>
+    <title>CRM - Comercial Ethan</title>
+    <!-- Tailwind CSS para diseño moderno -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
-<body>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col">
 
-    <aside>
-        <h2>COMERCIAL ETHAN</h2>
-        <nav>
-            <div class="nav-header">Negocio (Almohadas)</div>
-            <a onclick="nav('dashboard')" class="active" id="nav-dashboard">Dashboard General</a>
-            <a onclick="nav('clientes')" id="nav-clientes">Clientes</a>
-            <a onclick="nav('ventas')" id="nav-ventas">Ventas</a>
-            <a onclick="nav('cobros')" id="nav-cobros">Cobros & Cuotas</a>
-            <a onclick="nav('comisiones')" id="nav-comisiones">Comisiones</a>
-            <a onclick="nav('inventario')" id="nav-inventario">Inventario (Almohadas)</a>
-            
-            <div class="nav-header">Finanzas Personales</div>
-            <a onclick="nav('finanzas')" id="nav-finanzas">Dashboard Financiero</a>
-            <a onclick="nav('entradas_salidas')" id="nav-entradas_salidas">Entradas / Salidas</a>
-            <a onclick="nav('combustible')" id="nav-combustible">Control Combustible</a>
-
-            <div class="nav-header">Sistema</div>
-            <a onclick="nav('config')" id="nav-config">Backup / Config</a>
-        </nav>
-    </aside>
-
-    <main>
-        <header>
-            <div class="search-bar">
-                <input type="text" id="global-search" placeholder="🔍 Buscar cliente globalmente..." onkeyup="searchGlobal()">
-            </div>
-            <div class="header-actions">
-                <button class="btn-export" onclick="exportExcel()">⬇ Exportar Excel</button>
-                <button onclick="window.print()">🖨 Imprimir / PDF</button>
-            </div>
-        </header>
-
-        <div id="content">
-            
-            <!-- DASHBOARD NEGOCIO -->
-            <section id="view-dashboard" class="view-section active">
-                <div class="dashboard-cards">
-                    <div class="card"><h3>Clientes Activos</h3><p id="dash-clientes">7</p></div>
-                    <div class="card"><h3>Almohadas Vendidas (Jul)</h3><p id="dash-vendidas">12</p></div>
-                    <div class="card income"><h3>Ventas Totales (Jul)</h3><p id="dash-ventas">$480.00</p></div>
-                    <div class="card income"><h3>Total Cobrado</h3><p id="dash-cobrado">$50.00</p></div>
-                    <div class="card debt"><h3>Saldo Pendiente</h3><p id="dash-saldo">$430.00</p></div>
-                    <div class="card debt"><h3>Comisiones Pendientes</h3><p id="dash-comisiones">$40.00</p></div>
-                </div>
-            </section>
-
-            <!-- FINANZAS: DASHBOARD FINANCIERO -->
-            <section id="view-finanzas" class="view-section">
-                <h3 style="margin-bottom: 15px; color: var(--primary);">Resumen Financiero Personal</h3>
-                <div class="dashboard-cards">
-                    <div class="card income"><h3>Entradas (Mes)</h3><p id="f-in-mes">$50.00</p></div>
-                    <div class="card debt"><h3>Salidas / Inversiones (Mes)</h3><p id="f-out-mes">$165.60</p></div>
-                    <div class="card balance"><h3>Balance Mensual</h3><p id="f-bal-mes">-$115.60</p></div>
-                </div>
-            </section>
-
-            <!-- ENTRADAS Y SALIDAS -->
-            <section id="view-entradas_salidas" class="view-section">
-                <div class="panel">
-                    <h3>Registrar Movimiento Financiero</h3>
-                    <form id="form-finanzas" onsubmit="saveFinanzas(event)">
-                        <div class="form-grid">
-                            <div class="form-group"><label>Tipo</label>
-                                <select id="fin-tipo" required><option value="entrada">Entrada</option><option value="salida">Salida</option></select>
-                            </div>
-                            <div class="form-group"><label>Fecha</label><input type="date" id="fin-fecha" value="2026-07-28" required></div>
-                            <div class="form-group"><label>Categoría</label><input type="text" id="fin-categoria" value="General" required></div>
-                            <div class="form-group"><label>Concepto</label><input type="text" id="fin-concepto" required></div>
-                            <div class="form-group"><label>Valor ($)</label><input type="number" step="0.01" id="fin-valor" required></div>
-                        </div>
-                        <button type="submit" class="btn success">Guardar Registro</button>
-                    </form>
-                </div>
-            </section>
-
-            <!-- COMBUSTIBLE -->
-            <section id="view-combustible" class="view-section">
-                <div class="panel">
-                    <h3>Control de Combustible (Camioneta)</h3>
-                    <form id="form-combustible" onsubmit="saveCombustible(event)">
-                        <div class="form-grid">
-                            <div class="form-group"><label>Fecha</label><input type="date" id="comb-fecha" value="2026-07-24" required></div>
-                            <div class="form-group"><label>Vehículo</label><input type="text" id="comb-vehiculo" value="Camioneta" required></div>
-                            <div class="form-group"><label>Valor Gastado ($)</label><input type="number" step="0.01" id="comb-valor" value="11.00" required></div>
-                        </div>
-                        <button type="submit" class="btn warning">Registrar Carga</button>
-                    </form>
-                </div>
-            </section>
-
-            <!-- CLIENTES -->
-            <section id="view-clientes" class="view-section">
-                <div class="panel">
-                    <h3>
-                        Directorio de Clientes (Julio 2026)
-                        <button class="btn success" onclick="openClienteModal()">➕ Nuevo Cliente</button>
-                    </h3>
-                    <div class="table-responsive">
-                        <table id="table-clientes">
-                            <thead>
-                                <tr><th>Nombre</th><th>Deuda / Saldo Pendiente</th><th>Estado</th></tr>
-                            </thead>
-                            <tbody>
-                                <tr><td>Yosmel Córdova</td><td class="status-red">Pendiente</td><td>Activo</td></tr>
-                                <tr><td>Rosa Galarza</td><td class="status-red">Pendiente</td><td>Activo</td></tr>
-                                <tr><td>Jorge Alarcón</td><td class="status-red">Pendiente</td><td>Activo</td></tr>
-                                <tr><td>Mecánico Guagua</td><td class="status-red">Pendiente</td><td>Activo</td></tr>
-                                <tr><td>Katherine Guzmán</td><td class="status-red">Pendiente</td><td>Activo</td></tr>
-                                <tr><td>Nelzon Zambrano</td><td class="status-red">Pendiente</td><td>Activo</td></tr>
-                                <tr><td>Estefanía Borja</td><td class="status-red">Pendiente</td><td>Activo</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <p style="margin-top: 10px; font-weight: bold; color: var(--red);">Saldo pendiente total acumulado: $430.00</p>
-                </div>
-            </section>
-
-            <!-- VENTAS -->
-            <section id="view-ventas" class="view-section">
-                <div class="panel">
-                    <h3>Historial de Ventas (Julio 2026)</h3>
-                    <div class="table-responsive">
-                        <table>
-                            <thead><tr><th>Descripción</th><th>Total Vendido</th><th>Almohadas</th></tr></thead>
-                            <tbody>
-                                <tr><td>Ventas Globales Mes de Julio</td><td>$480.00[cite: 2]</td><td>12 unidades[cite: 2]</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
-
-            <!-- COBROS -->
-            <section id="view-cobros" class="view-section">
-                <div class="panel">
-                    <h3>Cobros Realizados</h3>
-                    <p>Total ingresado por cobros de cuotas: <strong>$50.00</strong>[cite: 2]</p>
-                </div>
-            </section>
-
-            <!-- COMISIONES -->
-            <section id="view-comisiones" class="view-section">
-                <div class="panel">
-                    <h3>Gestión de Comisiones (George y Bolívar)</h3>
-                    <p>Comisiones generadas por George: <strong>$50.00</strong> (Pagadas: $10.00 | Pendientes: $40.00)[cite: 2]</p>
-                </div>
-            </section>
-
-            <!-- INVENTARIO -->
-            <section id="view-inventario" class="view-section">
-                <div class="panel">
-                    <h3>Inventario de Almohadas</h3>
-                    <p>Inversión total realizada en inventario (2 compras iniciales): <strong>$165.60</strong>[cite: 2]</p>
-                </div>
-            </section>
-
-            <!-- CONFIGURACION -->
-            <section id="view-config" class="view-section">
-                <div class="panel">
-                    <h3>Copias de Seguridad (Backup)</h3>
-                    <button class="btn success" onclick="alert('Sistema sincronizado con los datos de Comercial Ethan.')">Ver Estado de Datos</button>
-                </div>
-            </section>
-
+    <!-- Navbar -->
+    <header class="bg-slate-800 border-b border-slate-700 p-4 shadow-md flex justify-between items-center">
+        <div class="flex items-center space-x-3">
+            <i class="fa-solid fa-bed text-indigo-400 text-2xl"></i>
+            <h1 class="text-xl font-bold tracking-wider">COMERCIAL ETHAN <span class="text-xs text-indigo-400 font-normal">CRM Cloud</span></h1>
         </div>
+        <div id="status-conexion" class="text-xs px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
+            <i class="fa-solid fa-spinner fa-spin mr-1"></i> Conectando a Firebase...
+        </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="flex-1 p-4 md:p-8 max-w-6xl mx-auto w-full space-y-6">
+        
+        <!-- Tarjetas de Resumen Rápido -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow">
+                <p class="text-slate-400 text-sm">Clientes / Deudores</p>
+                <h3 id="total-clientes" class="text-2xl font-bold mt-1 text-white">0</h3>
+            </div>
+            <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow">
+                <p class="text-slate-400 text-sm">Inventario Registrado</p>
+                <h3 id="total-inventario" class="text-2xl font-bold mt-1 text-white">0</h3>
+            </div>
+            <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow">
+                <p class="text-slate-400 text-sm">Estado del Sistema</p>
+                <h3 class="text-2xl font-bold mt-1 text-emerald-400">En Línea</h3>
+            </div>
+        </div>
+
+        <!-- Sección de Clientes / Créditos -->
+        <div class="bg-slate-800 rounded-xl border border-slate-700 p-6 shadow-md">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-semibold flex items-center gap-2">
+                    <i class="fa-solid fa-users text-indigo-400"></i> Clientes y Créditos
+                </h2>
+                <button onclick="cargarDatosDesdeFirebase()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm transition font-medium">
+                    <i class="fa-solid fa-rotate mr-1"></i> Actualizar Datos
+                </button>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-slate-700 text-slate-400 text-xs uppercase">
+                            <th class="p-3">Nombre</th>
+                            <th class="p-3">Artículo</th>
+                            <th class="p-3">Deuda Pendiente</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-clientes-body" class="divide-y divide-slate-700/50 text-sm">
+                        <tr>
+                            <td colspan="3" class="p-4 text-center text-slate-400">Cargando registros desde la nube...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
     </main>
 
-    <!-- MODAL CLIENTE -->
-    <div class="modal-overlay" id="modal-cliente">
-        <div class="modal-content">
-            <h3>Registrar Nuevo Cliente <button class="btn danger" onclick="closeClienteModal()" style="padding: 2px 8px; float:right;">✕</button></h3>
-            <form onsubmit="event.preventDefault(); alert('Cliente guardado con éxito.'); closeClienteModal();">
-                <div class="form-grid" style="margin-top: 15px;">
-                    <div class="form-group"><label>Nombre Completo</label><input type="text" required></div>
-                    <div class="form-group"><label>Teléfono</label><input type="text"></div>
-                    <div class="form-group"><label>Saldo / Deuda ($)</label><input type="number" step="0.01" value="0.00"></div>
-                </div>
-                <button type="submit" class="btn success">Guardar</button>
-            </form>
-        </div>
-    </div>
+    <!-- Script de Conexión a Firebase (Modular SDK) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    <script>
-        function nav(sectionId) {
-            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('aside nav a').forEach(el => el.classList.remove('active'));
-            document.getElementById('view-' + sectionId).classList.add('active');
-            document.getElementById('nav-' + sectionId).classList.add('active');
+        // Configuración oficial de tu proyecto Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDwgvrnx4iXLl4l7g6vBmMPrVUAojrBiA",
+            authDomain: "crm-almohadas.firebaseapp.com",
+            projectId: "crm-almohadas",
+            storageBucket: "crm-almohadas.firebasestorage.app",
+            messagingSenderId: "908140665373",
+            appId: "1:908140665373:web:dd25aa031f843be63144f4",
+            measurementId: "G-80YSWZHK35"
+        };
+
+        // Inicializar Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Función para cargar datos de Firestore
+        async function cargarDatosDesdeFirebase() {
+            const badge = document.getElementById('status-conexion');
+            const tbody = document.getElementById('tabla-clientes-body');
+            
+            badge.className = "text-xs px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30";
+            badge.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Sincronizando...';
+
+            try {
+                // Consulta a tu colección 'clientes_ethan' que ya tienes en Firestore
+                const querySnapshot = await getDocs(collection(db, "clientes_ethan"));
+                let filasHTML = "";
+                let contador = 0;
+
+                querySnapshot.forEach((doc) => {
+                    contador++;
+                    const data = doc.data();
+                    filasHTML += `
+                        <tr class="hover:bg-slate-700/30 transition">
+                            <td class="p-3 font-medium text-white">${data.nombre || 'Sin nombre'}</td>
+                            <td class="p-3 text-slate-300">${data.articulo || 'N/D'}</td>
+                            <td class="p-3 font-semibold text-emerald-400">$${data.deuda || '0'}</td>
+                        </tr>
+                    `;
+                });
+
+                if (contador === 0) {
+                    filasHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-400">No se encontraron registros en clientes_ethan.</td></tr>`;
+                }
+
+                tbody.innerHTML = filasHTML;
+                document.getElementById('total-clientes').innerText = contador;
+
+                // Actualizar indicador a Conectado con Éxito
+                badge.className = "text-xs px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
+                badge.innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i> Conectado a la Nube';
+
+            } catch (error) {
+                console.error("Error al obtener documentos: ", error);
+                badge.className = "text-xs px-3 py-1 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30";
+                badge.innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-1"></i> Error de Conexión';
+                tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-rose-400">Error al cargar datos. Verifica tu conexión o reglas de Firestore.</td></tr>`;
+            }
         }
-        function openClienteModal() { document.getElementById('modal-cliente').classList.add('active'); }
-        function closeClienteModal() { document.getElementById('modal-cliente').classList.remove('active'); }
-        function exportExcel() { alert('Exportando datos de Comercial Ethan...'); }
+
+        // Ejecutar al cargar la página
+        window.onload = cargarDatosDesdeFirebase;
+        // Exponer función al botón global
+        window.cargarDatosDesdeFirebase = cargarDatosDesdeFirebase;
     </script>
 </body>
 </html>
