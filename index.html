@@ -53,7 +53,7 @@
                 </div>
             </nav>
         </div>
-        <div class="p-4 border-t border-slate-800 text-xs text-slate-500">Comercial Ethan Cloud v3.8</div>
+        <div class="p-4 border-t border-slate-800 text-xs text-slate-500">Comercial Ethan Cloud v3.9</div>
     </aside>
 
     <!-- Contenido Principal -->
@@ -454,17 +454,14 @@
                         </div>
                     </form>
                 </div>
+                
+                <!-- HISTORIAL SEPARADO POR SEMANAS -->
                 <div class="space-y-4">
-                    <h2 class="font-bold text-slate-800 text-base">Historial de Entradas y Salidas</h2>
-                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
-                        <table class="w-full text-left border-collapse text-sm">
-                            <thead>
-                                <tr class="bg-[#0B132B] text-white text-xs uppercase">
-                                    <th class="p-3">Fecha</th><th class="p-3">Tipo</th><th class="p-3">Categoría</th><th class="p-3">Monto</th><th class="p-3">Descripción</th><th class="p-3 text-center">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tabla-movimientos-cuerpo" class="divide-y divide-slate-100 text-xs sm:text-sm"></tbody>
-                        </table>
+                    <div class="flex justify-between items-center">
+                        <h2 class="font-bold text-slate-800 text-base">Historial de Entradas y Salidas por Semanas</h2>
+                    </div>
+                    <div id="contenedor-historial-semanas" class="space-y-4">
+                        <!-- Las semanas se inyectarán dinámicamente aquí -->
                     </div>
                 </div>
             </div>
@@ -914,7 +911,7 @@
                 });
                 document.getElementById('tabla-calendario-cuerpo').innerHTML = htmlCal || '<tr><td colspan="6" class="p-4 text-center text-slate-400">Sin fechas de pago programadas</td></tr>';
 
-                // Finanzas Personales & Movimientos (INDULGENTE: Carga de su propia colección separada)
+                // Finanzas Personales & Movimientos
                 const snapMov = await getDocs(collection(db, "movimientos_personales_ethan"));
                 listaMovimientos = [];
                 snapMov.forEach(d => listaMovimientos.push({ id: d.id, ...d.data() }));
@@ -922,7 +919,6 @@
                 // ORDENAR MOVIMIENTOS POR FECHA (Más reciente primero)
                 listaMovimientos.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
 
-                let htmlMov = '';
                 let ingHoy = 0, ingSem = 0, ingMes = 0;
                 let gasHoy = 0, gasSem = 0, gasMes = 0;
                 let combustibleTotal = 0;
@@ -948,21 +944,11 @@
                         if(esEsteMes) gasMes += montoNum;
                         gasSem += montoNum;
                     }
-
-                    htmlMov += `
-                        <tr class="hover:bg-slate-50 border-b border-slate-100">
-                            <td class="p-3 text-slate-600">${m.fecha || '-'}</td>
-                            <td class="p-3"><span class="px-2 py-1 text-xs rounded-full ${m.tipo === 'Entrada' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}">${m.tipo}</span></td>
-                            <td class="p-3 font-medium text-slate-800">${m.categoria || '-'}</td>
-                            <td class="p-3 font-semibold ${m.tipo === 'Entrada' ? 'text-emerald-600' : 'text-rose-600'}">$${montoNum.toFixed(2)}</td>
-                            <td class="p-3 text-slate-500">${m.descripcion || '-'}</td>
-                            <td class="p-3 text-center"><button onclick="eliminarMovimiento('${m.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button></td>
-                        </tr>
-                    `;
                 });
 
-                document.getElementById('tabla-movimientos-cuerpo').innerHTML = htmlMov || '<tr><td colspan="6" class="p-4 text-center text-slate-400">Sin movimientos personales registrados.</td></tr>';
-                
+                // Renderizar Movimientos Personales Agrupados por Semanas
+                renderizarMovimientosPorSemanas();
+
                 // Renderizar historial de combustible y calcular totales de semana actual / anterior
                 renderizarHistorialCombustible();
 
@@ -1055,6 +1041,122 @@
                 console.error(e);
                 dot.className = "w-3 h-3 rounded-full bg-rose-500";
             }
+        }
+
+        // FUNCIÓN PARA AGRUPAR Y RENDERIZAR MOVIMIENTOS POR SEMANAS
+        window.renderizarMovimientosPorSemanas = () => {
+            const contenedor = document.getElementById('contenedor-historial-semanas');
+            if(!listaMovimientos || listaMovimientos.length === 0) {
+                contenedor.innerHTML = '<div class="bg-white p-4 rounded-xl border border-slate-200 text-center text-slate-400 text-sm">Sin movimientos personales registrados.</div>';
+                return;
+            }
+
+            // Agrupar por semana del año (Año-W##)
+            const semanasMap = {};
+            listaMovimientos.forEach(m => {
+                if(!m.fecha) return;
+                const d = new Date(m.fecha + 'T00:00:00');
+                const idSemana = obtenerIdSemana(d);
+                if(!semanasMap[idSemana]) {
+                    semanasMap[idSemana] = {
+                        titulo: obtenerNombreSemana(d),
+                        movimientos: [],
+                        totalEntradas: 0,
+                        totalSalidas: 0
+                    };
+                }
+                semanasMap[idSemana].movimientos.push(m);
+                const monto = parseFloat(m.monto || 0);
+                if(m.tipo === 'Entrada') semanasMap[idSemana].totalEntradas += monto;
+                else semanasMap[idSemana].totalSalidas += monto;
+            });
+
+            // Ordenar semanas de la más reciente a la más antigua
+            const semanasOrdenadas = Object.keys(semanasMap).sort().reverse();
+
+            let htmlFinal = '';
+            semanasOrdenadas.forEach((semKey, index) => {
+                const sem = semanasMap[semKey];
+                const balanceSemanal = sem.totalEntradas - sem.totalSalidas;
+                const colorBalance = balanceSemanal >= 0 ? 'text-emerald-600' : 'text-rose-600';
+                // La primera semana abierta por defecto, las demás cerradas
+                const isOpen = index === 0 ? '' : 'hidden';
+                const rotateIcon = index === 0 ? 'rotate-180' : '';
+
+                let filasMovs = '';
+                sem.movimientos.forEach(m => {
+                    const montoNum = parseFloat(m.monto || 0);
+                    filasMovs += `
+                        <tr class="hover:bg-slate-50 border-b border-slate-100">
+                            <td class="p-3 text-slate-600">${m.fecha || '-'}</td>
+                            <td class="p-3"><span class="px-2 py-1 text-xs rounded-full ${m.tipo === 'Entrada' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}">${m.tipo}</span></td>
+                            <td class="p-3 font-medium text-slate-800">${m.categoria || '-'}</td>
+                            <td class="p-3 font-semibold ${m.tipo === 'Entrada' ? 'text-emerald-600' : 'text-rose-600'}">$${montoNum.toFixed(2)}</td>
+                            <td class="p-3 text-slate-500">${m.descripcion || '-'}</td>
+                            <td class="p-3 text-center"><button onclick="eliminarMovimiento('${m.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button></td>
+                        </tr>
+                    `;
+                });
+
+                htmlFinal += `
+                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden mb-4">
+                        <button onclick="toggleAcordeonSemana('${semKey}')" class="w-full bg-slate-900 text-white p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-left hover:bg-slate-800 transition">
+                            <div class="flex items-center gap-3">
+                                <i id="icono-sem-${semKey}" class="fa-solid fa-chevron-down text-xs transition-transform ${rotateIcon}"></i>
+                                <span class="font-bold text-sm sm:text-base">${sem.titulo}</span>
+                            </div>
+                            <div class="flex items-center gap-4 text-xs font-semibold">
+                                <span class="bg-emerald-900/60 text-emerald-300 px-2.5 py-1 rounded-md">Entradas: +$${sem.totalEntradas.toFixed(2)}</span>
+                                <span class="bg-rose-900/60 text-rose-300 px-2.5 py-1 rounded-md">Salidas: -$${sem.totalSalidas.toFixed(2)}</span>
+                                <span class="bg-slate-800 text-white px-2.5 py-1 rounded-md border border-slate-700">Balance: <span class="${colorBalance}">$${balanceSemanal.toFixed(2)}</span></span>
+                            </div>
+                        </button>
+                        <div id="semana-body-${semKey}" class="${isOpen} overflow-x-auto">
+                            <table class="w-full text-left border-collapse text-sm">
+                                <thead>
+                                    <tr class="bg-slate-100 text-slate-700 text-xs uppercase border-b border-slate-200">
+                                        <th class="p-3">Fecha</th><th class="p-3">Tipo</th><th class="p-3">Categoría</th><th class="p-3">Monto</th><th class="p-3">Descripción</th><th class="p-3 text-center">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100 text-xs sm:text-sm">
+                                    ${filasMovs}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            });
+
+            contenedor.innerHTML = htmlFinal;
+        }
+
+        window.toggleAcordeonSemana = (semKey) => {
+            const body = document.getElementById(`semana-body-${semKey}`);
+            const icono = document.getElementById(`icono-sem-${semKey}`);
+            body.classList.toggle('hidden');
+            icono.classList.toggle('rotate-180');
+        }
+
+        function obtenerIdSemana(d) {
+            const ano = d.getFullYear();
+            const primerDiaAno = new Date(ano, 0, 1);
+            const dias = Math.floor((d - primerDiaAno) / (24 * 60 * 60 * 1000));
+            const numSemana = Math.ceil((dias + primerDiaAno.getDay() + 1) / 7);
+            return `${ano}-W${String(numSemana).padStart(2, '0')}`;
+        }
+
+        function obtenerNombreSemana(d) {
+            // Calcular lunes y domingo de esa semana
+            const dia = d.getDay() === 0 ? 6 : d.getDay() - 1;
+            const lunes = new Date(d);
+            lunes.setDate(d.getDate() - dia);
+            const domingo = new Date(lunes);
+            domingo.setDate(lunes.getDate() + 6);
+
+            const opciones = { month: 'short', day: 'numeric' };
+            const fLunes = lunes.toLocaleDateString('es-ES', opciones);
+            const fDomingo = domingo.toLocaleDateString('es-ES', opciones);
+            return `Semana del ${fLunes} al ${fDomingo} de ${d.getFullYear()}`;
         }
 
         function obtenerRangosSemanales() {
