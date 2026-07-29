@@ -25,13 +25,21 @@
                 <a href="#" onclick="cambiarVista('inventario')" id="nav-inventario" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition"><i class="fa-solid fa-boxes-stacked w-5"></i> Inventario</a>
                 <a href="#" onclick="cambiarVista('comisiones')" id="nav-comisiones" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition"><i class="fa-solid fa-percent w-5"></i> Comisiones</a>
                 
-                <p class="px-3 text-[10px] tracking-wider text-slate-500 uppercase font-semibold mt-4 mb-1">Sistema</p>
+                <p class="px-3 text-[10px] tracking-wider text-slate-500 uppercase font-semibold mt-4 mb-1">Sistema & Respaldos</p>
                 <a href="#" onclick="sincronizarDatos()" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition text-amber-400"><i class="fa-solid fa-rotate w-5"></i> Sincronizar Nube</a>
-                <!-- BOTÓN DE RESPALDO INTEGRADO -->
-                <a href="#" onclick="descargarRespaldoJSON()" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition text-emerald-400"><i class="fa-solid fa-cloud-arrow-down w-5"></i> Respaldo de Datos</a>
+                <a href="#" onclick="descargarRespaldoJSON()" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition text-emerald-400"><i class="fa-solid fa-cloud-arrow-down w-5"></i> Descargar Respaldo JSON</a>
+                
+                <!-- BOTÓN PARA CARGAR EL ARCHIVO JSON -->
+                <label class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition text-cyan-400 cursor-pointer">
+                    <i class="fa-solid fa-cloud-arrow-up w-5"></i> Cargar Respaldo JSON
+                    <input type="file" id="input-cargar-json" accept=".json" onchange="restaurarRespaldoJSON(event)" class="hidden">
+                </label>
+
+                <!-- BOTÓN PARA DESCARGAR ESTE CÓDIGO HTML -->
+                <a href="#" onclick="descargarCodigoHTML()" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition text-indigo-400"><i class="fa-solid fa-file-code w-5"></i> Descargar Código HTML</a>
             </nav>
         </div>
-        <div class="p-4 border-t border-slate-800 text-xs text-slate-500">Comercial Ethan Cloud v3.0</div>
+        <div class="p-4 border-t border-slate-800 text-xs text-slate-500">Comercial Ethan Cloud v3.1</div>
     </aside>
 
     <!-- Contenido Principal -->
@@ -570,7 +578,7 @@
             }
         }
 
-        // FUNCIÓN DE RESPALDO DE DATOS (JSON)
+        // 1. DESCARGAR RESPALDO JSON
         window.descargarRespaldoJSON = () => {
             try {
                 const datosRespaldo = {
@@ -580,7 +588,6 @@
                     cobros: listaPagos,
                     inventario: listaInventario
                 };
-
                 const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(datosRespaldo, null, 2));
                 const downloadAnchor = document.createElement('a');
                 downloadAnchor.setAttribute("href", dataStr);
@@ -592,6 +599,52 @@
             } catch (error) {
                 console.error(error);
                 alert("Hubo un error al generar el respaldo.");
+            }
+        };
+
+        // 2. CARGAR Y LEER ARCHIVO JSON
+        window.restaurarRespaldoJSON = (event) => {
+            const archivo = event.target.files[0];
+            if (!archivo) return;
+            const lector = new FileReader();
+            lector.onload = function(e) {
+                try {
+                    const contenido = JSON.parse(e.target.result);
+                    if (contenido && contenido.clientes && contenido.ventas) {
+                        listaClientes = contenido.clientes || [];
+                        listaVentas = contenido.ventas || [];
+                        listaPagos = contenido.cobros || [];
+                        listaInventario = contenido.inventario || [];
+                        alert("¡Respaldo cargado con éxito en la vista previa del sistema!");
+                        // Aquí puedes actualizar la interfaz con los datos leídos del JSON si lo deseas de forma local
+                    } else {
+                        alert("El archivo JSON no tiene el formato correcto.");
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert("Error al leer el archivo JSON.");
+                }
+            };
+            lector.readAsText(archivo);
+        };
+
+        // 3. DESCARGAR ESTE CÓDIGO HTML COMPLETO
+        window.descargarCodigoHTML = () => {
+            try {
+                const codigoActual = document.documentElement.outerHTML;
+                const blob = new Blob([codigoActual], { type: 'text/html;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const downloadAnchor = document.createElement('a');
+                downloadAnchor.href = url;
+                downloadAnchor.download = "index.html";
+                document.body.appendChild(downloadAnchor);
+                downloadAnchor.click();
+                downloadAnchor.remove();
+                URL.revokeObjectURL(url);
+                alert("¡Código HTML descargado con éxito!");
+            } catch (error) {
+                console.error(error);
+                alert("Hubo un error al descargar el código.");
             }
         };
 
