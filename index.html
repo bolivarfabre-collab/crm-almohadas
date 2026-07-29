@@ -21,14 +21,14 @@
                 <a href="#" onclick="cambiarVista('dashboard')" id="nav-dashboard" class="flex items-center gap-3 px-3 py-2 rounded-lg bg-indigo-900/50 text-white font-medium"><i class="fa-solid fa-chart-pie w-5"></i> Dashboard General</a>
                 <a href="#" onclick="cambiarVista('clientes')" id="nav-clientes" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition"><i class="fa-solid fa-users w-5"></i> Clientes</a>
                 <a href="#" onclick="cambiarVista('ventas')" id="nav-ventas" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition"><i class="fa-solid fa-cart-shopping w-5"></i> Ventas</a>
-                <a href="#" onclick="cambiarVista('cobros')" id="nav-cobros" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition"><i class="fa-solid fa-hand-holding-dollar w-5"></i> Cobros</a>
+                <a href="#" onclick="cambiarVista('pagos')" id="nav-pagos" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition"><i class="fa-solid fa-hand-holding-dollar w-5"></i> Pagos</a>
                 <a href="#" onclick="cambiarVista('comisiones')" id="nav-comisiones" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition"><i class="fa-solid fa-percent w-5"></i> Comisiones</a>
                 
                 <p class="px-3 text-[10px] tracking-wider text-slate-500 uppercase font-semibold mt-4 mb-1">Sistema</p>
                 <a href="#" onclick="sincronizarDatos()" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition text-amber-400"><i class="fa-solid fa-rotate w-5"></i> Sincronizar Nube</a>
             </nav>
         </div>
-        <div class="p-4 border-t border-slate-800 text-xs text-slate-500">Comercial Ethan Cloud v2.8</div>
+        <div class="p-4 border-t border-slate-800 text-xs text-slate-500">Comercial Ethan Cloud v2.9</div>
     </aside>
 
     <!-- Contenido Principal -->
@@ -102,27 +102,58 @@
                 </div>
             </div>
 
-            <!-- COBROS -->
-            <div id="vista-cobros" class="space-y-4 hidden">
+            <!-- PAGOS (NUEVA ESTRUCTURA EXACTA) -->
+            <div id="vista-pagos" class="space-y-6 hidden">
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
-                    <h2 class="font-bold text-slate-800 text-base">Registrar Cobro / Abono</h2>
-                    <form onsubmit="registrarCobro(event)" class="grid grid-cols-1 sm:grid-cols-4 gap-4 text-sm">
+                    <h2 class="font-bold text-slate-800 text-base">Registrar Pago</h2>
+                    <form onsubmit="registrarPago(event)" class="grid grid-cols-1 sm:grid-cols-5 gap-4 text-sm">
                         <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">Seleccionar Cliente</label>
-                            <select id="cobro-cliente" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 focus:outline-none focus:border-indigo-500"></select>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Fecha</label>
+                            <input type="date" id="pago-fecha" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2">
+                        </div>
+                        <div class="sm:col-span-2">
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Seleccionar Cliente con Deuda</label>
+                            <select id="pago-cliente" required onchange="actualizarSaldoActual(this)" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 focus:outline-none focus:border-indigo-500">
+                                <option value="">Seleccione...</option>
+                            </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">Fecha de Pago</label>
-                            <input type="date" id="cobro-fecha" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2">
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Saldo Actual ($)</label>
+                            <input type="text" id="pago-saldo-actual" readonly class="w-full bg-slate-100 border border-slate-200 rounded-lg p-2 font-bold text-rose-600" placeholder="0.00">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-600 mb-1">Monto a Cobrar ($)</label>
-                            <input type="number" step="0.01" id="cobro-monto" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 focus:outline-none focus:border-indigo-500">
+                            <input type="number" step="0.01" id="pago-monto" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 focus:outline-none focus:border-indigo-500" placeholder="0.00">
+                        </div>
+                        <div class="sm:col-span-4">
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Observaciones</label>
+                            <input type="text" id="pago-obs" placeholder="Ej: Abono semanal..." class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2">
                         </div>
                         <div class="flex items-end">
-                            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white p-2 rounded-lg font-medium shadow-sm">Registrar Pago</button>
+                            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white p-2 rounded-lg font-medium shadow-sm transition">Registrar Pago</button>
                         </div>
                     </form>
+                </div>
+
+                <!-- Historial de Pagos -->
+                <div class="space-y-4">
+                    <h2 class="font-bold text-slate-800 text-base">Historial de Pagos</h2>
+                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead>
+                                <tr class="bg-[#0B132B] text-white text-xs uppercase">
+                                    <th class="p-3">Fecha</th>
+                                    <th class="p-3">Cliente</th>
+                                    <th class="p-3">Monto</th>
+                                    <th class="p-3">Saldo Ant.</th>
+                                    <th class="p-3">Saldo Nuevo</th>
+                                    <th class="p-3">Obs</th>
+                                    <th class="p-3 text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-pagos-cuerpo" class="divide-y divide-slate-100 text-xs sm:text-sm"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
@@ -270,7 +301,7 @@
                 </div>
             </div>
             <div>
-                <h4 class="font-bold text-slate-700 text-sm mb-2">Historial de Abonos / Pagos</h4>
+                <h4 class="font-bold text-slate-700 text-sm mb-2">Historial de Pagos / Abonos</h4>
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
                     <table class="w-full text-left border-collapse text-xs">
                         <thead>
@@ -307,10 +338,10 @@
         const db = getFirestore(app);
         let listaClientes = [];
         let listaVentas = [];
-        let listaCobros = [];
+        let listaPagos = [];
 
         window.cambiarVista = (v) => {
-            ['dashboard', 'clientes', 'ventas', 'cobros', 'comisiones'].forEach(id => {
+            ['dashboard', 'clientes', 'ventas', 'pagos', 'comisiones'].forEach(id => {
                 document.getElementById(`vista-${id}`).classList.add('hidden');
                 const nav = document.getElementById(`nav-${id}`);
                 if(nav) nav.className = "flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition text-slate-300";
@@ -329,27 +360,24 @@
                 listaVentas = [];
                 snapVentas.forEach(d => listaVentas.push({ id: d.id, ...d.data() }));
 
-                // 2. Cargar Cobros / Abonos
-                const snapCobros = await getDocs(collection(db, "cobros_ethan"));
-                listaCobros = [];
-                snapCobros.forEach(d => listaCobros.push({ id: d.id, ...d.data() }));
+                // 2. Cargar Pagos
+                const snapPagos = await getDocs(collection(db, "cobros_ethan"));
+                listaPagos = [];
+                snapPagos.forEach(d => listaPagos.push({ id: d.id, ...d.data() }));
 
                 // 3. Cargar Clientes
                 const snapClientes = await getDocs(collection(db, "clientes_ethan"));
                 listaClientes = [];
-                let htmlClientes = '', htmlSelectCliente = '<option value="">Seleccione cliente...</option>';
-                let htmlSelectCobro = '<option value="">Seleccione...</option>';
+                let htmlClientes = '', htmlSelectCliente = '<option value="">Seleccione...</option>';
                 let totalDeuda = 0, totalAlmohadasGral = 0, totalVentasValGral = 0;
 
                 snapClientes.forEach(d => {
                     const item = { id: d.id, ...d.data() };
                     listaClientes.push(item);
 
-                    // Filtrar ventas y cobros del cliente
                     const vCliente = listaVentas.filter(v => v.clienteId === item.id || v.nombre === item.nombre);
-                    const cCliente = listaCobros.filter(c => c.clienteId === item.id || c.nombre === item.nombre);
+                    const pCliente = listaPagos.filter(p => p.clienteId === item.id || p.nombre === item.nombre);
 
-                    // Calcular Artículos y Total Venta
                     let artTotales = 0;
                     let totalVentaCliente = 0;
                     vCliente.forEach(v => {
@@ -357,26 +385,25 @@
                         totalVentaCliente += parseFloat(v.total || (v.cantidad * 40));
                     });
 
-                    // Calcular Abonado Total
                     let abonadoCliente = 0;
-                    let ultimoPago = '-';
                     let fechasPagos = [];
-                    cCliente.forEach(c => {
-                        abonadoCliente += parseFloat(c.monto || 0);
-                        if(c.fecha) fechasPagos.push(c.fecha);
+                    pCliente.forEach(p => {
+                        abonadoCliente += parseFloat(p.monto || 0);
+                        if(p.fecha) fechasPagos.push(p.fecha);
                     });
 
-                    // Si es venta de contado o tiene pagos registrados, ordenamos fechas
+                    let ultimoPago = '-';
                     if(fechasPagos.length > 0) {
                         fechasPagos.sort();
                         ultimoPago = fechasPagos[fechasPagos.length - 1];
                     }
 
-                    // Saldo = Total - Abonado (o si el cliente ya tenía saldo manual asignado)
                     let saldoCalculado = Math.max(0, totalVentaCliente - abonadoCliente);
                     if(item.saldo !== undefined && item.saldo !== null && vCliente.length === 0) {
                         saldoCalculado = parseFloat(item.saldo || 0);
                     }
+                    
+                    item.saldoActualCalculado = saldoCalculado; // Guardar temporalmente para el selector de pagos
                     totalDeuda += saldoCalculado;
                     totalAlmohadasGral += artTotales;
                     totalVentasValGral += totalVentaCliente;
@@ -397,19 +424,37 @@
                             </td>
                         </tr>
                     `;
-                    htmlSelectCliente += `<option value="${item.id}">${item.nombre}</option>`;
+                    
                     if(saldoCalculado > 0) {
-                        htmlSelectCobro += `<option value="${item.id}">${item.nombre} (Deuda: $${saldoCalculado.toFixed(2)})</option>`;
+                        htmlSelectCliente += `<option value="${item.id}">${item.nombre} (Deuda: $${saldoCalculado.toFixed(2)})</option>`;
                     }
                 });
 
                 document.getElementById('tabla-clientes-cuerpo').innerHTML = htmlClientes || '<tr><td colspan="9" class="p-4 text-center text-slate-400">Sin clientes registrados</td></tr>';
-                document.getElementById('v-cliente-select').innerHTML = htmlSelectCliente;
-                document.getElementById('cobro-cliente').innerHTML = htmlSelectCobro;
+                document.getElementById('pago-cliente').innerHTML = htmlSelectCliente;
                 document.getElementById('dash-clientes').innerText = listaClientes.length;
                 document.getElementById('dash-deuda').innerText = `$${totalDeuda.toFixed(2)}`;
                 document.getElementById('dash-almohadas').innerText = totalAlmohadasGral;
                 document.getElementById('dash-ventas-totales').innerText = `$${totalVentasValGral.toFixed(2)}`;
+
+                // Renderizar Tabla Historial de Pagos
+                let htmlPagos = '';
+                listaPagos.forEach(p => {
+                    htmlPagos += `
+                        <tr class="hover:bg-slate-50 border-b border-slate-100">
+                            <td class="p-3 text-slate-600">${p.fecha || '-'}</td>
+                            <td class="p-3 font-medium text-slate-900">${p.nombre || ''}</td>
+                            <td class="p-3 font-semibold text-emerald-600">$${(parseFloat(p.monto) || 0).toFixed(2)}</td>
+                            <td class="p-3 text-slate-600">$${(parseFloat(p.saldoAnt) || 0).toFixed(2)}</td>
+                            <td class="p-3 font-semibold text-rose-600">$${(parseFloat(p.saldoNuevo) || 0).toFixed(2)}</td>
+                            <td class="p-3 text-slate-500">${p.observaciones || '-'}</td>
+                            <td class="p-3 text-center">
+                                <button onclick="eliminarPago('${p.id}')" class="text-rose-600 hover:text-rose-800" title="Eliminar pago"><i class="fa-solid fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                document.getElementById('tabla-pagos-cuerpo').innerHTML = htmlPagos || '<tr><td colspan="7" class="p-4 text-center text-slate-400">Sin pagos registrados</td></tr>';
 
                 // Renderizar Tabla Ventas General
                 let htmlVentas = '';
@@ -433,13 +478,59 @@
                 });
                 document.getElementById('tabla-ventas-cuerpo').innerHTML = htmlVentas || '<tr><td colspan="7" class="p-4 text-center text-slate-400">Sin ventas registradas</td></tr>';
 
-                // Fecha por defecto en cobros
-                document.getElementById('cobro-fecha').value = new Date().toISOString().split('T')[0];
+                // Fecha por defecto en pagos
+                document.getElementById('pago-fecha').value = new Date().toISOString().split('T')[0];
 
                 dot.className = "w-3 h-3 rounded-full bg-emerald-500";
             } catch(e) {
                 console.error(e);
                 dot.className = "w-3 h-3 rounded-full bg-rose-500";
+            }
+        }
+
+        window.actualizarSaldoActual = (select) => {
+            const cliente = listaClientes.find(c => c.id === select.value);
+            if(cliente) {
+                document.getElementById('pago-saldo-actual').value = (cliente.saldoActualCalculado || 0).toFixed(2);
+            } else {
+                document.getElementById('pago-saldo-actual').value = '';
+            }
+        }
+
+        window.registrarPago = async (e) => {
+            e.preventDefault();
+            const idCliente = document.getElementById('pago-cliente').value;
+            const montoPago = parseFloat(document.getElementById('pago-monto').value) || 0;
+            const fechaPago = document.getElementById('pago-fecha').value;
+            const obs = document.getElementById('pago-obs').value;
+
+            const cliente = listaClientes.find(x => x.id === idCliente);
+            if(!cliente) return;
+
+            const saldoAnt = cliente.saldoActualCalculado || 0;
+            const saldoNuevo = Math.max(0, saldoAnt - montoPago);
+
+            await addDoc(collection(db, "cobros_ethan"), {
+                clienteId: idCliente,
+                nombre: cliente.nombre,
+                monto: montoPago,
+                fecha: fechaPago,
+                saldoAnt: saldoAnt,
+                saldoNuevo: saldoNuevo,
+                observaciones: obs
+            });
+
+            document.getElementById('pago-monto').value = '';
+            document.getElementById('pago-obs').value = '';
+            document.getElementById('pago-saldo-actual').value = '';
+            sincronizarDatos();
+            alert("¡Pago registrado con éxito!");
+        }
+
+        window.eliminarPago = async (id) => {
+            if(confirm("¿Estás seguro de eliminar este pago? Se actualizará el saldo del cliente.")) {
+                await deleteDoc(doc(db, "cobros_ethan", id));
+                sincronizarDatos();
             }
         }
 
@@ -571,7 +662,7 @@
             document.getElementById('det-dir').innerText = cliente.direccion || 'Sin dirección';
 
             const ventasCliente = listaVentas.filter(v => v.clienteId === id || v.nombre === cliente.nombre);
-            const cobrosCliente = listaCobros.filter(c => c.clienteId === id || c.nombre === cliente.nombre);
+            const pagosCliente = listaPagos.filter(p => p.clienteId === id || p.nombre === cliente.nombre);
 
             let totalV = 0, totalC = 0;
             let htmlV = '';
@@ -591,16 +682,16 @@
             document.getElementById('tabla-detalles-ventas').innerHTML = htmlV || '<tr><td colspan="6" class="p-3 text-center text-slate-400">Sin ventas.</td></tr>';
 
             let htmlC = '';
-            cobrosCliente.forEach(c => {
-                totalC += parseFloat(c.monto || 0);
+            pagosCliente.forEach(p => {
+                totalC += parseFloat(p.monto || 0);
                 htmlC += `
                     <tr class="border-b border-slate-100">
-                        <td class="p-2">${c.fecha || '-'}</td>
-                        <td class="p-2 font-semibold text-emerald-600">$${(parseFloat(c.monto) || 0).toFixed(2)}</td>
+                        <td class="p-2">${p.fecha || '-'}</td>
+                        <td class="p-2 font-semibold text-emerald-600">$${(parseFloat(p.monto) || 0).toFixed(2)}</td>
                     </tr>
                 `;
             });
-            document.getElementById('tabla-detalles-cobros').innerHTML = htmlC || '<tr><td colspan="2" class="p-3 text-center text-slate-400">Sin abonos registrados.</td></tr>';
+            document.getElementById('tabla-detalles-cobros').innerHTML = htmlC || '<tr><td colspan="2" class="p-3 text-center text-slate-400">Sin pagos registrados.</td></tr>';
 
             const saldoFinal = Math.max(0, totalV - totalC);
             document.getElementById('det-saldo').innerText = `$${saldoFinal.toFixed(2)}`;
@@ -615,26 +706,6 @@
 
         window.eliminarVenta = async (id) => {
             if(confirm("¿Eliminar venta?")) { await deleteDoc(doc(db, "ventas_ethan", id)); sincronizarDatos(); }
-        }
-
-        window.registrarCobro = async (e) => {
-            e.preventDefault();
-            const id = document.getElementById('cobro-cliente').value;
-            const monto = parseFloat(document.getElementById('cobro-monto').value);
-            const fecha = document.getElementById('cobro-fecha').value;
-            const cliente = listaClientes.find(x => x.id === id);
-            if(!cliente) return;
-
-            await addDoc(collection(db, "cobros_ethan"), {
-                clienteId: id,
-                nombre: cliente.nombre,
-                monto: monto,
-                fecha: fecha
-            });
-
-            document.getElementById('cobro-monto').value = '';
-            sincronizarDatos();
-            alert("¡Cobro / Abono registrado con éxito!");
         }
 
         window.onload = sincronizarDatos;
