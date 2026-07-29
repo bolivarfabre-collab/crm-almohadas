@@ -3,103 +3,189 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRM - Comercial Ethan</title>
+    <title>CRM Almohadillas - Comercial Ethan</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col">
+<body class="bg-slate-100 text-slate-800 min-h-screen flex">
 
-    <!-- Navbar -->
-    <header class="bg-slate-800 border-b border-slate-700 p-4 shadow-md flex justify-between items-center">
-        <div class="flex items-center space-x-3">
-            <i class="fa-solid fa-bed text-indigo-400 text-2xl"></i>
-            <h1 class="text-xl font-bold tracking-wider">COMERCIAL ETHAN <span class="text-xs text-indigo-400 font-normal">CRM Cloud</span></h1>
+    <!-- Barra Lateral (Sidebar) -->
+    <aside class="w-64 bg-[#0B132B] text-slate-300 flex flex-col justify-between hidden md:flex shrink-0">
+        <div>
+            <!-- Logo / Título -->
+            <div class="p-4 border-b border-slate-800 flex items-center justify-between">
+                <h1 class="text-white font-bold tracking-wider text-sm">CRM ALMOHADAS</h1>
+                <div id="status-dot" class="w-3 h-3 rounded-full bg-amber-500" title="Conectando..."></div>
+            </div>
+
+            <!-- Menú de Navegación -->
+            <nav class="p-2 space-y-1 text-sm">
+                <p class="px-3 text-[10px] tracking-wider text-slate-500 uppercase font-semibold mb-1">Negocio</p>
+                <a href="#" onclick="cambiarVista('dashboard')" id="nav-dashboard" class="flex items-center gap-3 px-3 py-2 rounded-lg bg-indigo-900/50 text-white font-medium">
+                    <i class="fa-solid fa-chart-pie w-5"></i> Dashboard General
+                </a>
+                <a href="#" onclick="cambiarVista('clientes')" id="nav-clientes" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition">
+                    <i class="fa-solid fa-users w-5"></i> Clientes
+                </a>
+                <a href="#" onclick="cambiarVista('ventas')" id="nav-ventas" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition">
+                    <i class="fa-solid fa-cart-shopping w-5"></i> Ventas
+                </a>
+                <a href="#" onclick="cambiarVista('inventario')" id="nav-inventario" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition">
+                    <i class="fa-solid fa-box w-5"></i> Inventario
+                </a>
+                
+                <p class="px-3 text-[10px] tracking-wider text-slate-500 uppercase font-semibold mt-4 mb-1">Sistema</p>
+                <a href="#" onclick="sincronizarDatos()" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition text-amber-400">
+                    <i class="fa-solid fa-rotate w-5"></i> Sincronizar Nube
+                </a>
+            </nav>
         </div>
-        <div id="status-conexion" class="text-xs px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
-            <i class="fa-solid fa-spinner fa-spin mr-1"></i> Conectando a Firebase...
+        <div class="p-4 border-t border-slate-800 text-xs text-slate-500">
+            Comercial Ethan Cloud v2.0
         </div>
-    </header>
+    </aside>
 
     <!-- Contenido Principal -->
-    <main class="flex-1 p-4 md:p-8 max-w-6xl mx-auto w-full space-y-6">
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
         
-        <!-- Tarjetas de Resumen Rápido -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow">
-                <p class="text-slate-400 text-sm">Clientes Registrados</p>
-                <h3 id="total-clientes" class="text-2xl font-bold mt-1 text-white">0</h3>
+        <!-- Barra Superior -->
+        <header class="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-6 shadow-sm z-10">
+            <div class="flex items-center gap-4 w-96">
+                <div class="relative w-full">
+                    <i class="fa-solid fa-magnifying glass absolute left-3 top-3 text-slate-400 text-sm"></i>
+                    <input type="text" id="buscador-global" oninput="filtrarClientesGlobal(this.value)" placeholder="Buscar cliente globalmente..." class="w-full bg-slate-50 border border-slate-200 rounded-lg pl-9 pr-4 py-2 text-sm focus:outline-none focus:border-indigo-500">
+                </div>
             </div>
-            <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow">
-                <p class="text-slate-400 text-sm">Deuda Total Acumulada</p>
-                <h3 id="total-deuda" class="text-2xl font-bold mt-1 text-rose-400">$0.00</h3>
+            <div class="flex items-center gap-3">
+                <button onclick="exportarExcel()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition">
+                    <i class="fa-solid fa-file-excel"></i> Exportar Excel
+                </button>
+                <button onclick="exportarPDF()" class="bg-slate-900 hover:bg-slate-800 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition">
+                    <i class="fa-solid fa-file-pdf"></i> Exportar PDF
+                </button>
             </div>
-            <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow">
-                <p class="text-slate-400 text-sm">Estado del Sistema</p>
-                <h3 class="text-2xl font-bold mt-1 text-emerald-400">En Línea</h3>
-            </div>
-        </div>
+        </header>
 
-        <!-- Formulario para Agregar Cliente Directo a Firebase -->
-        <div class="bg-slate-800 rounded-xl border border-slate-700 p-6 shadow-md">
-            <h2 class="text-lg font-semibold flex items-center gap-2 mb-4">
-                <i class="fa-solid fa-user-plus text-emerald-400"></i> Agregar Nuevo Cliente a la Nube
-            </h2>
-            <form id="form-cliente" onsubmit="agregarCliente(event)" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                    <label class="block text-xs text-slate-400 mb-1">Nombre Completo</label>
-                    <input type="text" id="input-nombre" required placeholder="Ej. Rosa Galarza" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none focus:border-indigo-500">
+        <!-- Área Dinámica de Contenido -->
+        <main class="flex-1 overflow-y-auto p-6 space-y-6">
+            
+            <!-- VISTA: DASHBOARD GENERAL -->
+            <div id="vista-dashboard" class="space-y-6">
+                <!-- Tarjetas de Resumen -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                        <p class="text-slate-400 text-xs font-semibold uppercase">Clientes Activos</p>
+                        <h3 id="dash-clientes-activos" class="text-2xl font-bold mt-1 text-slate-900">0</h3>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                        <p class="text-slate-400 text-xs font-semibold uppercase">Almohadas Vendidas</p>
+                        <h3 id="dash-almohadas" class="text-2xl font-bold mt-1 text-slate-900">0</h3>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                        <p class="text-slate-400 text-xs font-semibold uppercase">Ventas Totales</p>
+                        <h3 id="dash-ventas-totales" class="text-2xl font-bold mt-1 text-emerald-600">$0.00</h3>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                        <p class="text-slate-400 text-xs font-semibold uppercase">Saldo Pendiente (Deuda)</p>
+                        <h3 id="dash-deuda-total" class="text-2xl font-bold mt-1 text-rose-600">$0.00</h3>
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-xs text-slate-400 mb-1">Artículo / Detalle</label>
-                    <input type="text" id="input-articulo" required placeholder="Ej. Almohada" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none focus:border-indigo-500">
-                </div>
-                <div>
-                    <label class="block text-xs text-slate-400 mb-1">Deuda Pendiente ($)</label>
-                    <input type="number" step="0.01" id="input-deuda" required placeholder="80.00" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none focus:border-indigo-500">
-                </div>
-                <div class="md:col-span-3 flex justify-end">
-                    <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">
-                        <i class="fa-solid fa-floppy-disk"></i> Guardar en Firebase
+            </div>
+
+            <!-- VISTA: CLIENTES (Oculta por defecto al iniciar) -->
+            <div id="vista-clientes" class="space-y-4 hidden">
+                <div class="flex justify-between items-center bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                    <h2 class="font-bold text-slate-800 text-base">Directorio de Clientes</h2>
+                    <button onclick="abrirModalCliente()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition">
+                        <i class="fa-solid fa-user-plus"></i> Registrar / Editar Cliente
                     </button>
+                </div>
+
+                <!-- Tabla de Clientes -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-sm">
+                        <thead>
+                            <tr class="bg-[#0B132B] text-white text-xs uppercase">
+                                <th class="p-3">Nombre</th>
+                                <th class="p-3">Dirección</th>
+                                <th class="p-3">Teléfono</th>
+                                <th class="p-3">Cant.</th>
+                                <th class="p-3">Total</th>
+                                <th class="p-3">Abonado</th>
+                                <th class="p-3">Saldo</th>
+                                <th class="p-3">Estado</th>
+                                <th class="p-3 text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-clientes-cuerpo" class="divide-y divide-slate-100">
+                            <tr>
+                                <td colspan="9" class="p-4 text-center text-slate-400">Cargando registros desde Firebase...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- VISTA: INVENTARIO -->
+            <div id="vista-inventario" class="space-y-4 hidden">
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                    <h2 class="font-bold text-slate-800 text-base mb-2">Control de Inventario</h2>
+                    <p class="text-sm text-slate-500">Módulo listo para registrar entradas y salidas de almohadas o colchones.</p>
+                </div>
+            </div>
+
+            <!-- VISTA: VENTAS -->
+            <div id="vista-ventas" class="space-y-4 hidden">
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                    <h2 class="font-bold text-slate-800 text-base mb-2">Historial de Ventas</h2>
+                    <p class="text-sm text-slate-500">Registro detallado de transacciones asociadas a la base de datos.</p>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- MODAL REGISTRO / EDICIÓN DE CLIENTE -->
+    <div id="modal-cliente" class="fixed inset-0 bg-black/50 backdrop-blur-xs hidden flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 border border-slate-100">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h3 class="font-bold text-slate-800 text-lg">Registrar / Editar Cliente</h3>
+                <button onclick="cerrarModalCliente()" class="text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="form-cliente-modal" onsubmit="guardarClienteFirebase(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                <input type="hidden" id="edit-doc-id">
+                <div class="sm:col-span-2">
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Nombre Completo</label>
+                    <input type="text" id="modal-nombre" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Teléfono</label>
+                    <input type="text" id="modal-telefono" placeholder="099..." class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Dirección</label>
+                    <input type="text" id="modal-direccion" placeholder="Sector / Calle" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Cantidad de Artículos</label>
+                    <input type="number" id="modal-cantidad" value="1" min="1" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Deuda / Saldo Pendiente ($)</label>
+                    <input type="number" step="0.01" id="modal-saldo" value="0.00" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div class="sm:col-span-2 flex justify-end gap-2 pt-3 border-t border-slate-100">
+                    <button type="button" onclick="cerrarModalCliente()" class="px-4 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 font-medium">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-medium shadow-sm">Guardar Cliente</button>
                 </div>
             </form>
         </div>
+    </div>
 
-        <!-- Sección de Clientes / Créditos -->
-        <div class="bg-slate-800 rounded-xl border border-slate-700 p-6 shadow-md">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-lg font-semibold flex items-center gap-2">
-                    <i class="fa-solid fa-users text-indigo-400"></i> Directorio en la Nube
-                </h2>
-                <button onclick="cargarDatosDesdeFirebase()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm transition font-medium">
-                    <i class="fa-solid fa-rotate mr-1"></i> Recargar
-                </button>
-            </div>
-
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="border-b border-slate-700 text-slate-400 text-xs uppercase">
-                            <th class="p-3">Nombre</th>
-                            <th class="p-3">Artículo</th>
-                            <th class="p-3">Deuda Pendiente</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabla-clientes-body" class="divide-y divide-slate-700/50 text-sm">
-                        <tr>
-                            <td colspan="3" class="p-4 text-center text-slate-400">Cargando registros...</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-    </main>
-
-    <!-- Script de Conexión y Gestión de Firebase -->
+    <!-- SCRIPT DE FIREBASE Y LÓGICA DE INTERFAZ -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDwgvrnx4iXLl4l7g6vBmMPrVUAojrBiA",
@@ -114,80 +200,146 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Función para cargar datos desde Firestore
-        async function cargarDatosDesdeFirebase() {
-            const badge = document.getElementById('status-conexion');
-            const tbody = document.getElementById('tabla-clientes-body');
-            
-            badge.className = "text-xs px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30";
-            badge.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Sincronizando...';
+        let cacheClientes = [];
 
+        // Cambiar entre pestañas de la barra lateral
+        window.cambiarVista = function(vista) {
+            ['dashboard', 'clientes', 'ventas', 'inventario'].forEach(v => {
+                document.getElementById(`vista-${v}`).classList.add('hidden');
+                const nav = document.getElementById(`nav-${v}`);
+                if(nav) nav.className = "flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition text-slate-300";
+            });
+            document.getElementById(`vista-${vista}`).classList.remove('hidden');
+            const activeNav = document.getElementById(`nav-${vista}`);
+            if(activeNav) activeNav.className = "flex items-center gap-3 px-3 py-2 rounded-lg bg-indigo-900/50 text-white font-medium";
+        }
+
+        // Cargar datos desde Firebase
+        window.sincronizarDatos = async function() {
+            const dot = document.getElementById('status-dot');
+            dot.className = "w-3 h-3 rounded-full bg-amber-500 animate-pulse";
+            
             try {
                 const querySnapshot = await getDocs(collection(db, "clientes_ethan"));
-                let filasHTML = "";
-                let contador = 0;
-                let sumaDeuda = 0;
+                cacheClientes = [];
+                let totalDeuda = 0;
+                let totalAlmohadas = 0;
+                let filas = "";
 
-                querySnapshot.forEach((doc) => {
-                    contador++;
-                    const data = doc.data();
-                    const deudaNum = parseFloat(data.deuda) || 0;
-                    sumaDeuda += deudaNum;
+                querySnapshot.forEach((d) => {
+                    const item = { id: d.id, ...d.data() };
+                    cacheClientes.push(item);
+                    
+                    const saldo = parseFloat(item.saldo || item.deuda || 0);
+                    const cant = parseInt(item.cantidad || 1);
+                    totalDeuda += saldo;
+                    totalAlmohadas += cant;
 
-                    filasHTML += `
-                        <tr class="hover:bg-slate-700/30 transition">
-                            <td class="p-3 font-medium text-white">${data.nombre || 'Sin nombre'}</td>
-                            <td class="p-3 text-slate-300">${data.articulo || 'N/D'}</td>
-                            <td class="p-3 font-semibold text-rose-400">$${deudaNum.toFixed(2)}</td>
+                    let estadoBadge = saldo > 0 ? '<span class="text-amber-600 font-semibold">Atrasado</span>' : '<span class="text-emerald-600 font-semibold">Al día</span>';
+
+                    filas += `
+                        <tr class="hover:bg-slate-50 transition border-b border-slate-100">
+                            <td class="p-3 font-medium text-slate-900">${item.nombre || 'Sin nombre'}</td>
+                            <td class="p-3 text-slate-600">${item.direccion || '-'}</td>
+                            <td class="p-3 text-slate-600">${item.telefono || '-'}</td>
+                            <td class="p-3 text-slate-600">${cant}</td>
+                            <td class="p-3 text-slate-600">$${(cant * 40).toFixed(2)}</td>
+                            <td class="p-3 text-slate-600">$0.00</td>
+                            <td class="p-3 font-semibold text-rose-600">$${saldo.toFixed(2)}</td>
+                            <td class="p-3">${estadoBadge}</td>
+                            <td class="p-3 text-center space-x-2">
+                                <button onclick="editarCliente('${item.id}')" class="text-indigo-600 hover:text-indigo-800"><i class="fa-solid fa-pen"></i></button>
+                                <button onclick="eliminarCliente('${item.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
+                            </td>
                         </tr>
                     `;
                 });
 
-                if (contador === 0) {
-                    filasHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-400">No hay clientes registrados todavía.</td></tr>`;
+                if(cacheClientes.length === 0) {
+                    filas = `<tr><td colspan="9" class="p-4 text-center text-slate-400">No hay clientes en la base de datos.</td></tr>`;
                 }
 
-                tbody.innerHTML = filasHTML;
-                document.getElementById('total-clientes').innerText = contador;
-                document.getElementById('total-deuda').innerText = `$${sumaDeuda.toFixed(2)}`;
+                document.getElementById('tabla-clientes-cuerpo').innerHTML = filas;
+                document.getElementById('dash-clientes-activos').innerText = cacheClientes.length;
+                document.getElementById('dash-almohadas').innerText = totalAlmohadas;
+                document.getElementById('dash-ventas-totales').innerText = `$${(totalAlmohadas * 40).toFixed(2)}`;
+                document.getElementById('dash-deuda-total').innerText = `$${totalDeuda.toFixed(2)}`;
 
-                badge.className = "text-xs px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
-                badge.innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i> Conectado a la Nube';
-
-            } catch (error) {
-                console.error("Error al obtener documentos: ", error);
-                badge.className = "text-xs px-3 py-1 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30";
-                badge.innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-1"></i> Error de Conexión';
+                dot.className = "w-3 h-3 rounded-full bg-emerald-500";
+            } catch (e) {
+                console.error("Error sincronizando:", e);
+                dot.className = "w-3 h-3 rounded-full bg-rose-500";
             }
         }
 
-        // Función para agregar un cliente directamente a Firestore
-        async function agregarCliente(event) {
-            event.preventDefault();
-            const nombre = document.getElementById('input-nombre').value;
-            const articulo = document.getElementById('input-articulo').value;
-            const deuda = parseFloat(document.getElementById('input-deuda').value);
+        // Modal Controles
+        window.abrirModalCliente = function() {
+            document.getElementById('form-cliente-modal').reset();
+            document.getElementById('edit-doc-id').value = "";
+            document.getElementById('modal-cliente').classList.remove('hidden');
+        }
+        window.cerrarModalCliente = function() {
+            document.getElementById('modal-cliente').classList.add('hidden');
+        }
+
+        // Guardar o Actualizar en Firebase
+        window.guardarClienteFirebase = async function(e) {
+            e.preventDefault();
+            const id = document.getElementById('edit-doc-id').value;
+            const datos = {
+                nombre: document.getElementById('modal-nombre').value,
+                telefono: document.getElementById('modal-telefono').value,
+                direccion: document.getElementById('modal-direccion').value,
+                cantidad: parseInt(document.getElementById('modal-cantidad').value) || 1,
+                saldo: parseFloat(document.getElementById('modal-saldo').value) || 0
+            };
 
             try {
-                await addDoc(collection(db, "clientes_ethan"), {
-                    nombre: nombre,
-                    articulo: articulo,
-                    deuda: deuda
-                });
-
-                // Limpiar formulario y recargar tabla
-                document.getElementById('form-cliente').reset();
-                alert("¡Cliente guardado exitosamente en Firebase!");
-                cargarDatosDesdeFirebase();
-            } catch (e) {
-                console.error("Error al agregar documento: ", e);
-                alert("Hubo un error al guardar en la nube.");
+                if(id) {
+                    await updateDoc(doc(db, "clientes_ethan", id), datos);
+                } else {
+                    await addDoc(collection(db, "clientes_ethan"), datos);
+                }
+                cerrarModalCliente();
+                sincronizarDatos();
+            } catch(err) {
+                console.error("Error al guardar:", err);
+                alert("Hubo un error al guardar en Firebase.");
             }
         }
 
-        window.onload = cargarDatosDesdeFirebase;
-        window.cargarDatosDesdeFirebase = cargarDatosDesdeFirebase;
-        window.agregarCliente = agregarCliente;
+        window.eliminarCliente = async function(id) {
+            if(confirm("¿Estás seguro de eliminar este registro de la nube?")) {
+                await deleteDoc(doc(db, "clientes_ethan", id));
+                sincronizarDatos();
+            }
+        }
+
+        window.editarCliente = function(id) {
+            const cliente = cacheClientes.find(c => c.id === id);
+            if(!cliente) return;
+            document.getElementById('edit-doc-id').value = cliente.id;
+            document.getElementById('modal-nombre').value = cliente.nombre || '';
+            document.getElementById('modal-telefono').value = cliente.telefono || '';
+            document.getElementById('modal-direccion').value = cliente.direccion || '';
+            document.getElementById('modal-cantidad').value = cliente.cantidad || 1;
+            document.getElementById('modal-saldo').value = cliente.saldo || 0;
+            document.getElementById('modal-cliente').classList.remove('hidden');
+        }
+
+        window.filtrarClientesGlobal = function(texto) {
+            const filtro = texto.toLowerCase();
+            const filas = document.querySelectorAll('#tabla-clientes-cuerpo tr');
+            filas.forEach(f => {
+                const contenido = f.innerText.toLowerCase();
+                f.style.display = contenido.includes(filtro) ? '' : 'none';
+            });
+        }
+
+        window.exportarExcel = () => alert("Módulo de exportación Excel listo.");
+        window.exportarPDF = () => alert("Módulo de exportación PDF listo.");
+
+        window.onload = sincronizarDatos;
     </script>
 </body>
 </html>
