@@ -73,80 +73,80 @@
 
         <main class="flex-1 overflow-y-auto p-6 space-y-6">
             
-            <!-- DASHBOARD GENERAL (8 Tarjetas Estilo Oscuro Solicitado) -->
+            <!-- DASHBOARD GENERAL (8 Tarjetas Con Paleta de Colores Claros Original) -->
             <div id="vista-dashboard" class="space-y-6">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     
                     <!-- 1. Clientes Activos -->
-                    <div onclick="cambiarVista('clientes')" class="bg-[#0B132B] text-white p-5 rounded-2xl border border-slate-800 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden">
+                    <div onclick="cambiarVista('clientes')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden">
                         <div class="flex items-center justify-between mb-2">
                             <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Clientes Activos</span>
-                            <i class="fa-solid fa-users text-indigo-400"></i>
+                            <i class="fa-solid fa-users text-indigo-500"></i>
                         </div>
-                        <h3 id="dash-clientes" class="text-3xl font-bold mt-1 text-white">0</h3>
+                        <h3 id="dash-clientes" class="text-3xl font-bold mt-1 text-slate-900">0</h3>
                     </div>
 
                     <!-- 2. Almohadas Vendidas -->
-                    <div onclick="cambiarVista('ventas')" class="bg-[#0B132B] text-white p-5 rounded-2xl border border-slate-800 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden">
+                    <div onclick="cambiarVista('ventas')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden">
                         <div class="flex items-center justify-between mb-2">
                             <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Almohadas Vendidas</span>
-                            <i class="fa-solid fa-bed text-emerald-400"></i>
+                            <i class="fa-solid fa-bed text-emerald-500"></i>
                         </div>
-                        <h3 id="dash-almohadas-vendidas" class="text-3xl font-bold mt-1 text-emerald-400">0</h3>
+                        <h3 id="dash-almohadas-vendidas" class="text-3xl font-bold mt-1 text-emerald-600">0</h3>
                     </div>
 
                     <!-- 3. Stock Disponible -->
-                    <div onclick="cambiarVista('inventario')" class="bg-[#0B132B] text-white p-5 rounded-2xl border border-slate-800 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden">
+                    <div onclick="cambiarVista('inventario')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden">
                         <div class="flex items-center justify-between mb-2">
                             <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Stock Disponible</span>
-                            <i class="fa-solid fa-boxes-stacked text-amber-400"></i>
+                            <i class="fa-solid fa-boxes-stacked text-amber-500"></i>
                         </div>
-                        <h3 id="dash-stock" class="text-3xl font-bold mt-1 text-amber-400">0</h3>
+                        <h3 id="dash-stock" class="text-3xl font-bold mt-1 text-amber-600">0</h3>
                     </div>
 
                     <!-- 4. Ventas Totales -->
-                    <div onclick="cambiarVista('ventas')" class="bg-[#0B132B] text-white p-5 rounded-2xl border border-slate-800 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden">
+                    <div onclick="cambiarVista('ventas')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden">
                         <div class="flex items-center justify-between mb-2">
                             <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Ventas Totales</span>
-                            <i class="fa-solid fa-cart-shopping text-blue-400"></i>
+                            <i class="fa-solid fa-cart-shopping text-blue-500"></i>
                         </div>
-                        <h3 id="dash-ventas-totales" class="text-3xl font-bold mt-1 text-white">$0.00</h3>
+                        <h3 id="dash-ventas-totales" class="text-3xl font-bold mt-1 text-emerald-600">$0.00</h3>
                     </div>
 
                     <!-- 5. Total Cobrado -->
-                    <div onclick="cambiarVista('pagos')" class="bg-[#0B132B] text-white p-5 rounded-2xl border border-slate-800 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden">
+                    <div onclick="cambiarVista('pagos')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden">
                         <div class="flex items-center justify-between mb-2">
                             <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Cobrado</span>
-                            <i class="fa-solid fa-hand-holding-dollar text-emerald-400"></i>
+                            <i class="fa-solid fa-hand-holding-dollar text-emerald-500"></i>
                         </div>
-                        <h3 id="dash-total-cobrado" class="text-3xl font-bold mt-1 text-emerald-400">$0.00</h3>
+                        <h3 id="dash-total-cobrado" class="text-3xl font-bold mt-1 text-emerald-600">$0.00</h3>
                     </div>
 
                     <!-- 6. Saldo Pendiente (Deuda) -->
-                    <div onclick="cambiarVista('pagos')" class="bg-[#0B132B] text-white p-5 rounded-2xl border border-slate-800 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden">
+                    <div onclick="cambiarVista('pagos')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden">
                         <div class="flex items-center justify-between mb-2">
                             <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Saldo Pendiente (Deuda)</span>
-                            <i class="fa-solid fa-file-invoice-dollar text-rose-400"></i>
+                            <i class="fa-solid fa-file-invoice-dollar text-rose-500"></i>
                         </div>
-                        <h3 id="dash-deuda" class="text-3xl font-bold mt-1 text-rose-500">$0.00</h3>
+                        <h3 id="dash-deuda" class="text-3xl font-bold mt-1 text-rose-600">$0.00</h3>
                     </div>
 
                     <!-- 7. Comisiones Pendientes -->
-                    <div onclick="cambiarVista('comisiones')" class="bg-[#0B132B] text-white p-5 rounded-2xl border border-slate-800 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden">
+                    <div onclick="cambiarVista('comisiones')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden">
                         <div class="flex items-center justify-between mb-2">
                             <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Comisiones Pendientes</span>
-                            <i class="fa-solid fa-percent text-purple-400"></i>
+                            <i class="fa-solid fa-percent text-purple-500"></i>
                         </div>
-                        <h3 id="dash-comisiones-pendientes" class="text-3xl font-bold mt-1 text-purple-300">$0.00</h3>
+                        <h3 id="dash-comisiones-pendientes" class="text-3xl font-bold mt-1 text-purple-600">$0.00</h3>
                     </div>
 
                     <!-- 8. Gasto Combustible (Mes) -->
-                    <div onclick="cambiarVista('combustible')" class="bg-[#0B132B] text-white p-5 rounded-2xl border border-slate-800 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden">
+                    <div onclick="cambiarVista('combustible')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden">
                         <div class="flex items-center justify-between mb-2">
                             <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Gasto Combustible (Mes)</span>
-                            <i class="fa-solid fa-gas-pump text-orange-400"></i>
+                            <i class="fa-solid fa-gas-pump text-orange-500"></i>
                         </div>
-                        <h3 id="dash-gasto-combustible" class="text-3xl font-bold mt-1 text-amber-300">$0.00</h3>
+                        <h3 id="dash-gasto-combustible" class="text-3xl font-bold mt-1 text-amber-600">$0.00</h3>
                     </div>
 
                 </div>
