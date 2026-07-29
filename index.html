@@ -458,7 +458,7 @@
                 <!-- HISTORIAL SEPARADO POR SEMANAS -->
                 <div class="space-y-4">
                     <div class="flex justify-between items-center">
-                        <h2 class="font-bold text-slate-800 text-base">Historial de Entradas y Salidas por Semanas</h2>
+                        <h2 class="font-bold text-slate-800 text-base">Historial de Entradas y Salidas por Semanas (Lunes a Domingo)</h2>
                     </div>
                     <div id="contenedor-historial-semanas" class="space-y-4">
                         <!-- Las semanas se inyectarán dinámicamente aquí -->
@@ -926,10 +926,15 @@
                 const hoyStr = new Date().toISOString().split('T')[0];
                 const mesActualStr = hoyStr.substring(0, 7);
 
+                // Rangos actualizados de Lunes a Domingo para cálculos generales
+                const { inicioSemanaActual, finSemanaActual } = obtenerRangosSemanales();
+
                 listaMovimientos.forEach(m => {
                     const montoNum = parseFloat(m.monto || 0);
                     const esHoy = (m.fecha === hoyStr);
                     const esEsteMes = m.fecha && m.fecha.startsWith(mesActualStr);
+                    const fechaMov = m.fecha ? new Date(m.fecha + 'T00:00:00') : null;
+                    const esEstaSemana = fechaMov && (fechaMov >= inicioSemanaActual && fechaMov <= finSemanaActual);
 
                     if(m.categoria === 'Combustible') {
                         combustibleTotal += montoNum;
@@ -938,15 +943,15 @@
                     if(m.tipo === 'Entrada') {
                         if(esHoy) ingHoy += montoNum;
                         if(esEsteMes) ingMes += montoNum;
-                        ingSem += montoNum; 
+                        if(esEstaSemana) ingSem += montoNum; 
                     } else {
                         if(esHoy) gasHoy += montoNum;
                         if(esEsteMes) gasMes += montoNum;
-                        gasSem += montoNum;
+                        if(esEstaSemana) gasSem += montoNum;
                     }
                 });
 
-                // Renderizar Movimientos Personales Agrupados por Semanas
+                // Renderizar Movimientos Personales Agrupados por Semanas (Lunes a Domingo)
                 renderizarMovimientosPorSemanas();
 
                 // Renderizar historial de combustible y calcular totales de semana actual / anterior
@@ -1043,6 +1048,57 @@
             }
         }
 
+        // FUNCIONES DE FECHAS CORREGIDAS: SEMANAS ESTRICTAS DE LUNES A DOMINGO
+        function obtenerLunesDeLaSemana(d) {
+            const fecha = new Date(d);
+            const dia = fecha.getDay();
+            const diff = fecha.getDate() - dia + (dia === 0 ? -6 : 1); // Ajustar si es domingo (0) o cualquier otro día
+            return new Date(fecha.setDate(diff));
+        }
+
+        function obtenerIdSemana(d) {
+            const lunes = obtenerLunesDeLaSemana(d);
+            const ano = lunes.getFullYear();
+            const primerDiaAno = new Date(ano, 0, 1);
+            const dias = Math.floor((lunes - primerDiaAno) / (24 * 60 * 60 * 1000));
+            const numSemana = Math.floor(dias / 7) + 1;
+            return `${ano}-W${String(numSemana).padStart(2, '0')}`;
+        }
+
+        function obtenerNombreSemana(d) {
+            const lunes = obtenerLunesDeLaSemana(d);
+            const domingo = new Date(lunes);
+            domingo.setDate(lunes.getDate() + 6);
+
+            const opciones = { month: 'short', day: 'numeric' };
+            const fLunes = lunes.toLocaleDateString('es-ES', opciones);
+            const fDomingo = domingo.toLocaleDateString('es-ES', opciones);
+            return `Semana del ${fLunes} al ${fDomingo} de ${lunes.getFullYear()}`;
+        }
+
+        function obtenerRangosSemanales() {
+            const ahora = new Date();
+            const lunesActual = obtenerLunesDeLaSemana(ahora);
+            lunesActual.setHours(0, 0, 0, 0);
+
+            const domingoActual = new Date(lunesActual);
+            domingoActual.setDate(lunesActual.getDate() + 6);
+            domingoActual.setHours(23, 59, 59, 999);
+
+            const lunesAnterior = new Date(lunesActual);
+            lunesAnterior.setDate(lunesActual.getDate() - 7);
+
+            const domingoAnterior = new Date(domingoActual);
+            domingoAnterior.setDate(domingoActual.getDate() - 7);
+
+            return { 
+                inicioSemanaActual: lunesActual, 
+                finSemanaActual: domingoActual, 
+                inicioSemanaAnterior: lunesAnterior, 
+                finSemanaAnterior: domingoAnterior 
+            };
+        }
+
         // FUNCIÓN PARA AGRUPAR Y RENDERIZAR MOVIMIENTOS POR SEMANAS
         window.renderizarMovimientosPorSemanas = () => {
             const contenedor = document.getElementById('contenedor-historial-semanas');
@@ -1051,7 +1107,7 @@
                 return;
             }
 
-            // Agrupar por semana del año (Año-W##)
+            // Agrupar por semana estricta (Lunes a Domingo)
             const semanasMap = {};
             listaMovimientos.forEach(m => {
                 if(!m.fecha) return;
@@ -1079,7 +1135,6 @@
                 const sem = semanasMap[semKey];
                 const balanceSemanal = sem.totalEntradas - sem.totalSalidas;
                 const colorBalance = balanceSemanal >= 0 ? 'text-emerald-600' : 'text-rose-600';
-                // La primera semana abierta por defecto, las demás cerradas
                 const isOpen = index === 0 ? '' : 'hidden';
                 const rotateIcon = index === 0 ? 'rotate-180' : '';
 
@@ -1135,49 +1190,6 @@
             const icono = document.getElementById(`icono-sem-${semKey}`);
             body.classList.toggle('hidden');
             icono.classList.toggle('rotate-180');
-        }
-
-        function obtenerIdSemana(d) {
-            const ano = d.getFullYear();
-            const primerDiaAno = new Date(ano, 0, 1);
-            const dias = Math.floor((d - primerDiaAno) / (24 * 60 * 60 * 1000));
-            const numSemana = Math.ceil((dias + primerDiaAno.getDay() + 1) / 7);
-            return `${ano}-W${String(numSemana).padStart(2, '0')}`;
-        }
-
-        function obtenerNombreSemana(d) {
-            // Calcular lunes y domingo de esa semana
-            const dia = d.getDay() === 0 ? 6 : d.getDay() - 1;
-            const lunes = new Date(d);
-            lunes.setDate(d.getDate() - dia);
-            const domingo = new Date(lunes);
-            domingo.setDate(lunes.getDate() + 6);
-
-            const opciones = { month: 'short', day: 'numeric' };
-            const fLunes = lunes.toLocaleDateString('es-ES', opciones);
-            const fDomingo = domingo.toLocaleDateString('es-ES', opciones);
-            return `Semana del ${fLunes} al ${fDomingo} de ${d.getFullYear()}`;
-        }
-
-        function obtenerRangosSemanales() {
-            const ahora = new Date();
-            const diaSemana = ahora.getDay() === 0 ? 6 : ahora.getDay() - 1; 
-            
-            const inicioSemanaActual = new Date(ahora);
-            inicioSemanaActual.setDate(ahora.getDate() - diaSemana);
-            inicioSemanaActual.setHours(0, 0, 0, 0);
-
-            const finSemanaActual = new Date(inicioSemanaActual);
-            finSemanaActual.setDate(inicioSemanaActual.getDate() + 6);
-            finSemanaActual.setHours(23, 59, 59, 999);
-
-            const inicioSemanaAnterior = new Date(inicioSemanaActual);
-            inicioSemanaAnterior.setDate(inicioSemanaActual.getDate() - 7);
-
-            const finSemanaAnterior = new Date(finSemanaActual);
-            finSemanaAnterior.setDate(finSemanaActual.getDate() - 7);
-
-            return { inicioSemanaActual, finSemanaActual, inicioSemanaAnterior, finSemanaAnterior };
         }
 
         window.renderizarHistorialCombustible = () => {
@@ -1548,3 +1560,4 @@
     </script>
 </body>
 </html>
+```[cite: 7]
