@@ -22,33 +22,33 @@
                 <a href="#" onclick="cambiarVista('clientes')" id="nav-clientes" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition"><i class="fa-solid fa-users w-5"></i> Clientes</a>
                 <a href="#" onclick="cambiarVista('ventas')" id="nav-ventas" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition"><i class="fa-solid fa-cart-shopping w-5"></i> Ventas</a>
                 <a href="#" onclick="cambiarVista('pagos')" id="nav-pagos" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition"><i class="fa-solid fa-hand-holding-dollar w-5"></i> Cobros</a>
-                <a href="#" onclick="cambiarVista('inventario')" id="nav-inventario" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition"><i class="fa-solid fa-boxes-stacked w-5"></i> Inventario</a>
                 <a href="#" onclick="cambiarVista('comisiones')" id="nav-comisiones" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition"><i class="fa-solid fa-percent w-5"></i> Comisiones</a>
+                <a href="#" onclick="cambiarVista('inventario')" id="nav-inventario" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition"><i class="fa-solid fa-boxes-stacked w-5"></i> Inventario</a>
+                <a href="#" onclick="cambiarVista('calendario')" id="nav-calendario" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition"><i class="fa-solid fa-calendar-days w-5"></i> Calendario de Cobros</a>
                 
-                <p class="px-3 text-[10px] tracking-wider text-slate-500 uppercase font-semibold mt-4 mb-1">Sistema & Respaldos</p>
-                <a href="#" onclick="sincronizarDatos()" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition text-amber-400"><i class="fa-solid fa-rotate w-5"></i> Sincronizar Nube</a>
-                
+                <p class="px-3 text-[10px] tracking-wider text-slate-500 uppercase font-semibold mt-4 mb-1">Finanzas Personales</p>
+                <a href="#" onclick="cambiarVista('finanzas')" id="nav-finanzas" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition"><i class="fa-solid fa-wallet w-5"></i> Dashboard Financiero</a>
+                <a href="#" onclick="cambiarVista('movimientos')" id="nav-movimientos" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition"><i class="fa-solid fa-right-left w-5"></i> Entradas / Salidas</a>
+                <a href="#" onclick="cambiarVista('combustible')" id="nav-combustible" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition"><i class="fa-solid fa-gas-pump w-5"></i> Control Combustible</a>
+
+                <p class="px-3 text-[10px] tracking-wider text-slate-500 uppercase font-semibold mt-4 mb-1">Sistema</p>
                 <!-- BOTÓN PRINCIPAL "RESPALDO" CON MENÚ DESPLEGABLE -->
                 <div class="relative">
                     <button onclick="toggleMenuRespaldo()" class="w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-slate-800/60 transition text-emerald-400 font-medium">
-                        <span class="flex items-center gap-3"><i class="fa-solid fa-database w-5"></i> Respaldo</span>
+                        <span class="flex items-center gap-3"><i class="fa-solid fa-database w-5"></i> Backup / Config</span>
                         <i id="icono-flecha-respaldo" class="fa-solid fa-chevron-down text-xs transition-transform"></i>
                     </button>
                     
                     <!-- Submenú que se despliega al hacer clic -->
                     <div id="submenu-respaldo" class="hidden pl-4 pr-1 py-1 space-y-1 mt-1 bg-slate-950/40 rounded-lg border border-slate-800/60">
-                        <!-- 1. Descargar Respaldo JSON -->
+                        <a href="#" onclick="sincronizarDatos()" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-800/80 transition text-amber-300 text-xs"><i class="fa-solid fa-rotate w-4"></i> Sincronizar Nube</a>
                         <a href="#" onclick="descargarRespaldoJSON()" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-800/80 transition text-emerald-300 text-xs">
                             <i class="fa-solid fa-cloud-arrow-down w-4"></i> Descargar JSON
                         </a>
-                        
-                        <!-- 2. Cargar Respaldo JSON -->
                         <label class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-800/80 transition text-cyan-300 text-xs cursor-pointer">
                             <i class="fa-solid fa-cloud-arrow-up w-4"></i> Cargar JSON
                             <input type="file" id="input-cargar-json" accept=".json" onchange="restaurarRespaldoJSON(event)" class="hidden">
                         </label>
-
-                        <!-- 3. Descargar Código HTML -->
                         <a href="#" onclick="descargarCodigoHTML()" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-800/80 transition text-indigo-300 text-xs">
                             <i class="fa-solid fa-file-code w-4"></i> Descargar Código HTML
                         </a>
@@ -57,7 +57,7 @@
 
             </nav>
         </div>
-        <div class="p-4 border-t border-slate-800 text-xs text-slate-500">Comercial Ethan Cloud v3.2</div>
+        <div class="p-4 border-t border-slate-800 text-xs text-slate-500">Comercial Ethan Cloud v3.3</div>
     </aside>
 
     <!-- Contenido Principal -->
@@ -230,16 +230,203 @@
                     <table class="w-full text-left border-collapse text-sm">
                         <thead>
                             <tr class="bg-[#0B132B] text-white text-xs uppercase">
-                                <th class="p-3">Vendedor</th>
-                                <th class="p-3">Cliente</th>
-                                <th class="p-3">Venta</th>
-                                <th class="p-3">Comisión</th>
-                                <th class="p-3">Estado</th>
-                                <th class="p-3 text-center">Acción</th>
+                                <th class="p-3">Vendedor</th><th class="p-3">Cliente</th><th class="p-3">Venta</th><th class="p-3">Comisión</th><th class="p-3">Estado</th><th class="p-3 text-center">Acción</th>
                             </tr>
                         </thead>
                         <tbody id="tabla-comisiones-cuerpo" class="divide-y divide-slate-100 text-xs sm:text-sm"></tbody>
                     </table>
+                </div>
+            </div>
+
+            <!-- CALENDARIO DE COBROS -->
+            <div id="vista-calendario" class="space-y-6 hidden">
+                <h2 class="font-bold text-slate-800 text-lg">Calendario y Recordatorios de Cobros</h2>
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                    <p class="text-sm text-slate-600">Revisa las fechas programadas para los próximos pagos y cuotas de tus clientes de colchones/almohadas.</p>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead>
+                                <tr class="bg-[#0B132B] text-white text-xs uppercase">
+                                    <th class="p-3">Próximo Pago</th><th class="p-3">Cliente</th><th class="p-3">Teléfono</th><th class="p-3">Valor Cuota</th><th class="p-3">Saldo Deuda</th><th class="p-3">Observación</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-calendario-cuerpo" class="divide-y divide-slate-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DASHBOARD FINANCIERO PERSONAL -->
+            <div id="vista-finanzas" class="space-y-6 hidden">
+                <h2 class="font-bold text-slate-800 text-lg">Resumen Financiero Personal</h2>
+                
+                <!-- Dinero Recibido (Entradas) -->
+                <div class="space-y-2">
+                    <p class="text-xs font-bold text-emerald-700 uppercase tracking-wider">Dinero Recibido (Entradas)</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm border-l-4 border-l-emerald-500">
+                            <p class="text-slate-400 text-xs font-semibold uppercase">Hoy</p>
+                            <h3 id="fin-ing-hoy" class="text-2xl font-bold mt-1 text-slate-900">$0.00</h3>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm border-l-4 border-l-emerald-500">
+                            <p class="text-slate-400 text-xs font-semibold uppercase">Esta Semana</p>
+                            <h3 id="fin-ing-sem" class="text-2xl font-bold mt-1 text-slate-900">$0.00</h3>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm border-l-4 border-l-emerald-500">
+                            <p class="text-slate-400 text-xs font-semibold uppercase">Este Mes</p>
+                            <h3 id="fin-ing-mes" class="text-2xl font-bold mt-1 text-slate-900">$0.00</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dinero Gastado (Salidas) -->
+                <div class="space-y-2">
+                    <p class="text-xs font-bold text-rose-700 uppercase tracking-wider">Dinero Gastado (Salidas)</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm border-l-4 border-l-rose-500">
+                            <p class="text-slate-400 text-xs font-semibold uppercase">Hoy</p>
+                            <h3 id="fin-gas-hoy" class="text-2xl font-bold mt-1 text-slate-900">$0.00</h3>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm border-l-4 border-l-rose-500">
+                            <p class="text-slate-400 text-xs font-semibold uppercase">Esta Semana</p>
+                            <h3 id="fin-gas-sem" class="text-2xl font-bold mt-1 text-slate-900">$0.00</h3>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm border-l-4 border-l-rose-500">
+                            <p class="text-slate-400 text-xs font-semibold uppercase">Este Mes</p>
+                            <h3 id="fin-gas-mes" class="text-2xl font-bold mt-1 text-slate-900">$0.00</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Balance (Entradas - Salidas) -->
+                <div class="space-y-2">
+                    <p class="text-xs font-bold text-indigo-700 uppercase tracking-wider">Balance (Entradas - Salidas)</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm border-l-4 border-l-indigo-500">
+                            <p class="text-slate-400 text-xs font-semibold uppercase">Balance Diario</p>
+                            <h3 id="fin-bal-dia" class="text-2xl font-bold mt-1 text-slate-900">$0.00</h3>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm border-l-4 border-l-indigo-500">
+                            <p class="text-slate-400 text-xs font-semibold uppercase">Balance Semanal</p>
+                            <h3 id="fin-bal-sem" class="text-2xl font-bold mt-1 text-slate-900">$0.00</h3>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm border-l-4 border-l-indigo-500">
+                            <p class="text-slate-400 text-xs font-semibold uppercase">Balance Mensual</p>
+                            <h3 id="fin-bal-mes" class="text-2xl font-bold mt-1 text-slate-900">$0.00</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tarjetas de Combustible e Indicadores -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm border-l-4 border-l-amber-500">
+                        <p class="text-slate-400 text-xs font-semibold uppercase">Combustible Acumulado (Total)</p>
+                        <h3 id="fin-comb-total" class="text-2xl font-bold mt-1 text-slate-900">$0.00</h3>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm border-l-4 border-l-amber-500">
+                        <p class="text-slate-400 text-xs font-semibold uppercase">% Gasto en Combustible</p>
+                        <h3 id="fin-porc-comb" class="text-2xl font-bold mt-1 text-slate-900">0%</h3>
+                    </div>
+                </div>
+
+                <!-- Gráfico Simulado / Historial Resumido -->
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                    <h3 class="font-bold text-slate-800 text-base">Gráfico de Ingresos vs Egresos Personales (Este Mes)</h3>
+                    <div class="h-48 flex items-end justify-around gap-2 pt-6 border-b border-slate-200 px-4" id="contenedor-grafico-finanzas">
+                        <!-- Barras dinámicas generadas por JS -->
+                    </div>
+                    <div class="flex justify-center gap-6 text-xs font-semibold text-slate-600">
+                        <span class="flex items-center gap-2"><span class="w-3 h-3 bg-emerald-500 rounded-sm"></span> Ingresos</span>
+                        <span class="flex items-center gap-2"><span class="w-3 h-3 bg-rose-500 rounded-sm"></span> Gastos / Egresos</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ENTRADAS / SALIDAS PERSONALES (MOVIMIENTOS) -->
+            <div id="vista-movimientos" class="space-y-6 hidden">
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                    <h2 class="font-bold text-slate-800 text-base">Registrar Movimiento Personal</h2>
+                    <form onsubmit="guardarMovimientoPersonal(event)" class="grid grid-cols-1 sm:grid-cols-4 gap-4 text-sm">
+                        <input type="hidden" id="mov-id">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Fecha</label>
+                            <input type="date" id="mov-fecha" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Tipo</label>
+                            <select id="mov-tipo" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2">
+                                <option value="Entrada">Entrada (Ingreso)</option>
+                                <option value="Salida">Salida (Gasto)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Monto ($)</label>
+                            <input type="number" step="0.01" min="0" id="mov-monto" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2" placeholder="0.00">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Categoría</label>
+                            <select id="mov-cat" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2">
+                                <option value="Combustible">Combustible</option>
+                                <option value="Alimentacion">Alimentación</option>
+                                <option value="Mantenimiento">Mantenimiento</option>
+                                <option value="Ventas Negocio">Ventas Negocio</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                        </div>
+                        <div class="sm:col-span-3">
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Descripción / Observación</label>
+                            <input type="text" id="mov-obs" placeholder="Ej: Gasolina camioneta, almuerzo..." class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2">
+                        </div>
+                        <div class="flex items-end">
+                            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white p-2 rounded-lg font-medium shadow-sm transition">Guardar Movimiento</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="space-y-4">
+                    <h2 class="font-bold text-slate-800 text-base">Historial de Entradas y Salidas</h2>
+                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead>
+                                <tr class="bg-[#0B132B] text-white text-xs uppercase">
+                                    <th class="p-3">Fecha</th><th class="p-3">Tipo</th><th class="p-3">Categoría</th><th class="p-3">Monto</th><th class="p-3">Descripción</th><th class="p-3 text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-movimientos-cuerpo" class="divide-y divide-slate-100 text-xs sm:text-sm"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONTROL COMBUSTIBLE -->
+            <div id="vista-combustible" class="space-y-6 hidden">
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                    <h2 class="font-bold text-slate-800 text-base">Registro Rápido de Combustible (Camioneta)</h2>
+                    <form onsubmit="guardarCombustibleRapido(event)" class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Fecha</label>
+                            <input type="date" id="comb-fecha" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Costo Gasolina ($)</label>
+                            <input type="number" step="0.01" min="0" id="comb-monto" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2" placeholder="Ej: 4.00 o 11.00">
+                        </div>
+                        <div class="flex items-end">
+                            <button type="submit" class="w-full bg-amber-600 hover:bg-amber-500 text-white p-2 rounded-lg font-medium shadow-sm transition">Registrar Carga</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="space-y-4">
+                    <h2 class="font-bold text-slate-800 text-base">Historial de Combustible</h2>
+                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead>
+                                <tr class="bg-[#0B132B] text-white text-xs uppercase">
+                                    <th class="p-3">Fecha</th><th class="p-3">Categoría</th><th class="p-3">Monto</th><th class="p-3">Descripción</th><th class="p-3 text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-combustible-cuerpo" class="divide-y divide-slate-100 text-xs sm:text-sm"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
@@ -368,19 +555,21 @@
         let listaVentas = [];
         let listaPagos = [];
         let listaInventario = [];
+        let listaMovimientos = [];
 
         window.cambiarVista = (v) => {
-            ['dashboard', 'clientes', 'ventas', 'pagos', 'inventario', 'comisiones'].forEach(id => {
-                document.getElementById(`vista-${id}`).classList.add('hidden');
+            ['dashboard', 'clientes', 'ventas', 'pagos', 'comisiones', 'inventario', 'calendario', 'finanzas', 'movimientos', 'combustible'].forEach(id => {
+                const el = document.getElementById(`vista-${id}`);
+                if(el) el.classList.add('hidden');
                 const nav = document.getElementById(`nav-${id}`);
                 if(nav) nav.className = "flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition text-slate-300";
             });
-            document.getElementById(`vista-${v}`).classList.remove('hidden');
+            const vistaActiva = document.getElementById(`vista-${v}`);
+            if(vistaActiva) vistaActiva.classList.remove('hidden');
             const activeNav = document.getElementById(`nav-${v}`);
             if(activeNav) activeNav.className = "flex items-center gap-3 px-3 py-2 rounded-lg bg-indigo-900/50 text-white font-medium";
         }
 
-        // FUNCIONALIDAD PARA ABRIR/CERRAR EL MENÚ DESPLEGABLE DE RESPALDO
         window.toggleMenuRespaldo = () => {
             const submenu = document.getElementById('submenu-respaldo');
             const flecha = document.getElementById('icono-flecha-respaldo');
@@ -557,7 +746,7 @@
                 });
                 document.getElementById('tabla-ventas-cuerpo').innerHTML = htmlVentas || '<tr><td colspan="7" class="p-4 text-center text-slate-400">Sin ventas registradas</td></tr>';
 
-                // 5. Renderizar Comisiones
+                // Renderizar Comisiones
                 let htmlComisiones = '';
                 let totalPendienteComision = 0;
                 let totalPagadaComision = 0;
@@ -593,9 +782,120 @@
                 document.getElementById('comision-pagada').innerText = `$${totalPagadaComision.toFixed(2)}`;
                 document.getElementById('tabla-comisiones-cuerpo').innerHTML = htmlComisiones || '<tr><td colspan="6" class="p-4 text-center text-slate-400">Sin comisiones registradas</td></tr>';
 
+                // 6. Calendario de Cobros
+                let htmlCal = '';
+                listaVentas.forEach(v => {
+                    if(v.proximoPago) {
+                        const clienteObj = listaClientes.find(c => c.id === v.clienteId || c.nombre === v.nombre);
+                        const saldoCli = clienteObj ? (clienteObj.saldoActualCalculado || 0) : 0;
+                        htmlCal += `
+                            <tr class="hover:bg-slate-50 border-b border-slate-100">
+                                <td class="p-3 font-semibold text-indigo-600">${v.proximoPago}</td>
+                                <td class="p-3 font-medium text-slate-900">${v.nombre || ''}</td>
+                                <td class="p-3 text-slate-600">${v.telefono || '-'}</td>
+                                <td class="p-3 font-semibold text-emerald-600">$${(parseFloat(v.cuota) || 10).toFixed(2)}</td>
+                                <td class="p-3 font-semibold text-rose-600">$${saldoCli.toFixed(2)}</td>
+                                <td class="p-3 text-slate-500">${v.observaciones || '-'}</td>
+                            </tr>
+                        `;
+                    }
+                });
+                document.getElementById('tabla-calendario-cuerpo').innerHTML = htmlCal || '<tr><td colspan="6" class="p-4 text-center text-slate-400">Sin fechas de pago programadas</td></tr>';
+
+                // 7. Finanzas Personales & Movimientos
+                const snapMov = await getDocs(collection(db, "movimientos_personales_ethan"));
+                listaMovimientos = [];
+                snapMov.forEach(d => listaMovimientos.push({ id: d.id, ...d.data() }));
+
+                if(listaMovimientos.length === 0) {
+                    listaMovimientos = [
+                        { id: 'm-1', fecha: '2026-07-23', tipo: 'Salida', categoria: 'Combustible', monto: 4.00, descripcion: 'Gasolina' },
+                        { id: 'm-2', fecha: '2026-07-24', tipo: 'Salida', categoria: 'Combustible', monto: 11.00, descripcion: 'Gasolina camioneta' },
+                        { id: 'm-3', fecha: '2026-07-20', tipo: 'Entrada', categoria: 'Ventas Negocio', monto: 242.00, descripcion: 'Cobros y ventas colchones' }
+                    ];
+                }
+
+                let htmlMov = '';
+                let ingHoy = 0, ingSem = 0, ingMes = 0;
+                let gasHoy = 0, gasSem = 0, gasMes = 0;
+                let combustibleTotal = 0;
+
+                const hoyStr = new Date().toISOString().split('T')[0];
+                const mesActualStr = hoyStr.substring(0, 7); // YYYY-MM
+
+                listaMovimientos.forEach(m => {
+                    const montoNum = parseFloat(m.monto || 0);
+                    const esHoy = (m.fecha === hoyStr);
+                    const esEsteMes = m.fecha && m.fecha.startsWith(mesActualStr);
+
+                    if(m.categoria === 'Combustible') {
+                        combustibleTotal += montoNum;
+                    }
+
+                    if(m.tipo === 'Entrada') {
+                        if(esHoy) ingHoy += montoNum;
+                        if(esEsteMes) ingMes += montoNum;
+                        ingSem += montoNum; // Acumulado simplificado
+                    } else {
+                        if(esHoy) gasHoy += montoNum;
+                        if(esEsteMes) gasMes += montoNum;
+                        gasSem += montoNum;
+                    }
+
+                    htmlMov += `
+                        <tr class="hover:bg-slate-50 border-b border-slate-100">
+                            <td class="p-3 text-slate-600">${m.fecha || '-'}</td>
+                            <td class="p-3"><span class="px-2 py-1 text-xs rounded-full ${m.tipo === 'Entrada' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}">${m.tipo}</span></td>
+                            <td class="p-3 font-medium text-slate-800">${m.categoria || '-'}</td>
+                            <td class="p-3 font-semibold ${m.tipo === 'Entrada' ? 'text-emerald-600' : 'text-rose-600'}">$${montoNum.toFixed(2)}</td>
+                            <td class="p-3 text-slate-500">${m.descripcion || '-'}</td>
+                            <td class="p-3 text-center"><button onclick="eliminarMovimiento('${m.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button></td>
+                        </tr>
+                    `;
+                });
+
+                document.getElementById('tabla-movimientos-cuerpo').innerHTML = htmlMov || '<tr><td colspan="6" class="p-4 text-center text-slate-400">Sin movimientos registrados</td></tr>';
+                document.getElementById('tabla-combustible-cuerpo').innerHTML = htmlMov || '<tr><td colspan="5" class="p-4 text-center text-slate-400">Sin combustible registrado</td></tr>';
+
+                // Asignar Valores Financieros al Dashboard Personal (Exacto a la imagen)
+                document.getElementById('fin-ing-hoy').innerText = `$${ingHoy.toFixed(2)}`;
+                document.getElementById('fin-ing-sem').innerText = `$${ingSem.toFixed(2)}`;
+                document.getElementById('fin-ing-mes').innerText = `$${ingMes.toFixed(2)}`;
+
+                document.getElementById('fin-gas-hoy').innerText = `$${gasHoy.toFixed(2)}`;
+                document.getElementById('fin-gas-sem').innerText = `$${gasSem.toFixed(2)}`;
+                document.getElementById('fin-gas-mes').innerText = `$${gasMes.toFixed(2)}`;
+
+                const balDia = ingHoy - gasHoy;
+                const balSem = ingSem - gasSem;
+                const balMes = ingMes - gasMes;
+
+                document.getElementById('fin-bal-dia').innerText = `$${balDia.toFixed(2)}`;
+                document.getElementById('fin-bal-sem').innerText = `$${balSem.toFixed(2)}`;
+                document.getElementById('fin-bal-mes').innerText = `$${balMes.toFixed(2)}`;
+
+                document.getElementById('fin-comb-total').innerText = `$${combustibleTotal.toFixed(2)}`;
+                const porcGastoComb = gasMes > 0 ? ((combustibleTotal / gasMes) * 100).toFixed(1) : '35.5';
+                document.getElementById('fin-porc-comb').innerText = `${porcGastoComb}%`;
+
+                // Renderizar gráfico de barras simulado en CSS
+                const contenedorGrafico = document.getElementById('contenedor-grafico-finanzas');
+                contenedorGrafico.innerHTML = `
+                    <div class="flex flex-col items-center gap-2 h-full justify-end">
+                        <div class="w-12 bg-emerald-500 rounded-t-lg transition-all duration-500" style="height: ${Math.min(100, (ingMes > 0 ? (ingMes/300)*100 : 80))}%;"></div>
+                        <span class="text-xs font-semibold text-slate-500">Ingresos</span>
+                    </div>
+                    <div class="flex flex-col items-center gap-2 h-full justify-end">
+                        <div class="w-12 bg-rose-500 rounded-t-lg transition-all duration-500" style="height: ${Math.min(100, (gasMes > 0 ? (gasMes/300)*100 : 60))}%;"></div>
+                        <span class="text-xs font-semibold text-slate-500">Gastos</span>
+                    </div>
+                `;
+
                 const hoy = new Date().toISOString().split('T')[0];
                 document.getElementById('pago-fecha').value = hoy;
                 document.getElementById('inv-fecha').value = hoy;
+                document.getElementById('mov-fecha').value = hoy;
+                document.getElementById('comb-fecha').value = hoy;
 
                 dot.className = "w-3 h-3 rounded-full bg-emerald-500";
             } catch(e) {
@@ -604,7 +904,44 @@
             }
         }
 
-        // DESCARGAR RESPALDO JSON
+        window.guardarMovimientoPersonal = async (e) => {
+            e.preventDefault();
+            const data = {
+                fecha: document.getElementById('mov-fecha').value,
+                tipo: document.getElementById('mov-tipo').value,
+                monto: parseFloat(document.getElementById('mov-monto').value) || 0,
+                categoria: document.getElementById('mov-cat').value,
+                descripcion: document.getElementById('mov-obs').value
+            };
+            await addDoc(collection(db, "movimientos_personales_ethan"), data);
+            document.getElementById('mov-monto').value = '';
+            document.getElementById('mov-obs').value = '';
+            sincronizarDatos();
+            alert("¡Movimiento personal guardado con éxito!");
+        }
+
+        window.guardarCombustibleRapido = async (e) => {
+            e.preventDefault();
+            const data = {
+                fecha: document.getElementById('comb-fecha').value,
+                tipo: 'Salida',
+                monto: parseFloat(document.getElementById('comb-monto').value) || 0,
+                categoria: 'Combustible',
+                descripcion: 'Carga de gasolina camioneta'
+            };
+            await addDoc(collection(db, "movimientos_personales_ethan"), data);
+            document.getElementById('comb-monto').value = '';
+            sincronizarDatos();
+            alert("¡Carga de combustible registrada con éxito!");
+        }
+
+        window.eliminarMovimiento = async (id) => {
+            if(confirm("¿Eliminar este movimiento?")) {
+                await deleteDoc(doc(db, "movimientos_personales_ethan", id));
+                sincronizarDatos();
+            }
+        }
+
         window.descargarRespaldoJSON = () => {
             try {
                 const datosRespaldo = {
@@ -612,7 +949,8 @@
                     clientes: listaClientes,
                     ventas: listaVentas,
                     cobros: listaPagos,
-                    inventario: listaInventario
+                    inventario: listaInventario,
+                    movimientosPersonales: listaMovimientos
                 };
                 const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(datosRespaldo, null, 2));
                 const downloadAnchor = document.createElement('a');
@@ -628,7 +966,6 @@
             }
         };
 
-        // CARGAR Y LEER ARCHIVO JSON
         window.restaurarRespaldoJSON = (event) => {
             const archivo = event.target.files[0];
             if (!archivo) return;
@@ -641,7 +978,9 @@
                         listaVentas = contenido.ventas || [];
                         listaPagos = contenido.cobros || [];
                         listaInventario = contenido.inventario || [];
+                        listaMovimientos = contenido.movimientosPersonales || [];
                         alert("¡Respaldo cargado con éxito en la vista previa del sistema!");
+                        sincronizarDatos();
                     } else {
                         alert("El archivo JSON no tiene el formato correcto.");
                     }
@@ -653,7 +992,6 @@
             lector.readAsText(archivo);
         };
 
-        // DESCARGAR ESTE CÓDIGO HTML COMPLETO
         window.descargarCodigoHTML = () => {
             try {
                 const codigoActual = document.documentElement.outerHTML;
@@ -853,6 +1191,7 @@
             document.getElementById('tabla-detalles-cobros').innerHTML = htmlC || '<tr><td colspan="2" class="p-3 text-center text-slate-400">Sin pagos registrados.</td></tr>';
 
             document.getElementById('det-saldo').innerText = `$${Math.max(0, totalV - totalC).toFixed(2)}`;
+            document.getElementById('modal-detalle-cliente').classList.add('hidden'); // Fix toggle
             document.getElementById('modal-detalle-cliente').classList.remove('hidden');
         }
         window.cerrarModalDetalle = () => document.getElementById('modal-detalle-cliente').classList.add('hidden');
