@@ -21,7 +21,7 @@
                 <a href="#" onclick="cambiarVista('dashboard')" id="nav-dashboard" class="flex items-center gap-3 px-3 py-2 rounded-lg bg-indigo-900/50 text-white font-medium"><i class="fa-solid fa-chart-pie w-5"></i> Dashboard General</a>
                 <a href="#" onclick="cambiarVista('clientes')" id="nav-clientes" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition"><i class="fa-solid fa-users w-5"></i> Clientes</a>
                 <a href="#" onclick="cambiarVista('ventas')" id="nav-ventas" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition"><i class="fa-solid fa-cart-shopping w-5"></i> Ventas</a>
-                <a href="#" onclick="cambiarVista('pagos')" id="nav-pagos" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition"><i class="fa-solid fa-hand-holding-dollar w-5"></i> Pagos</a>
+                <a href="#" onclick="cambiarVista('pagos')" id="nav-pagos" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition"><i class="fa-solid fa-hand-holding-dollar w-5"></i> Cobros</a>
                 <a href="#" onclick="cambiarVista('inventario')" id="nav-inventario" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition"><i class="fa-solid fa-boxes-stacked w-5"></i> Inventario</a>
                 <a href="#" onclick="cambiarVista('comisiones')" id="nav-comisiones" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition"><i class="fa-solid fa-percent w-5"></i> Comisiones</a>
                 
@@ -95,7 +95,7 @@
                 </div>
             </div>
 
-            <!-- PAGOS -->
+            <!-- PAGOS / COBROS -->
             <div id="vista-pagos" class="space-y-6 hidden">
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
                     <h2 class="font-bold text-slate-800 text-base">Registrar Pago</h2>
@@ -128,7 +128,7 @@
                     </form>
                 </div>
                 <div class="space-y-4">
-                    <h2 class="font-bold text-slate-800 text-base">Historial de Pagos</h2>
+                    <h2 class="font-bold text-slate-800 text-base">Historial de Cobros</h2>
                     <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
                         <table class="w-full text-left border-collapse text-sm">
                             <thead>
@@ -142,7 +142,7 @@
                 </div>
             </div>
 
-            <!-- INVENTARIO (NUEVA SECCIÓN EXACTA) -->
+            <!-- INVENTARIO -->
             <div id="vista-inventario" class="space-y-6 hidden">
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
                     <h2 id="inv-titulo-form" class="font-bold text-slate-800 text-base">Ingresar Mercadería</h2>
@@ -154,37 +154,29 @@
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-600 mb-1">Cantidad Comprada</label>
-                            <input type="number" min="1" id="inv-cantidad" required oninput="calcularCostoUnitarioCompra()" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2" placeholder="Ej: 10">
+                            <input type="number" min="1" id="inv-cantidad" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2" placeholder="Ej: 10">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-600 mb-1">Costo Total de Compra ($)</label>
-                            <input type="number" step="0.01" min="0" id="inv-costo-total" required oninput="calcularCostoUnitarioCompra()" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2" placeholder="0.00">
+                            <input type="number" step="0.01" min="0" id="inv-costo-total" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2" placeholder="0.00">
                         </div>
                         <div class="flex items-end">
                             <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white p-2 rounded-lg font-medium shadow-sm transition">Registrar Compra</button>
                         </div>
                     </form>
                 </div>
-
-                <!-- Tarjetas Indicadoras de Inventario -->
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><p class="text-slate-400 text-xs font-semibold uppercase">Stock Disponible</p><h3 id="card-stock-disp" class="text-2xl font-bold mt-1 text-indigo-600">0</h3></div>
                     <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><p class="text-slate-400 text-xs font-semibold uppercase">Costo Promedio Unitario</p><h3 id="card-costo-prom" class="text-2xl font-bold mt-1 text-slate-900">$0.00</h3></div>
                     <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><p class="text-slate-400 text-xs font-semibold uppercase">Valor Total Inventario</p><h3 id="card-val-inv" class="text-2xl font-bold mt-1 text-emerald-600">$0.00</h3></div>
                 </div>
-
-                <!-- Historial de Compras -->
                 <div class="space-y-4">
                     <h2 class="font-bold text-slate-800 text-base">Historial de Compras</h2>
                     <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
                         <table class="w-full text-left border-collapse text-sm">
                             <thead>
                                 <tr class="bg-[#0B132B] text-white text-xs uppercase">
-                                    <th class="p-3">Fecha</th>
-                                    <th class="p-3">Cantidad</th>
-                                    <th class="p-3">Costo Total</th>
-                                    <th class="p-3">Costo Unitario</th>
-                                    <th class="p-3 text-center">Acciones</th>
+                                    <th class="p-3">Fecha</th><th class="p-3">Cantidad</th><th class="p-3">Costo Total</th><th class="p-3">Costo Unitario</th><th class="p-3 text-center">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody id="tabla-inventario-cuerpo" class="divide-y divide-slate-100 text-xs sm:text-sm"></tbody>
@@ -193,14 +185,33 @@
                 </div>
             </div>
 
-            <!-- COMISIONES -->
-            <div id="vista-comisiones" class="space-y-4 hidden">
-                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                    <h2 class="font-bold text-slate-800 text-base mb-4">Gestión de Comisiones</h2>
-                    <div class="grid grid-cols-2 gap-4 mb-4">
-                        <div class="p-4 bg-slate-50 rounded-lg border border-slate-100"><p class="text-xs text-slate-400 font-semibold uppercase">Pendientes</p><h3 id="comision-pendiente" class="text-xl font-bold text-rose-600">$0.00</h3></div>
-                        <div class="p-4 bg-slate-50 rounded-lg border border-slate-100"><p class="text-xs text-slate-400 font-semibold uppercase">Pagadas</p><h3 id="comision-pagada" class="text-xl font-bold text-emerald-600">$0.00</h3></div>
+            <!-- COMISIONES (ACTUALIZADO CON ESTILOS Y ACCIÓN MARCAR) -->
+            <div id="vista-comisiones" class="space-y-6 hidden">
+                <h2 class="font-bold text-slate-800 text-lg">Gestión de Comisiones</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-1">
+                        <p class="text-slate-400 text-xs font-semibold uppercase">Pendientes de Pago</p>
+                        <h3 id="comision-pendiente" class="text-3xl font-bold text-rose-600">$0.00</h3>
                     </div>
+                    <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-1">
+                        <p class="text-slate-400 text-xs font-semibold uppercase">Comisiones Pagadas</p>
+                        <h3 id="comision-pagada" class="text-3xl font-bold text-emerald-600">$0.00</h3>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-sm">
+                        <thead>
+                            <tr class="bg-[#0B132B] text-white text-xs uppercase">
+                                <th class="p-3">Vendedor</th>
+                                <th class="p-3">Cliente</th>
+                                <th class="p-3">Venta</th>
+                                <th class="p-3">Comisión</th>
+                                <th class="p-3">Estado</th>
+                                <th class="p-3 text-center">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-comisiones-cuerpo" class="divide-y divide-slate-100 text-xs sm:text-sm"></tbody>
+                    </table>
                 </div>
             </div>
 
@@ -294,7 +305,7 @@
                 </div>
             </div>
             <div>
-                <h4 class="font-bold text-slate-700 text-sm mb-2">Historial de Pagos / Abonos</h4>
+                <h4 class="font-bold text-slate-700 text-sm mb-2">Historial de Cobros / Abonos</h4>
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
                     <table class="w-full text-left border-collapse text-xs">
                         <thead><tr class="bg-slate-800 text-white uppercase"><th class="p-2">Fecha de Pago</th><th class="p-2">Monto Abonado ($)</th></tr></thead>
@@ -345,7 +356,7 @@
             const dot = document.getElementById('status-dot');
             dot.className = "w-3 h-3 rounded-full bg-amber-500 animate-pulse";
             try {
-                // 1. Cargar Inventario / Compras
+                // 1. Inventario
                 const snapInv = await getDocs(collection(db, "inventario_ethan"));
                 listaInventario = [];
                 snapInv.forEach(d => listaInventario.push({ id: d.id, ...d.data() }));
@@ -353,7 +364,6 @@
                 let totalComprado = 0;
                 let costoTotalGasto = 0;
                 let htmlInv = '';
-                
                 listaInventario.forEach(item => {
                     const cant = parseInt(item.cantidad || 0);
                     const costoTot = parseFloat(item.costoTotal || 0);
@@ -376,7 +386,7 @@
                 });
                 document.getElementById('tabla-inventario-cuerpo').innerHTML = htmlInv || '<tr><td colspan="5" class="p-4 text-center text-slate-400">Sin compras registradas</td></tr>';
 
-                // 2. Cargar Ventas
+                // 2. Ventas
                 const snapVentas = await getDocs(collection(db, "ventas_ethan"));
                 listaVentas = [];
                 let totalAlmohadasVendidas = 0;
@@ -388,24 +398,22 @@
                     totalVentasValGral += parseFloat(v.total || (v.cantidad * 40));
                 });
 
-                // Calcular Stock Disponible Real
                 const stockDisponible = Math.max(0, totalComprado - totalAlmohadasVendidas);
                 const costoPromedio = totalComprado > 0 ? (costoTotalGasto / totalComprado) : 0;
                 const valorTotalInventario = stockDisponible * costoPromedio;
 
-                // Actualizar tarjetas de Inventario
                 document.getElementById('card-stock-disp').innerText = stockDisponible;
                 document.getElementById('card-costo-prom').innerText = `$${costoPromedio.toFixed(2)}`;
                 document.getElementById('card-val-inv').innerText = `$${valorTotalInventario.toFixed(2)}`;
                 document.getElementById('dash-stock').innerText = stockDisponible;
                 document.getElementById('dash-ventas-totales').innerText = `$${totalVentasValGral.toFixed(2)}`;
 
-                // 3. Cargar Pagos
+                // 3. Pagos
                 const snapPagos = await getDocs(collection(db, "cobros_ethan"));
                 listaPagos = [];
                 snapPagos.forEach(d => listaPagos.push({ id: d.id, ...d.data() }));
 
-                // 4. Cargar Clientes
+                // 4. Clientes
                 const snapClientes = await getDocs(collection(db, "clientes_ethan"));
                 listaClientes = [];
                 let htmlClientes = '', htmlSelectCliente = '<option value="">Seleccione...</option>';
@@ -468,7 +476,7 @@
                 document.getElementById('dash-clientes').innerText = listaClientes.length;
                 document.getElementById('dash-deuda').innerText = `$${totalDeuda.toFixed(2)}`;
 
-                // Renderizar Tabla Historial de Pagos
+                // Renderizar Historial de Pagos
                 let htmlPagos = '';
                 listaPagos.forEach(p => {
                     htmlPagos += `
@@ -485,7 +493,7 @@
                 });
                 document.getElementById('tabla-pagos-cuerpo').innerHTML = htmlPagos || '<tr><td colspan="7" class="p-4 text-center text-slate-400">Sin pagos registrados</td></tr>';
 
-                // Renderizar Tabla Ventas General
+                // Renderizar Ventas General
                 let htmlVentas = '';
                 listaVentas.forEach(item => {
                     const cant = parseInt(item.cantidad || 1);
@@ -507,6 +515,42 @@
                 });
                 document.getElementById('tabla-ventas-cuerpo').innerHTML = htmlVentas || '<tr><td colspan="7" class="p-4 text-center text-slate-400">Sin ventas registradas</td></tr>';
 
+                // 5. Renderizar Comisiones (Comisión = $5 por almohada)
+                let htmlComisiones = '';
+                let totalPendienteComision = 0;
+                let totalPagadaComision = 0;
+
+                listaVentas.forEach(item => {
+                    const cantAlmohadas = parseInt(item.cantidad || 1);
+                    const comisionTotalVenta = cantAlmohadas * 5;
+                    const estadoComision = item.estadoComision || 'Pendiente'; // 'Pendiente' o 'Pagada'
+
+                    if(estadoComision === 'Pagada') {
+                        totalPagadaComision += comisionTotalVenta;
+                    } else {
+                        totalPendienteComision += comisionTotalVenta;
+                    }
+
+                    const badgeColor = estadoComision === 'Pagada' ? 'text-emerald-600 font-semibold' : 'text-rose-600 font-semibold';
+
+                    htmlComisiones += `
+                        <tr class="hover:bg-slate-50 border-b border-slate-100">
+                            <td class="p-3 text-slate-900 font-medium">${item.vendedor || 'George'}</td>
+                            <td class="p-3 text-slate-700">${item.nombre || ''}</td>
+                            <td class="p-3 text-slate-600">$${(parseFloat(item.total) || (cantAlmohadas * 40)).toFixed(2)}</td>
+                            <td class="p-3 font-semibold text-slate-900">$${comisionTotalVenta.toFixed(2)}</td>
+                            <td class="p-3 ${badgeColor}">${estadoComision}</td>
+                            <td class="p-3 text-center">
+                                <button onclick="toggleEstadoComision('${item.id}', '${estadoComision}')" class="bg-[#0B132B] hover:bg-indigo-900 text-white px-3 py-1 rounded-lg text-xs font-semibold shadow-sm transition">Marcar</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                document.getElementById('comision-pendiente').innerText = `$${totalPendienteComision.toFixed(2)}`;
+                document.getElementById('comision-pagada').innerText = `$${totalPagadaComision.toFixed(2)}`;
+                document.getElementById('tabla-comisiones-cuerpo').innerHTML = htmlComisiones || '<tr><td colspan="6" class="p-4 text-center text-slate-400">Sin comisiones registradas</td></tr>';
+
                 // Fechas por defecto
                 const hoy = new Date().toISOString().split('T')[0];
                 document.getElementById('pago-fecha').value = hoy;
@@ -519,6 +563,13 @@
             }
         }
 
+        // Cambiar estado de comisión (Pendiente <-> Pagada)
+        window.toggleEstadoComision = async (idVenta, estadoActual) => {
+            const nuevoEstado = estadoActual === 'Pendiente' ? 'Pagada' : 'Pendiente';
+            await updateDoc(doc(db, "ventas_ethan", idVenta), { estadoComision: nuevoEstado });
+            sincronizarDatos();
+        }
+
         // Gestión de Inventario / Compras
         window.guardarCompraInventario = async (e) => {
             e.preventDefault();
@@ -528,11 +579,8 @@
                 cantidad: parseInt(document.getElementById('inv-cantidad').value) || 0,
                 costoTotal: parseFloat(document.getElementById('inv-costo-total').value) || 0
             };
-            if(id) {
-                await updateDoc(doc(db, "inventario_ethan", id), data);
-            } else {
-                await addDoc(collection(db, "inventario_ethan"), data);
-            }
+            if(id) { await updateDoc(doc(db, "inventario_ethan", id), data); } 
+            else { await addDoc(collection(db, "inventario_ethan"), data); }
             document.getElementById('inv-id').value = '';
             document.getElementById('inv-cantidad').value = '';
             document.getElementById('inv-costo-total').value = '';
@@ -648,7 +696,8 @@
                 formaPago: document.getElementById('v-forma-pago').value,
                 cuota: parseFloat(document.getElementById('v-cuota').value) || 0,
                 proximoPago: document.getElementById('v-proximo-pago').value,
-                observaciones: document.getElementById('v-obs').value
+                observaciones: document.getElementById('v-obs').value,
+                estadoComision: 'Pendiente'
             };
             if(id) { await updateDoc(doc(db, "ventas_ethan", id), data); } else { await addDoc(collection(db, "ventas_ethan"), data); }
             cerrarModalVenta(); sincronizarDatos(); alert("¡Venta guardada con éxito!");
