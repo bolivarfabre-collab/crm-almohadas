@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CRM - Comercial Ethan</title>
-    <!-- Tailwind CSS para diseño moderno -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
@@ -25,14 +24,18 @@
     <main class="flex-1 p-4 md:p-8 max-w-6xl mx-auto w-full space-y-6">
         
         <!-- Tarjetas de Resumen Rápido -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow">
-                <p class="text-slate-400 text-sm">Clientes / Deudores</p>
-                <h3 id="total-clientes" class="text-2xl font-bold mt-1 text-white">0</h3>
+                <p class="text-slate-400 text-sm">Clientes Activos</p>
+                <h3 id="total-clientes" class="text-2xl font-bold mt-1 text-white">7</h3>
             </div>
             <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow">
-                <p class="text-slate-400 text-sm">Inventario Registrado</p>
-                <h3 id="total-inventario" class="text-2xl font-bold mt-1 text-white">0</h3>
+                <p class="text-slate-400 text-sm">Ventas Totales (Jul)</p>
+                <h3 class="text-2xl font-bold mt-1 text-emerald-400">$480.00</h3>
+            </div>
+            <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow">
+                <p class="text-slate-400 text-sm">Saldo Pendiente</p>
+                <h3 class="text-2xl font-bold mt-1 text-rose-400">$430.00</h3>
             </div>
             <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow">
                 <p class="text-slate-400 text-sm">Estado del Sistema</p>
@@ -44,7 +47,7 @@
         <div class="bg-slate-800 rounded-xl border border-slate-700 p-6 shadow-md">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-lg font-semibold flex items-center gap-2">
-                    <i class="fa-solid fa-users text-indigo-400"></i> Clientes y Créditos
+                    <i class="fa-solid fa-users text-indigo-400"></i> Directorio de Clientes y Créditos (Julio 2026)
                 </h2>
                 <button onclick="cargarDatosDesdeFirebase()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm transition font-medium">
                     <i class="fa-solid fa-rotate mr-1"></i> Actualizar Datos
@@ -56,13 +59,14 @@
                     <thead>
                         <tr class="border-b border-slate-700 text-slate-400 text-xs uppercase">
                             <th class="p-3">Nombre</th>
-                            <th class="p-3">Artículo</th>
-                            <th class="p-3">Deuda Pendiente</th>
+                            <th class="p-3">Artículo / Detalle</th>
+                            <th class="p-3">Vendedor</th>
+                            <th class="p-3">Estado Deuda</th>
                         </tr>
                     </thead>
                     <tbody id="tabla-clientes-body" class="divide-y divide-slate-700/50 text-sm">
                         <tr>
-                            <td colspan="3" class="p-4 text-center text-slate-400">Cargando registros desde la nube...</td>
+                            <td colspan="4" class="p-4 text-center text-slate-400">Cargando registros desde la nube...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -76,7 +80,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Configuración oficial de tu proyecto Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyDwgvrnx4iXLl4l7g6vBmMPrVUAojrBiA",
             authDomain: "crm-almohadas.firebaseapp.com",
@@ -87,11 +90,9 @@
             measurementId: "G-80YSWZHK35"
         };
 
-        // Inicializar Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Función para cargar datos de Firestore
         async function cargarDatosDesdeFirebase() {
             const badge = document.getElementById('status-conexion');
             const tbody = document.getElementById('tabla-clientes-body');
@@ -100,7 +101,6 @@
             badge.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Sincronizando...';
 
             try {
-                // Consulta a tu colección 'clientes_ethan' que ya tienes en Firestore
                 const querySnapshot = await getDocs(collection(db, "clientes_ethan"));
                 let filasHTML = "";
                 let contador = 0;
@@ -108,23 +108,26 @@
                 querySnapshot.forEach((doc) => {
                     contador++;
                     const data = doc.data();
+                    // Determinamos vendedor según el registro histórico (Estefanía por Bolívar, resto por George por defecto)
+                    let vendedor = data.nombre && data.nombre.includes("Estefanía") ? "Bolívar" : "George";
+                    
                     filasHTML += `
                         <tr class="hover:bg-slate-700/30 transition">
                             <td class="p-3 font-medium text-white">${data.nombre || 'Sin nombre'}</td>
-                            <td class="p-3 text-slate-300">${data.articulo || 'N/D'}</td>
-                            <td class="p-3 font-semibold text-emerald-400">$${data.deuda || '0'}</td>
+                            <td class="p-3 text-slate-300">${data.articulo || 'Almohada a crédito'}</td>
+                            <td class="p-3 text-indigo-300">${vendedor}</td>
+                            <td class="p-3 font-semibold text-rose-400">Pendiente</td>
                         </tr>
                     `;
                 });
 
                 if (contador === 0) {
-                    filasHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-400">No se encontraron registros en clientes_ethan.</td></tr>`;
+                    filasHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400">No se encontraron registros en clientes_ethan.</td></tr>`;
                 }
 
                 tbody.innerHTML = filasHTML;
                 document.getElementById('total-clientes').innerText = contador;
 
-                // Actualizar indicador a Conectado con Éxito
                 badge.className = "text-xs px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
                 badge.innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i> Conectado a la Nube';
 
@@ -132,13 +135,11 @@
                 console.error("Error al obtener documentos: ", error);
                 badge.className = "text-xs px-3 py-1 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30";
                 badge.innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-1"></i> Error de Conexión';
-                tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-rose-400">Error al cargar datos. Verifica tu conexión o reglas de Firestore.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-rose-400">Error al cargar datos. Verifica tu conexión.</td></tr>`;
             }
         }
 
-        // Ejecutar al cargar la página
         window.onload = cargarDatosDesdeFirebase;
-        // Exponer función al botón global
         window.cargarDatosDesdeFirebase = cargarDatosDesdeFirebase;
     </script>
 </body>
