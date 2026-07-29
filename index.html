@@ -3,107 +3,187 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRM Comercial Ethan - Sincronizado</title>
+    <title>Comercial Ethan - CRM y Control Financiero</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen">
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col md:flex-row">
 
-    <div class="container mx-auto px-4 py-8 max-w-7xl">
-        <header class="flex flex-col md:flex-row justify-between items-center mb-8 bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-700">
-            <div>
-                <h1 class="text-3xl font-black text-amber-400 tracking-wide">Comercial Ethan</h1>
-                <p class="text-slate-400 text-sm">Sistema CRM y Control Financiero en la Nube</p>
+    <!-- SIDEBAR DE NAVEGACIÓN -->
+    <aside class="w-full md:w-64 bg-slate-800 border-r border-slate-700 p-6 flex flex-col justify-between shrink-0">
+        <div>
+            <div class="mb-8">
+                <h1 class="text-2xl font-black text-amber-400 tracking-wide">COMERCIAL ETHAN</h1>
+                <p class="text-xs text-slate-400 mt-1">Gestión de Almohadas y Colchones</p>
             </div>
-            <div class="mt-4 md:mt-0 flex items-center gap-3">
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                    <span class="w-2 h-2 mr-2 bg-emerald-500 rounded-full animate-pulse"></span> Firebase Sincronizado
-                </span>
-            </div>
-        </header>
-
-        <!-- SECCIÓN DE MÉTRICAS -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-            <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow">
-                <p class="text-slate-400 text-xs font-semibold uppercase">Total Clientes</p>
-                <h3 id="stat-clientes" class="text-2xl font-bold mt-1 text-white">0</h3>
-            </div>
-            <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow">
-                <p class="text-slate-400 text-xs font-semibold uppercase">Ventas Registradas</p>
-                <h3 id="stat-ventas" class="text-2xl font-bold mt-1 text-amber-400">$0.00</h3>
-            </div>
-            <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow">
-                <p class="text-slate-400 text-xs font-semibold uppercase">Cobros / Créditos</p>
-                <h3 id="stat-cobros" class="text-2xl font-bold mt-1 text-blue-400">$0.00</h3>
-            </div>
-            <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow">
-                <p class="text-slate-400 text-xs font-semibold uppercase">Gastos Operativos</p>
-                <h3 id="stat-gastos" class="text-2xl font-bold mt-1 text-rose-400">$0.00</h3>
-            </div>
+            <nav class="space-y-2">
+                <button onclick="cambiarTab('dashboard', this)" class="tab-btn w-full text-left px-4 py-3 rounded-xl font-semibold bg-amber-500 text-slate-950 transition flex items-center gap-3">
+                    📊 Dashboard
+                </button>
+                <button onclick="cambiarTab('inventario', this)" class="tab-btn w-full text-left px-4 py-3 rounded-xl font-semibold text-slate-300 hover:bg-slate-700 transition flex items-center gap-3">
+                    🛏️ Inventario
+                </button>
+                <button onclick="cambiarTab('clientes', this)" class="tab-btn w-full text-left px-4 py-3 rounded-xl font-semibold text-slate-300 hover:bg-slate-700 transition flex items-center gap-3">
+                    👥 Clientes y Créditos
+                </button>
+                <button onclick="cambiarTab('gastos', this)" class="tab-btn w-full text-left px-4 py-3 rounded-xl font-semibold text-slate-300 hover:bg-slate-700 transition flex items-center gap-3">
+                    💸 Gastos Diarios
+                </button>
+            </nav>
         </div>
+        <div class="mt-8 pt-4 border-t border-slate-700">
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 w-full justify-center">
+                <span class="w-2 h-2 mr-2 bg-emerald-500 rounded-full animate-pulse"></span> Nube Sincronizada
+            </span>
+        </div>
+    </aside>
 
-        <!-- FORMULARIO RÁPIDO Y LISTADOS -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            
-            <!-- Panel de Registro -->
-            <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-xl h-fit">
-                <h2 class="text-xl font-bold mb-4 text-amber-400">Nuevo Registro</h2>
-                
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-400 mb-1">Tipo de Registro</label>
-                        <select id="tipo-reg" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-amber-400">
-                            <option value="cliente">Cliente / Crédito</option>
-                            <option value="venta">Venta de Colchón / Artículo</option>
-                            <option value="gasto">Gasto Diario (Gasolina, etc.)</option>
-                        </select>
-                    </div>
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="flex-1 p-6 md:p-10 overflow-y-auto">
+        
+        <!-- SECCIÓN: DASHBOARD -->
+        <div id="tab-dashboard" class="tab-content active space-y-8">
+            <header class="flex justify-between items-center bg-slate-800 p-6 rounded-2xl border border-slate-700">
+                <div>
+                    <h2 class="text-2xl font-bold text-white">Resumen General</h2>
+                    <p class="text-slate-400 text-sm">Control financiero en tiempo real</p>
+                </div>
+            </header>
 
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-400 mb-1">Descripción / Nombre del Cliente</label>
-                        <input type="text" id="input-desc" placeholder="Ej. Colchón ortopédico / Juan Pérez" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-amber-400">
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-400 mb-1">Monto ($)</label>
-                        <input type="number" step="0.01" id="input-monto" placeholder="0.00" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-amber-400">
-                    </div>
-
-                    <button onclick="guardarRegistro()" class="w-full bg-amber-500 hover:bg-amber-600 font-bold text-slate-950 p-3 rounded-lg transition shadow-lg">
-                        Guardar en la Nube
-                    </button>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 shadow">
+                    <p class="text-slate-400 text-xs font-semibold uppercase">Total Clientes</p>
+                    <h3 id="stat-clientes" class="text-3xl font-black mt-2 text-white">0</h3>
+                </div>
+                <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 shadow">
+                    <p class="text-slate-400 text-xs font-semibold uppercase">Ventas Totales</p>
+                    <h3 id="stat-ventas" class="text-3xl font-black mt-2 text-amber-400">$0.00</h3>
+                </div>
+                <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 shadow">
+                    <p class="text-slate-400 text-xs font-semibold uppercase">Créditos por Cobrar</p>
+                    <h3 id="stat-cobros" class="text-3xl font-black mt-2 text-blue-400">$0.00</h3>
+                </div>
+                <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 shadow">
+                    <p class="text-slate-400 text-xs font-semibold uppercase">Gastos Operativos</p>
+                    <h3 id="stat-gastos" class="text-3xl font-black mt-2 text-rose-400">$0.00</h3>
                 </div>
             </div>
 
-            <!-- Listado en Tiempo Real -->
-            <div class="lg:col-span-2 bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-xl">
-                <h2 class="text-xl font-bold mb-4 text-white">Actividad Reciente</h2>
+            <!-- TABLA DE ACTIVIDAD RECIENTE -->
+            <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow">
+                <h3 class="text-lg font-bold mb-4 text-white">Actividad Reciente en la Nube</h3>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-sm text-slate-300">
                         <thead class="bg-slate-900 text-slate-400 uppercase text-xs">
                             <tr>
-                                <th class="p-3">Tipo</th>
+                                <th class="p-3">Categoría</th>
+                                <th class="p-3">Detalle</th>
+                                <th class="p-3">Monto</th>
+                                <th class="p-3">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-dashboard" class="divide-y divide-slate-700"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN: INVENTARIO -->
+        <div id="tab-inventario" class="tab-content space-y-6">
+            <header class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
+                <h2 class="text-2xl font-bold text-white">Control de Inventario (Colchones y Almohadas)</h2>
+            </header>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 h-fit space-y-4">
+                    <h3 class="font-bold text-amber-400">Agregar Producto</h3>
+                    <input type="text" id="inv-nombre" placeholder="Nombre del artículo" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white">
+                    <input type="number" id="inv-stock" placeholder="Cantidad en stock" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white">
+                    <input type="number" step="0.01" id="inv-precio" placeholder="Precio de venta ($)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white">
+                    <button onclick="guardarInventario()" class="w-full bg-amber-500 hover:bg-amber-600 font-bold text-slate-950 p-3 rounded-lg transition">Guardar Producto</button>
+                </div>
+                <div class="lg:col-span-2 bg-slate-800 p-6 rounded-2xl border border-slate-700">
+                    <table class="w-full text-left text-sm text-slate-300">
+                        <thead class="bg-slate-900 text-slate-400 uppercase text-xs">
+                            <tr>
+                                <th class="p-3">Artículo</th>
+                                <th class="p-3">Stock</th>
+                                <th class="p-3">Precio</th>
+                                <th class="p-3">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-inventario" class="divide-y divide-slate-700"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN: CLIENTES Y CRÉDITOS -->
+        <div id="tab-clientes" class="tab-content space-y-6">
+            <header class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
+                <h2 class="text-2xl font-bold text-white">Clientes y Cobranza a Crédito</h2>
+            </header>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 h-fit space-y-4">
+                    <h3 class="font-bold text-amber-400">Registrar Cliente / Crédito</h3>
+                    <input type="text" id="cli-nombre" placeholder="Nombre del cliente" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white">
+                    <input type="text" id="cli-articulo" placeholder="Artículo llevado" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white">
+                    <input type="number" step="0.01" id="cli-deuda" placeholder="Monto total a crédito ($)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white">
+                    <button onclick="guardarCliente()" class="w-full bg-amber-500 hover:bg-amber-600 font-bold text-slate-950 p-3 rounded-lg transition">Registrar Crédito</button>
+                </div>
+                <div class="lg:col-span-2 bg-slate-800 p-6 rounded-2xl border border-slate-700">
+                    <table class="w-full text-left text-sm text-slate-300">
+                        <thead class="bg-slate-900 text-slate-400 uppercase text-xs">
+                            <tr>
+                                <th class="p-3">Cliente</th>
+                                <th class="p-3">Artículo</th>
+                                <th class="p-3">Deuda Pendiente</th>
+                                <th class="p-3">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-clientes" class="divide-y divide-slate-700"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN: GASTOS DIARIOS -->
+        <div id="tab-gastos" class="tab-content space-y-6">
+            <header class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
+                <h2 class="text-2xl font-bold text-white">Control de Gastos Diarios (Gasolina, etc.)</h2>
+            </header>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 h-fit space-y-4">
+                    <h3 class="font-bold text-amber-400">Registrar Gasto</h3>
+                    <input type="text" id="gas-desc" placeholder="Descripción (Ej. Gasolina camioneta)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white">
+                    <input type="number" step="0.01" id="gas-monto" placeholder="Monto ($)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white">
+                    <button onclick="guardarGasto()" class="w-full bg-amber-500 hover:bg-amber-600 font-bold text-slate-950 p-3 rounded-lg transition">Registrar Gasto</button>
+                </div>
+                <div class="lg:col-span-2 bg-slate-800 p-6 rounded-2xl border border-slate-700">
+                    <table class="w-full text-left text-sm text-slate-300">
+                        <thead class="bg-slate-900 text-slate-400 uppercase text-xs">
+                            <tr>
                                 <th class="p-3">Descripción</th>
                                 <th class="p-3">Monto</th>
                                 <th class="p-3">Acción</th>
                             </tr>
                         </thead>
-                        <tbody id="tabla-registros" class="divide-y divide-slate-700">
-                            <!-- Los registros se cargan dinámicamente desde Firebase -->
-                        </tbody>
+                        <tbody id="tabla-gastos" class="divide-y divide-slate-700"></tbody>
                     </table>
                 </div>
             </div>
-
         </div>
-    </div>
 
-    <!-- CONFIGURACIÓN Y CONEXIÓN A FIREBASE -->
+    </main>
+
+    <!-- LÓGICA Y CONEXIÓN FIREBASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addData, getDocs, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Credenciales de tu proyecto de Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyDwgvrnx4iXL4l7g6vBmPRVUAuojrBiA",
             authDomain: "crm-almohadas.firebaseapp.com",
@@ -114,92 +194,95 @@
             measurementId: "G-80YSWZHK35"
         };
 
-        // Inicializar Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Función global para guardar
-        window.guardarRegistro = async function() {
-            const tipo = document.getElementById('tipo-reg').value;
-            const desc = document.getElementById('input-desc').value;
-            const monto = parseFloat(document.getElementById('input-monto').value) || 0;
-
-            if(!desc) {
-                alert("Por favor ingresa una descripción.");
-                return;
-            }
-
-            try {
-                await addDoc(collection(db, "registros_ethan"), {
-                    tipo: tipo,
-                    descripcion: desc,
-                    monto: monto,
-                    fecha: new Date().toISOString()
-                });
-                document.getElementById('input-desc').value = '';
-                document.getElementById('input-monto').value = '';
-            } catch (e) {
-                console.error("Error al guardar: ", e);
-                alert("Hubo un error al guardar el registro.");
-            }
-        };
-
-        // Función global para eliminar
-        window.eliminarRegistro = async function(id) {
-            if(confirm("¿Seguro que deseas eliminar este registro?")) {
-                try {
-                    await deleteDoc(doc(db, "registros_ethan", id));
-                } catch (e) {
-                    console.error("Error al eliminar: ", e);
-                }
-            }
-        };
-
-        // Escuchar cambios en tiempo real desde Firestore
-        onSnapshot(collection(db, "registros_ethan"), (snapshot) => {
-            const tabla = document.getElementById('tabla-registros');
-            tabla.innerHTML = '';
-            
-            let totalClientes = 0;
-            let totalVentas = 0;
-            let totalCobros = 0;
-            let totalGastos = 0;
-
-            snapshot.forEach((docSnap) => {
-                const data = docSnap.data();
-                const id = docSnap.id;
-
-                if(data.tipo === 'cliente') totalClientes++;
-                if(data.tipo === 'venta') totalVentas += data.monto;
-                if(data.tipo === 'cliente') totalCobros += data.monto;
-                if(data.tipo === 'gasto') totalGastos += data.monto;
-
-                let badgeColor = 'bg-amber-500/10 text-amber-400 border-amber-500/20';
-                if(data.tipo === 'venta') badgeColor = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
-                if(data.tipo === 'gasto') badgeColor = 'bg-rose-500/10 text-rose-400 border-rose-500/20';
-
-                tabla.innerHTML += `
-                    <tr class="hover:bg-slate-750 transition">
-                        <td class="p-3">
-                            <span class="px-2.5 py-1 rounded-full text-xs font-semibold border ${badgeColor}">
-                                ${data.tipo.toUpperCase()}
-                            </span>
-                        </td>
-                        <td class="p-3 font-medium">${data.descripcion}</td>
-                        <td class="p-3 font-bold text-white">$${data.monto.toFixed(2)}</td>
-                        <td class="p-3">
-                            <button onclick="eliminarRegistro('${id}')" class="text-rose-400 hover:text-rose-300 text-xs font-semibold bg-rose-500/10 px-2.5 py-1 rounded border border-rose-500/20">
-                                Eliminar
-                            </button>
-                        </td>
-                    </tr>
-                `;
+        window.cambiarTab = function(tabId, btn) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('bg-amber-500', 'text-slate-950');
+                el.classList.add('text-slate-300', 'hover:bg-slate-700');
             });
+            document.getElementById('tab-' + tabId).classList.add('active');
+            btn.classList.add('bg-amber-500', 'text-slate-950');
+            btn.classList.remove('text-slate-300', 'hover:bg-slate-700');
+        };
 
-            document.getElementById('stat-clientes').innerText = totalClientes;
-            document.getElementById('stat-ventas').innerText = `$${totalVentas.toFixed(2)}`;
-            document.getElementById('stat-cobros').innerText = `$${totalCobros.toFixed(2)}`;
-            document.getElementById('stat-gastos').innerText = `$${totalGastos.toFixed(2)}`;
+        window.guardarInventario = async function() {
+            const nombre = document.getElementById('inv-nombre').value;
+            const stock = parseInt(document.getElementById('inv-stock').value) || 0;
+            const precio = parseFloat(document.getElementById('inv-precio').value) || 0;
+            if(!nombre) return alert("Ingresa el nombre del artículo");
+            await addDoc(collection(db, "inventario_ethan"), { nombre, stock, precio });
+            document.getElementById('inv-nombre').value = '';
+            document.getElementById('inv-stock').value = '';
+            document.getElementById('inv-precio').value = '';
+        };
+
+        window.guardarCliente = async function() {
+            const nombre = document.getElementById('cli-nombre').value;
+            const articulo = document.getElementById('cli-articulo').value;
+            const deuda = parseFloat(document.getElementById('cli-deuda').value) || 0;
+            if(!nombre) return alert("Ingresa el nombre del cliente");
+            await addDoc(collection(db, "clientes_ethan"), { nombre, articulo, deuda });
+            document.getElementById('cli-nombre').value = '';
+            document.getElementById('cli-articulo').value = '';
+            document.getElementById('cli-deuda').value = '';
+        };
+
+        window.guardarGasto = async function() {
+            const desc = document.getElementById('gas-desc').value;
+            const monto = parseFloat(document.getElementById('gas-monto').value) || 0;
+            if(!desc) return alert("Ingresa la descripción del gasto");
+            await addDoc(collection(db, "gastos_ethan"), { descripcion: desc, monto });
+            document.getElementById('gas-desc').value = '';
+            document.getElementById('gas-monto').value = '';
+        };
+
+        window.eliminarDoc = async function(coleccion, id) {
+            if(confirm("¿Eliminar este registro?")) {
+                await deleteDoc(doc(db, coleccion, id));
+            }
+        };
+
+        // Escuchas en tiempo real
+        onSnapshot(collection(db, "inventario_ethan"), (snapshot) => {
+            const tabla = document.getElementById('tabla-inventario');
+            tabla.innerHTML = '';
+            snapshot.forEach(docSnap => {
+                const d = docSnap.data();
+                tabla.innerHTML += `<tr class="hover:bg-slate-750"><td class="p-3 font-medium">${d.nombre}</td><td class="p-3">${d.stock}</td><td class="p-3 text-amber-400">$${d.precio.toFixed(2)}</td><td class="p-3"><button onclick="eliminarDoc('inventario_ethan', '${docSnap.id}')" class="text-rose-400 text-xs bg-rose-500/10 px-2 py-1 rounded border border-rose-500/20">Eliminar</button></td></tr>`;
+            });
+        });
+
+        onSnapshot(collection(db, "clientes_ethan"), (snapshot) => {
+            const tabla = document.getElementById('tabla-clientes');
+            const tablaDash = document.getElementById('tabla-dashboard');
+            tabla.innerHTML = '';
+            let totalCli = 0;
+            let totalCob = 0;
+
+            snapshot.forEach(docSnap => {
+                const d = docSnap.data();
+                totalCli++;
+                totalCob += d.deuda;
+                tabla.innerHTML += `<tr class="hover:bg-slate-750"><td class="p-3 font-medium">${d.nombre}</td><td class="p-3">${d.articulo}</td><td class="p-3 text-blue-400 font-bold">$${d.deuda.toFixed(2)}</td><td class="p-3"><button onclick="eliminarDoc('clientes_ethan', '${docSnap.id}')" class="text-rose-400 text-xs bg-rose-500/10 px-2 py-1 rounded border border-rose-500/20">Eliminar</button></td></tr>`;
+            });
+            document.getElementById('stat-clientes').innerText = totalCli;
+            document.getElementById('stat-cobros').innerText = `$${totalCob.toFixed(2)}`;
+            document.getElementById('stat-ventas').innerText = `$${totalCob.toFixed(2)}`;
+        });
+
+        onSnapshot(collection(db, "gastos_ethan"), (snapshot) => {
+            const tabla = document.getElementById('tabla-gastos');
+            tabla.innerHTML = '';
+            let totalGas = 0;
+            snapshot.forEach(docSnap => {
+                const d = docSnap.data();
+                totalGas += d.monto;
+                tabla.innerHTML += `<tr class="hover:bg-slate-750"><td class="p-3 font-medium">${d.descripcion}</td><td class="p-3 text-rose-400 font-bold">$${d.monto.toFixed(2)}</td><td class="p-3"><button onclick="eliminarDoc('gastos_ethan', '${docSnap.id}')" class="text-rose-400 text-xs bg-rose-500/10 px-2 py-1 rounded border border-rose-500/20">Eliminar</button></td></tr>`;
+            });
+            document.getElementById('stat-gastos').innerText = `$${totalGas.toFixed(2)}`;
         });
     </script>
 </body>
