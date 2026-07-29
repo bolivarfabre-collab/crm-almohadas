@@ -117,7 +117,7 @@
                         <h3 id="dash-total-cobrado" class="text-3xl font-bold mt-1 text-emerald-600">$0.00</h3>
                     </div>
 
-                    <!-- NUEVA TARJETA DE UTILIDAD NETA (EXCLUYENDO COMBUSTIBLE) -->
+                    <!-- UTILIDAD NETA (EXCLUYENDO COMBUSTIBLE) -->
                     <div onclick="cambiarVista('finanzas')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden border-l-4 border-l-indigo-600">
                         <div class="flex items-center justify-between mb-2">
                             <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Utilidad Neta (Mes)*</span>
@@ -958,7 +958,6 @@
                 document.getElementById('dash-gasto-combustible').innerText = `$${combustibleTotal.toFixed(2)}`;
                 
                 // CÁLCULO DE LA UTILIDAD NETA DEL MES (EXCLUYENDO COMBUSTIBLE)
-                // Se consideran las ventas del mes menos el costo de la mercadería vendida y otros gastos que NO sean combustible.
                 let ventasMesTotal = 0;
                 let costoMercaderiaMes = 0;
                 let otrosGastosMesSinCombustible = 0;
@@ -979,7 +978,6 @@
                     }
                 });
 
-                // Utilidad Neta del Mes = Ventas del Mes - Costo de la Mercadería - Gastos (excluyendo combustible)
                 let utilidadNetaMes = ventasMesTotal - costoMercaderiaMes - otrosGastosMesSinCombustible;
                 document.getElementById('dash-utilidad-neta').innerText = `$${utilidadNetaMes.toFixed(2)}`;
 
