@@ -32,14 +32,11 @@
                 <a href="#" onclick="cambiarVista('combustible')" id="nav-combustible" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition"><i class="fa-solid fa-gas-pump w-5"></i> Control Combustible</a>
 
                 <p class="px-3 text-[10px] tracking-wider text-slate-500 uppercase font-semibold mt-4 mb-1">Sistema</p>
-                <!-- BOTÓN PRINCIPAL "RESPALDO" CON MENÚ DESPLEGABLE -->
                 <div class="relative">
                     <button onclick="toggleMenuRespaldo()" class="w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-slate-800/60 transition text-emerald-400 font-medium">
                         <span class="flex items-center gap-3"><i class="fa-solid fa-database w-5"></i> Backup / Config</span>
                         <i id="icono-flecha-respaldo" class="fa-solid fa-chevron-down text-xs transition-transform"></i>
                     </button>
-                    
-                    <!-- Submenú que se despliega al hacer clic -->
                     <div id="submenu-respaldo" class="hidden pl-4 pr-1 py-1 space-y-1 mt-1 bg-slate-950/40 rounded-lg border border-slate-800/60">
                         <a href="#" onclick="sincronizarDatos()" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-800/80 transition text-amber-300 text-xs"><i class="fa-solid fa-rotate w-4"></i> Sincronizar Nube</a>
                         <a href="#" onclick="descargarRespaldoJSON()" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-800/80 transition text-emerald-300 text-xs">
@@ -54,10 +51,9 @@
                         </a>
                     </div>
                 </div>
-
             </nav>
         </div>
-        <div class="p-4 border-t border-slate-800 text-xs text-slate-500">Comercial Ethan Cloud v3.3[cite: 4]</div>
+        <div class="p-4 border-t border-slate-800 text-xs text-slate-500">Comercial Ethan Cloud v3.3</div>
     </aside>
 
     <!-- Contenido Principal -->
@@ -77,13 +73,82 @@
 
         <main class="flex-1 overflow-y-auto p-6 space-y-6">
             
-            <!-- DASHBOARD GENERAL -->
+            <!-- DASHBOARD GENERAL (8 Tarjetas Estilo Oscuro Solicitado) -->
             <div id="vista-dashboard" class="space-y-6">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div onclick="cambiarVista('clientes')" class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm cursor-pointer hover:border-indigo-500 transition"><p class="text-slate-400 text-xs font-semibold uppercase">Clientes Activos</p><h3 id="dash-clientes" class="text-2xl font-bold mt-1 text-slate-900">0</h3></div>
-                    <div onclick="cambiarVista('inventario')" class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm cursor-pointer hover:border-indigo-500 transition"><p class="text-slate-400 text-xs font-semibold uppercase">Stock Disponible</p><h3 id="dash-stock" class="text-2xl font-bold mt-1 text-indigo-600">0</h3></div>
-                    <div onclick="cambiarVista('ventas')" class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm cursor-pointer hover:border-indigo-500 transition"><p class="text-slate-400 text-xs font-semibold uppercase">Ventas Totales</p><h3 id="dash-ventas-totales" class="text-2xl font-bold mt-1 text-emerald-600">$0.00</h3></div>
-                    <div onclick="cambiarVista('pagos')" class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm cursor-pointer hover:border-indigo-500 transition"><p class="text-slate-400 text-xs font-semibold uppercase">Saldo Pendiente (Deuda)</p><h3 id="dash-deuda" class="text-2xl font-bold mt-1 text-rose-600">$0.00</h3></div>
+                    
+                    <!-- 1. Clientes Activos -->
+                    <div onclick="cambiarVista('clientes')" class="bg-[#0B132B] text-white p-5 rounded-2xl border border-slate-800 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Clientes Activos</span>
+                            <i class="fa-solid fa-users text-indigo-400"></i>
+                        </div>
+                        <h3 id="dash-clientes" class="text-3xl font-bold mt-1 text-white">0</h3>
+                    </div>
+
+                    <!-- 2. Almohadas Vendidas -->
+                    <div onclick="cambiarVista('ventas')" class="bg-[#0B132B] text-white p-5 rounded-2xl border border-slate-800 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Almohadas Vendidas</span>
+                            <i class="fa-solid fa-bed text-emerald-400"></i>
+                        </div>
+                        <h3 id="dash-almohadas-vendidas" class="text-3xl font-bold mt-1 text-emerald-400">0</h3>
+                    </div>
+
+                    <!-- 3. Stock Disponible -->
+                    <div onclick="cambiarVista('inventario')" class="bg-[#0B132B] text-white p-5 rounded-2xl border border-slate-800 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Stock Disponible</span>
+                            <i class="fa-solid fa-boxes-stacked text-amber-400"></i>
+                        </div>
+                        <h3 id="dash-stock" class="text-3xl font-bold mt-1 text-amber-400">0</h3>
+                    </div>
+
+                    <!-- 4. Ventas Totales -->
+                    <div onclick="cambiarVista('ventas')" class="bg-[#0B132B] text-white p-5 rounded-2xl border border-slate-800 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Ventas Totales</span>
+                            <i class="fa-solid fa-cart-shopping text-blue-400"></i>
+                        </div>
+                        <h3 id="dash-ventas-totales" class="text-3xl font-bold mt-1 text-white">$0.00</h3>
+                    </div>
+
+                    <!-- 5. Total Cobrado -->
+                    <div onclick="cambiarVista('pagos')" class="bg-[#0B132B] text-white p-5 rounded-2xl border border-slate-800 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Cobrado</span>
+                            <i class="fa-solid fa-hand-holding-dollar text-emerald-400"></i>
+                        </div>
+                        <h3 id="dash-total-cobrado" class="text-3xl font-bold mt-1 text-emerald-400">$0.00</h3>
+                    </div>
+
+                    <!-- 6. Saldo Pendiente (Deuda) -->
+                    <div onclick="cambiarVista('pagos')" class="bg-[#0B132B] text-white p-5 rounded-2xl border border-slate-800 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Saldo Pendiente (Deuda)</span>
+                            <i class="fa-solid fa-file-invoice-dollar text-rose-400"></i>
+                        </div>
+                        <h3 id="dash-deuda" class="text-3xl font-bold mt-1 text-rose-500">$0.00</h3>
+                    </div>
+
+                    <!-- 7. Comisiones Pendientes -->
+                    <div onclick="cambiarVista('comisiones')" class="bg-[#0B132B] text-white p-5 rounded-2xl border border-slate-800 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Comisiones Pendientes</span>
+                            <i class="fa-solid fa-percent text-purple-400"></i>
+                        </div>
+                        <h3 id="dash-comisiones-pendientes" class="text-3xl font-bold mt-1 text-purple-300">$0.00</h3>
+                    </div>
+
+                    <!-- 8. Gasto Combustible (Mes) -->
+                    <div onclick="cambiarVista('combustible')" class="bg-[#0B132B] text-white p-5 rounded-2xl border border-slate-800 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Gasto Combustible (Mes)</span>
+                            <i class="fa-solid fa-gas-pump text-orange-400"></i>
+                        </div>
+                        <h3 id="dash-gasto-combustible" class="text-3xl font-bold mt-1 text-amber-300">$0.00</h3>
+                    </div>
+
                 </div>
             </div>
 
@@ -259,8 +324,6 @@
             <!-- DASHBOARD FINANCIERO PERSONAL -->
             <div id="vista-finanzas" class="space-y-6 hidden">
                 <h2 class="font-bold text-slate-800 text-lg">Resumen Financiero Personal</h2>
-                
-                <!-- Dinero Recibido (Entradas) -->
                 <div class="space-y-2">
                     <p class="text-xs font-bold text-emerald-700 uppercase tracking-wider">Dinero Recibido (Entradas)</p>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -278,8 +341,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Dinero Gastado (Salidas) -->
                 <div class="space-y-2">
                     <p class="text-xs font-bold text-rose-700 uppercase tracking-wider">Dinero Gastado (Salidas)</p>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -297,8 +358,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Balance (Entradas - Salidas) -->
                 <div class="space-y-2">
                     <p class="text-xs font-bold text-indigo-700 uppercase tracking-wider">Balance (Entradas - Salidas)</p>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -316,8 +375,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Tarjetas de Combustible e Indicadores -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm border-l-4 border-l-amber-500">
                         <p class="text-slate-400 text-xs font-semibold uppercase">Combustible Acumulado (Total)</p>
@@ -328,13 +385,9 @@
                         <h3 id="fin-porc-comb" class="text-2xl font-bold mt-1 text-slate-900">0%</h3>
                     </div>
                 </div>
-
-                <!-- Gráfico Simulado / Historial Resumido -->
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
                     <h3 class="font-bold text-slate-800 text-base">Gráfico de Ingresos vs Egresos Personales (Este Mes)</h3>
-                    <div class="h-48 flex items-end justify-around gap-2 pt-6 border-b border-slate-200 px-4" id="contenedor-grafico-finanzas">
-                        <!-- Barras dinámicas generadas por JS -->
-                    </div>
+                    <div class="h-48 flex items-end justify-around gap-2 pt-6 border-b border-slate-200 px-4" id="contenedor-grafico-finanzas"></div>
                     <div class="flex justify-center gap-6 text-xs font-semibold text-slate-600">
                         <span class="flex items-center gap-2"><span class="w-3 h-3 bg-emerald-500 rounded-sm"></span> Ingresos</span>
                         <span class="flex items-center gap-2"><span class="w-3 h-3 bg-rose-500 rounded-sm"></span> Gastos / Egresos</span>
@@ -342,7 +395,7 @@
                 </div>
             </div>
 
-            <!-- ENTRADAS / SALIDAS PERSONALES (MOVIMIENTOS) -->
+            <!-- ENTRADAS / SALIDAS PERSONALES -->
             <div id="vista-movimientos" class="space-y-6 hidden">
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
                     <h2 class="font-bold text-slate-800 text-base">Registrar Movimiento Personal</h2>
@@ -534,7 +587,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT FIREBASE -->
+    <!-- SCRIPT FIREBASE Y LÓGICA -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -581,7 +634,7 @@
             const dot = document.getElementById('status-dot');
             dot.className = "w-3 h-3 rounded-full bg-amber-500 animate-pulse";
             try {
-                // 1. Inventario (Con las compras precargadas por defecto)
+                // 1. Inventario
                 const snapInv = await getDocs(collection(db, "inventario_ethan"));
                 listaInventario = [];
                 snapInv.forEach(d => listaInventario.push({ id: d.id, ...d.data() }));
@@ -636,13 +689,22 @@
                 document.getElementById('card-stock-disp').innerText = stockDisponible;
                 document.getElementById('card-costo-prom').innerText = `$${costoPromedio.toFixed(2)}`;
                 document.getElementById('card-val-inv').innerText = `$${valorTotalInventario.toFixed(2)}`;
+                
+                // Actualizar métricas Dashboard
                 document.getElementById('dash-stock').innerText = stockDisponible;
                 document.getElementById('dash-ventas-totales').innerText = `$${totalVentasValGral.toFixed(2)}`;
+                document.getElementById('dash-almohadas-vendidas').innerText = totalAlmohadasVendidas;
 
-                // 3. Pagos
+                // 3. Pagos / Cobros
                 const snapPagos = await getDocs(collection(db, "cobros_ethan"));
                 listaPagos = [];
-                snapPagos.forEach(d => listaPagos.push({ id: d.id, ...d.data() }));
+                let totalCobradoGeneral = 0;
+                snapPagos.forEach(d => {
+                    const p = { id: d.id, ...d.data() };
+                    listaPagos.push(p);
+                    totalCobradoGeneral += parseFloat(p.monto || 0);
+                });
+                document.getElementById('dash-total-cobrado').innerText = `$${totalCobradoGeneral.toFixed(2)}`;
 
                 // 4. Clientes
                 const snapClientes = await getDocs(collection(db, "clientes_ethan"));
@@ -707,7 +769,7 @@
                 document.getElementById('dash-clientes').innerText = listaClientes.length;
                 document.getElementById('dash-deuda').innerText = `$${totalDeuda.toFixed(2)}`;
 
-                // Renderizar Historial de Pagos
+                // Historial de Pagos
                 let htmlPagos = '';
                 listaPagos.forEach(p => {
                     htmlPagos += `
@@ -724,7 +786,7 @@
                 });
                 document.getElementById('tabla-pagos-cuerpo').innerHTML = htmlPagos || '<tr><td colspan="7" class="p-4 text-center text-slate-400">Sin pagos registrados</td></tr>';
 
-                // Renderizar Ventas General
+                // Ventas General
                 let htmlVentas = '';
                 listaVentas.forEach(item => {
                     const cant = parseInt(item.cantidad || 1);
@@ -746,7 +808,7 @@
                 });
                 document.getElementById('tabla-ventas-cuerpo').innerHTML = htmlVentas || '<tr><td colspan="7" class="p-4 text-center text-slate-400">Sin ventas registradas</td></tr>';
 
-                // Renderizar Comisiones
+                // Comisiones
                 let htmlComisiones = '';
                 let totalPendienteComision = 0;
                 let totalPagadaComision = 0;
@@ -780,9 +842,10 @@
 
                 document.getElementById('comision-pendiente').innerText = `$${totalPendienteComision.toFixed(2)}`;
                 document.getElementById('comision-pagada').innerText = `$${totalPagadaComision.toFixed(2)}`;
+                document.getElementById('dash-comisiones-pendientes').innerText = `$${totalPendienteComision.toFixed(2)}`;
                 document.getElementById('tabla-comisiones-cuerpo').innerHTML = htmlComisiones || '<tr><td colspan="6" class="p-4 text-center text-slate-400">Sin comisiones registradas</td></tr>';
 
-                // 6. Calendario de Cobros
+                // Calendario de Cobros
                 let htmlCal = '';
                 listaVentas.forEach(v => {
                     if(v.proximoPago) {
@@ -802,7 +865,7 @@
                 });
                 document.getElementById('tabla-calendario-cuerpo').innerHTML = htmlCal || '<tr><td colspan="6" class="p-4 text-center text-slate-400">Sin fechas de pago programadas</td></tr>';
 
-                // 7. Finanzas Personales & Movimientos
+                // Finanzas Personales & Movimientos
                 const snapMov = await getDocs(collection(db, "movimientos_personales_ethan"));
                 listaMovimientos = [];
                 snapMov.forEach(d => listaMovimientos.push({ id: d.id, ...d.data() }));
@@ -821,7 +884,7 @@
                 let combustibleTotal = 0;
 
                 const hoyStr = new Date().toISOString().split('T')[0];
-                const mesActualStr = hoyStr.substring(0, 7); // YYYY-MM
+                const mesActualStr = hoyStr.substring(0, 7);
 
                 listaMovimientos.forEach(m => {
                     const montoNum = parseFloat(m.monto || 0);
@@ -874,6 +937,8 @@
                 document.getElementById('fin-bal-mes').innerText = `$${balMes.toFixed(2)}`;
 
                 document.getElementById('fin-comb-total').innerText = `$${combustibleTotal.toFixed(2)}`;
+                document.getElementById('dash-gasto-combustible').innerText = `$${combustibleTotal.toFixed(2)}`;
+                
                 const porcGastoComb = gasMes > 0 ? ((combustibleTotal / gasMes) * 100).toFixed(1) : '35.5';
                 document.getElementById('fin-porc-comb').innerText = `${porcGastoComb}%`;
 
