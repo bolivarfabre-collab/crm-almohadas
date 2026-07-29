@@ -361,6 +361,13 @@
                 listaInventario = [];
                 snapInv.forEach(d => listaInventario.push({ id: d.id, ...d.data() }));
 
+// Si el inventario está vacío, inyectamos las compras por defecto
+if(listaInventario.length === 0) {
+    listaInventario = [
+        { id: 'compra-1', fecha: '2026-07-17', cantidad: 5, costoTotal: 69.00 },
+        { id: 'compra-2', fecha: '2026-07-21', cantidad: 7, costoTotal: 96.60 }
+    ];
+}
                 let totalComprado = 0;
                 let costoTotalGasto = 0;
                 let htmlInv = '';
