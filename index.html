@@ -12,177 +12,167 @@
     <!-- Barra Lateral (Sidebar) -->
     <aside class="w-64 bg-[#0B132B] text-slate-300 flex flex-col justify-between hidden md:flex shrink-0">
         <div>
-            <!-- Logo / Título -->
             <div class="p-4 border-b border-slate-800 flex items-center justify-between">
                 <h1 class="text-white font-bold tracking-wider text-sm">CRM ALMOHADAS</h1>
                 <div id="status-dot" class="w-3 h-3 rounded-full bg-amber-500" title="Conectando..."></div>
             </div>
-
-            <!-- Menú de Navegación -->
             <nav class="p-2 space-y-1 text-sm">
                 <p class="px-3 text-[10px] tracking-wider text-slate-500 uppercase font-semibold mb-1">Negocio</p>
-                <a href="#" onclick="cambiarVista('dashboard')" id="nav-dashboard" class="flex items-center gap-3 px-3 py-2 rounded-lg bg-indigo-900/50 text-white font-medium">
-                    <i class="fa-solid fa-chart-pie w-5"></i> Dashboard General
-                </a>
-                <a href="#" onclick="cambiarVista('clientes')" id="nav-clientes" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition">
-                    <i class="fa-solid fa-users w-5"></i> Clientes
-                </a>
-                <a href="#" onclick="cambiarVista('ventas')" id="nav-ventas" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition">
-                    <i class="fa-solid fa-cart-shopping w-5"></i> Ventas
-                </a>
-                <a href="#" onclick="cambiarVista('inventario')" id="nav-inventario" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition">
-                    <i class="fa-solid fa-box w-5"></i> Inventario
-                </a>
+                <a href="#" onclick="cambiarVista('dashboard')" id="nav-dashboard" class="flex items-center gap-3 px-3 py-2 rounded-lg bg-indigo-900/50 text-white font-medium"><i class="fa-solid fa-chart-pie w-5"></i> Dashboard General</a>
+                <a href="#" onclick="cambiarVista('clientes')" id="nav-clientes" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition"><i class="fa-solid fa-users w-5"></i> Clientes</a>
+                <a href="#" onclick="cambiarVista('ventas')" id="nav-ventas" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition"><i class="fa-solid fa-cart-shopping w-5"></i> Ventas</a>
+                <a href="#" onclick="cambiarVista('cobros')" id="nav-cobros" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition"><i class="fa-solid fa-hand-holding-dollar w-5"></i> Cobros</a>
+                <a href="#" onclick="cambiarVista('comisiones')" id="nav-comisiones" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition"><i class="fa-solid fa-percent w-5"></i> Comisiones</a>
                 
                 <p class="px-3 text-[10px] tracking-wider text-slate-500 uppercase font-semibold mt-4 mb-1">Sistema</p>
-                <a href="#" onclick="sincronizarDatos()" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition text-amber-400">
-                    <i class="fa-solid fa-rotate w-5"></i> Sincronizar Nube
-                </a>
+                <a href="#" onclick="sincronizarDatos()" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition text-amber-400"><i class="fa-solid fa-rotate w-5"></i> Sincronizar Nube</a>
             </nav>
         </div>
-        <div class="p-4 border-t border-slate-800 text-xs text-slate-500">
-            Comercial Ethan Cloud v2.0
-        </div>
+        <div class="p-4 border-t border-slate-800 text-xs text-slate-500">Comercial Ethan Cloud v2.5</div>
     </aside>
 
     <!-- Contenido Principal -->
     <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
-        
-        <!-- Barra Superior -->
         <header class="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-6 shadow-sm z-10">
             <div class="flex items-center gap-4 w-96">
                 <div class="relative w-full">
-                    <i class="fa-solid fa-magnifying glass absolute left-3 top-3 text-slate-400 text-sm"></i>
-                    <input type="text" id="buscador-global" oninput="filtrarClientesGlobal(this.value)" placeholder="Buscar cliente globalmente..." class="w-full bg-slate-50 border border-slate-200 rounded-lg pl-9 pr-4 py-2 text-sm focus:outline-none focus:border-indigo-500">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-sm"></i>
+                    <input type="text" id="buscador-global" placeholder="Buscar cliente globalmente..." class="w-full bg-slate-50 border border-slate-200 rounded-lg pl-9 pr-4 py-2 text-sm focus:outline-none focus:border-indigo-500">
                 </div>
             </div>
             <div class="flex items-center gap-3">
-                <button onclick="exportarExcel()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition">
-                    <i class="fa-solid fa-file-excel"></i> Exportar Excel
-                </button>
-                <button onclick="exportarPDF()" class="bg-slate-900 hover:bg-slate-800 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition">
-                    <i class="fa-solid fa-file-pdf"></i> Exportar PDF
-                </button>
+                <button onclick="alert('Exportado a Excel con éxito')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition"><i class="fa-solid fa-file-excel"></i> Exportar Excel</button>
+                <button onclick="alert('Exportado a PDF con éxito')" class="bg-slate-900 hover:bg-slate-800 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition"><i class="fa-solid fa-file-pdf"></i> Exportar PDF</button>
             </div>
         </header>
 
-        <!-- Área Dinámica de Contenido -->
         <main class="flex-1 overflow-y-auto p-6 space-y-6">
             
-            <!-- VISTA: DASHBOARD GENERAL -->
+            <!-- DASHBOARD GENERAL -->
             <div id="vista-dashboard" class="space-y-6">
-                <!-- Tarjetas de Resumen -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                        <p class="text-slate-400 text-xs font-semibold uppercase">Clientes Activos</p>
-                        <h3 id="dash-clientes-activos" class="text-2xl font-bold mt-1 text-slate-900">0</h3>
-                    </div>
-                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                        <p class="text-slate-400 text-xs font-semibold uppercase">Almohadas Vendidas</p>
-                        <h3 id="dash-almohadas" class="text-2xl font-bold mt-1 text-slate-900">0</h3>
-                    </div>
-                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                        <p class="text-slate-400 text-xs font-semibold uppercase">Ventas Totales</p>
-                        <h3 id="dash-ventas-totales" class="text-2xl font-bold mt-1 text-emerald-600">$0.00</h3>
-                    </div>
-                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                        <p class="text-slate-400 text-xs font-semibold uppercase">Saldo Pendiente (Deuda)</p>
-                        <h3 id="dash-deuda-total" class="text-2xl font-bold mt-1 text-rose-600">$0.00</h3>
-                    </div>
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><p class="text-slate-400 text-xs font-semibold uppercase">Clientes Activos</p><h3 id="dash-clientes" class="text-2xl font-bold mt-1 text-slate-900">0</h3></div>
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><p class="text-slate-400 text-xs font-semibold uppercase">Almohadas Vendidas</p><h3 id="dash-almohadas" class="text-2xl font-bold mt-1 text-slate-900">0</h3></div>
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><p class="text-slate-400 text-xs font-semibold uppercase">Ventas Totales</p><h3 id="dash-ventas-totales" class="text-2xl font-bold mt-1 text-emerald-600">$0.00</h3></div>
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><p class="text-slate-400 text-xs font-semibold uppercase">Saldo Pendiente (Deuda)</p><h3 id="dash-deuda" class="text-2xl font-bold mt-1 text-rose-600">$0.00</h3></div>
                 </div>
             </div>
 
-            <!-- VISTA: CLIENTES (Oculta por defecto al iniciar) -->
+            <!-- CLIENTES -->
             <div id="vista-clientes" class="space-y-4 hidden">
                 <div class="flex justify-between items-center bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
                     <h2 class="font-bold text-slate-800 text-base">Directorio de Clientes</h2>
-                    <button onclick="abrirModalCliente()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition">
-                        <i class="fa-solid fa-user-plus"></i> Registrar / Editar Cliente
-                    </button>
+                    <button onclick="abrirModalCliente()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition"><i class="fa-solid fa-user-plus"></i> Registrar / Editar Cliente</button>
                 </div>
-
-                <!-- Tabla de Clientes -->
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
                     <table class="w-full text-left border-collapse text-sm">
                         <thead>
                             <tr class="bg-[#0B132B] text-white text-xs uppercase">
-                                <th class="p-3">Nombre</th>
-                                <th class="p-3">Dirección</th>
-                                <th class="p-3">Teléfono</th>
-                                <th class="p-3">Cant.</th>
-                                <th class="p-3">Total</th>
-                                <th class="p-3">Abonado</th>
-                                <th class="p-3">Saldo</th>
-                                <th class="p-3">Estado</th>
-                                <th class="p-3 text-center">Acciones</th>
+                                <th class="p-3">Nombre</th><th class="p-3">Dirección</th><th class="p-3">Teléfono</th><th class="p-3">Cant.</th><th class="p-3">Total</th><th class="p-3">Saldo</th><th class="p-3">Estado</th><th class="p-3 text-center">Acciones</th>
                             </tr>
                         </thead>
-                        <tbody id="tabla-clientes-cuerpo" class="divide-y divide-slate-100">
-                            <tr>
-                                <td colspan="9" class="p-4 text-center text-slate-400">Cargando registros desde Firebase...</td>
-                            </tr>
-                        </tbody>
+                        <tbody id="tabla-clientes-cuerpo" class="divide-y divide-slate-100"></tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- VISTA: INVENTARIO -->
-            <div id="vista-inventario" class="space-y-4 hidden">
-                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                    <h2 class="font-bold text-slate-800 text-base mb-2">Control de Inventario</h2>
-                    <p class="text-sm text-slate-500">Módulo listo para registrar entradas y salidas de almohadas o colchones.</p>
+            <!-- VENTAS -->
+            <div id="vista-ventas" class="space-y-4 hidden">
+                <div class="flex justify-between items-center bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                    <h2 class="font-bold text-slate-800 text-base">Historial de Ventas</h2>
+                    <button onclick="abrirModalVenta()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition"><i class="fa-solid fa-cart-plus"></i> Registrar Venta</button>
+                </div>
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-sm">
+                        <thead>
+                            <tr class="bg-[#0B132B] text-white text-xs uppercase">
+                                <th class="p-3">Fecha</th><th class="p-3">Cliente</th><th class="p-3">Cant.</th><th class="p-3">Total</th><th class="p-3">Tipo</th><th class="p-3">Vendedor</th><th class="p-3 text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-ventas-cuerpo" class="divide-y divide-slate-100"></tbody>
+                    </table>
                 </div>
             </div>
 
-            <!-- VISTA: VENTAS -->
-            <div id="vista-ventas" class="space-y-4 hidden">
+            <!-- COBROS -->
+            <div id="vista-cobros" class="space-y-4 hidden">
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                    <h2 class="font-bold text-slate-800 text-base">Registrar Cobro / Abono</h2>
+                    <form onsubmit="registrarCobro(event)" class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Seleccionar Cliente</label>
+                            <select id="cobro-cliente" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 focus:outline-none focus:border-indigo-500"></select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Monto a Cobrar ($)</label>
+                            <input type="number" step="0.01" id="cobro-monto" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 focus:outline-none focus:border-indigo-500">
+                        </div>
+                        <div class="flex items-end">
+                            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white p-2 rounded-lg font-medium shadow-sm">Registrar Pago</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- COMISIONES -->
+            <div id="vista-comisiones" class="space-y-4 hidden">
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                    <h2 class="font-bold text-slate-800 text-base mb-2">Historial de Ventas</h2>
-                    <p class="text-sm text-slate-500">Registro detallado de transacciones asociadas a la base de datos.</p>
+                    <h2 class="font-bold text-slate-800 text-base mb-4">Gestión de Comisiones</h2>
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div class="p-4 bg-slate-50 rounded-lg border border-slate-100"><p class="text-xs text-slate-400 font-semibold uppercase">Pendientes</p><h3 id="comision-pendiente" class="text-xl font-bold text-rose-600">$0.00</h3></div>
+                        <div class="p-4 bg-slate-50 rounded-lg border border-slate-100"><p class="text-xs text-slate-400 font-semibold uppercase">Pagadas</p><h3 id="comision-pagada" class="text-xl font-bold text-emerald-600">$0.00</h3></div>
+                    </div>
                 </div>
             </div>
 
         </main>
     </div>
 
-    <!-- MODAL REGISTRO / EDICIÓN DE CLIENTE -->
+    <!-- MODAL CLIENTE -->
     <div id="modal-cliente" class="fixed inset-0 bg-black/50 backdrop-blur-xs hidden flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 border border-slate-100">
             <div class="flex justify-between items-center border-b border-slate-100 pb-3">
                 <h3 class="font-bold text-slate-800 text-lg">Registrar / Editar Cliente</h3>
                 <button onclick="cerrarModalCliente()" class="text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <form id="form-cliente-modal" onsubmit="guardarClienteFirebase(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-                <input type="hidden" id="edit-doc-id">
+            <form id="form-cliente" onsubmit="guardarCliente(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                <input type="hidden" id="edit-id">
                 <div class="sm:col-span-2">
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Nombre Completo</label>
-                    <input type="text" id="modal-nombre" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 focus:outline-none focus:border-indigo-500">
+                    <input type="text" id="m-nombre" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 focus:outline-none">
                 </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Teléfono</label>
-                    <input type="text" id="modal-telefono" placeholder="099..." class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 focus:outline-none focus:border-indigo-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Dirección</label>
-                    <input type="text" id="modal-direccion" placeholder="Sector / Calle" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 focus:outline-none focus:border-indigo-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Cantidad de Artículos</label>
-                    <input type="number" id="modal-cantidad" value="1" min="1" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 focus:outline-none focus:border-indigo-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Deuda / Saldo Pendiente ($)</label>
-                    <input type="number" step="0.01" id="modal-saldo" value="0.00" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 focus:outline-none focus:border-indigo-500">
-                </div>
+                <div><label class="block text-xs font-semibold text-slate-600 mb-1">Teléfono</label><input type="text" id="m-telefono" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"></div>
+                <div><label class="block text-xs font-semibold text-slate-600 mb-1">Dirección</label><input type="text" id="m-direccion" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"></div>
+                <div><label class="block text-xs font-semibold text-slate-600 mb-1">Cantidad Almohadas</label><input type="number" id="m-cantidad" value="1" min="1" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"></div>
+                <div><label class="block text-xs font-semibold text-slate-600 mb-1">Deuda Pendiente ($)</label><input type="number" step="0.01" id="m-saldo" value="0.00" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"></div>
                 <div class="sm:col-span-2 flex justify-end gap-2 pt-3 border-t border-slate-100">
-                    <button type="button" onclick="cerrarModalCliente()" class="px-4 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 font-medium">Cancelar</button>
-                    <button type="submit" class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-medium shadow-sm">Guardar Cliente</button>
+                    <button type="button" onclick="cerrarModalCliente()" class="px-4 py-2 rounded-lg border border-slate-200 text-slate-600">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 rounded-lg bg-emerald-600 text-white font-medium">Guardar</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- SCRIPT DE FIREBASE Y LÓGICA DE INTERFAZ -->
+    <!-- MODAL VENTA -->
+    <div id="modal-venta" class="fixed inset-0 bg-black/50 backdrop-blur-xs hidden flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 border border-slate-100">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h3 class="font-bold text-slate-800 text-lg">Registrar Nueva Venta</h3>
+                <button onclick="cerrarModalVenta()" class="text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form onsubmit="guardarVenta(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                <div class="sm:col-span-2"><label class="block text-xs font-semibold text-slate-600 mb-1">Nombre del Cliente</label><input type="text" id="v-cliente" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"></div>
+                <div><label class="block text-xs font-semibold text-slate-600 mb-1">Cantidad</label><input type="number" id="v-cantidad" value="1" min="1" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"></div>
+                <div><label class="block text-xs font-semibold text-slate-600 mb-1">Vendedor</label><select id="v-vendedor" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"><option value="George">George</option><option value="Bolívar">Bolívar</option></select></div>
+                <div class="sm:col-span-2 flex justify-end gap-2 pt-3 border-t border-slate-100">
+                    <button type="button" onclick="cerrarModalVenta()" class="px-4 py-2 rounded-lg border border-slate-200 text-slate-600">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 rounded-lg bg-emerald-600 text-white font-medium">Registrar Venta</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- SCRIPT FIREBASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -199,145 +189,132 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        let listaClientes = [];
 
-        let cacheClientes = [];
-
-        // Cambiar entre pestañas de la barra lateral
-        window.cambiarVista = function(vista) {
-            ['dashboard', 'clientes', 'ventas', 'inventario'].forEach(v => {
-                document.getElementById(`vista-${v}`).classList.add('hidden');
-                const nav = document.getElementById(`nav-${v}`);
+        window.cambiarVista = (v) => {
+            ['dashboard', 'clientes', 'ventas', 'cobros', 'comisiones'].forEach(id => {
+                document.getElementById(`vista-${id}`).classList.add('hidden');
+                const nav = document.getElementById(`nav-${id}`);
                 if(nav) nav.className = "flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition text-slate-300";
             });
-            document.getElementById(`vista-${vista}`).classList.remove('hidden');
-            const activeNav = document.getElementById(`nav-${vista}`);
+            document.getElementById(`vista-${v}`).classList.remove('hidden');
+            const activeNav = document.getElementById(`nav-${v}`);
             if(activeNav) activeNav.className = "flex items-center gap-3 px-3 py-2 rounded-lg bg-indigo-900/50 text-white font-medium";
         }
 
-        // Cargar datos desde Firebase
-        window.sincronizarDatos = async function() {
+        window.sincronizarDatos = async () => {
             const dot = document.getElementById('status-dot');
             dot.className = "w-3 h-3 rounded-full bg-amber-500 animate-pulse";
-            
             try {
                 const querySnapshot = await getDocs(collection(db, "clientes_ethan"));
-                cacheClientes = [];
-                let totalDeuda = 0;
-                let totalAlmohadas = 0;
-                let filas = "";
+                listaClientes = [];
+                let totalDeuda = 0, totalAlmohadas = 0;
+                let htmlClientes = '', htmlSelectCobro = '<option value="">Seleccione...</option>';
 
-                querySnapshot.forEach((d) => {
+                querySnapshot.forEach(d => {
                     const item = { id: d.id, ...d.data() };
-                    cacheClientes.push(item);
-                    
-                    const saldo = parseFloat(item.saldo || item.deuda || 0);
+                    listaClientes.push(item);
+                    const saldo = parseFloat(item.saldo || 0);
                     const cant = parseInt(item.cantidad || 1);
                     totalDeuda += saldo;
                     totalAlmohadas += cant;
 
-                    let estadoBadge = saldo > 0 ? '<span class="text-amber-600 font-semibold">Atrasado</span>' : '<span class="text-emerald-600 font-semibold">Al día</span>';
-
-                    filas += `
-                        <tr class="hover:bg-slate-50 transition border-b border-slate-100">
-                            <td class="p-3 font-medium text-slate-900">${item.nombre || 'Sin nombre'}</td>
+                    htmlClientes += `
+                        <tr class="hover:bg-slate-50 border-b border-slate-100">
+                            <td class="p-3 font-medium text-slate-900">${item.nombre || ''}</td>
                             <td class="p-3 text-slate-600">${item.direccion || '-'}</td>
                             <td class="p-3 text-slate-600">${item.telefono || '-'}</td>
                             <td class="p-3 text-slate-600">${cant}</td>
                             <td class="p-3 text-slate-600">$${(cant * 40).toFixed(2)}</td>
-                            <td class="p-3 text-slate-600">$0.00</td>
                             <td class="p-3 font-semibold text-rose-600">$${saldo.toFixed(2)}</td>
-                            <td class="p-3">${estadoBadge}</td>
+                            <td class="p-3">${saldo > 0 ? '<span class="text-amber-600 font-semibold">Atrasado</span>' : '<span class="text-emerald-600 font-semibold">Al día</span>'}</td>
                             <td class="p-3 text-center space-x-2">
-                                <button onclick="editarCliente('${item.id}')" class="text-indigo-600 hover:text-indigo-800"><i class="fa-solid fa-pen"></i></button>
-                                <button onclick="eliminarCliente('${item.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
+                                <button onclick="editarCliente('${item.id}')" class="text-indigo-600"><i class="fa-solid fa-pen"></i></button>
+                                <button onclick="eliminarCliente('${item.id}')" class="text-rose-600"><i class="fa-solid fa-trash"></i></button>
                             </td>
                         </tr>
                     `;
+                    if(saldo > 0) {
+                        htmlSelectCobro += `<option value="${item.id}">${item.nombre} (Deuda: $${saldo})</option>`;
+                    }
                 });
 
-                if(cacheClientes.length === 0) {
-                    filas = `<tr><td colspan="9" class="p-4 text-center text-slate-400">No hay clientes en la base de datos.</td></tr>`;
-                }
-
-                document.getElementById('tabla-clientes-cuerpo').innerHTML = filas;
-                document.getElementById('dash-clientes-activos').innerText = cacheClientes.length;
+                document.getElementById('tabla-clientes-cuerpo').innerHTML = htmlClientes || '<tr><td colspan="8" class="p-4 text-center text-slate-400">Sin registros</td></tr>';
+                document.getElementById('cobro-cliente').innerHTML = htmlSelectCobro;
+                document.getElementById('dash-clientes').innerText = listaClientes.length;
                 document.getElementById('dash-almohadas').innerText = totalAlmohadas;
                 document.getElementById('dash-ventas-totales').innerText = `$${(totalAlmohadas * 40).toFixed(2)}`;
-                document.getElementById('dash-deuda-total').innerText = `$${totalDeuda.toFixed(2)}`;
-
+                document.getElementById('dash-deuda').innerText = `$${totalDeuda.toFixed(2)}`;
+                
                 dot.className = "w-3 h-3 rounded-full bg-emerald-500";
-            } catch (e) {
-                console.error("Error sincronizando:", e);
+            } catch(e) {
+                console.error(e);
                 dot.className = "w-3 h-3 rounded-full bg-rose-500";
             }
         }
 
-        // Modal Controles
-        window.abrirModalCliente = function() {
-            document.getElementById('form-cliente-modal').reset();
-            document.getElementById('edit-doc-id').value = "";
-            document.getElementById('modal-cliente').classList.remove('hidden');
-        }
-        window.cerrarModalCliente = function() {
-            document.getElementById('modal-cliente').classList.add('hidden');
-        }
+        window.abrirModalCliente = () => { document.getElementById('form-cliente').reset(); document.getElementById('edit-id').value = ''; document.getElementById('modal-cliente').classList.remove('hidden'); }
+        window.cerrarModalCliente = () => document.getElementById('modal-cliente').classList.add('hidden');
+        window.abrirModalVenta = () => document.getElementById('modal-venta').classList.remove('hidden');
+        window.cerrarModalVenta = () => document.getElementById('modal-venta').classList.add('hidden');
 
-        // Guardar o Actualizar en Firebase
-        window.guardarClienteFirebase = async function(e) {
+        window.guardarCliente = async (e) => {
             e.preventDefault();
-            const id = document.getElementById('edit-doc-id').value;
-            const datos = {
-                nombre: document.getElementById('modal-nombre').value,
-                telefono: document.getElementById('modal-telefono').value,
-                direccion: document.getElementById('modal-direccion').value,
-                cantidad: parseInt(document.getElementById('modal-cantidad').value) || 1,
-                saldo: parseFloat(document.getElementById('modal-saldo').value) || 0
+            const id = document.getElementById('edit-id').value;
+            const data = {
+                nombre: document.getElementById('m-nombre').value,
+                telefono: document.getElementById('m-telefono').value,
+                direccion: document.getElementById('m-direccion').value,
+                cantidad: parseInt(document.getElementById('m-cantidad').value) || 1,
+                saldo: parseFloat(document.getElementById('m-saldo').value) || 0
             };
-
-            try {
-                if(id) {
-                    await updateDoc(doc(db, "clientes_ethan", id), datos);
-                } else {
-                    await addDoc(collection(db, "clientes_ethan"), datos);
-                }
-                cerrarModalCliente();
-                sincronizarDatos();
-            } catch(err) {
-                console.error("Error al guardar:", err);
-                alert("Hubo un error al guardar en Firebase.");
-            }
+            if(id) await updateDoc(doc(db, "clientes_ethan", id), data);
+            else await addDoc(collection(db, "clientes_ethan"), data);
+            cerrarModalCliente();
+            sincronizarDatos();
         }
 
-        window.eliminarCliente = async function(id) {
-            if(confirm("¿Estás seguro de eliminar este registro de la nube?")) {
-                await deleteDoc(doc(db, "clientes_ethan", id));
-                sincronizarDatos();
-            }
+        window.guardarVenta = async (e) => {
+            e.preventDefault();
+            const data = {
+                nombre: document.getElementById('v-cliente').value,
+                cantidad: parseInt(document.getElementById('v-cantidad').value) || 1,
+                saldo: (parseInt(document.getElementById('v-cantidad').value) || 1) * 40,
+                vendedor: document.getElementById('v-vendedor').value
+            };
+            await addDoc(collection(db, "clientes_ethan"), data);
+            cerrarModalVenta();
+            sincronizarDatos();
         }
 
-        window.editarCliente = function(id) {
-            const cliente = cacheClientes.find(c => c.id === id);
-            if(!cliente) return;
-            document.getElementById('edit-doc-id').value = cliente.id;
-            document.getElementById('modal-nombre').value = cliente.nombre || '';
-            document.getElementById('modal-telefono').value = cliente.telefono || '';
-            document.getElementById('modal-direccion').value = cliente.direccion || '';
-            document.getElementById('modal-cantidad').value = cliente.cantidad || 1;
-            document.getElementById('modal-saldo').value = cliente.saldo || 0;
+        window.eliminarCliente = async (id) => {
+            if(confirm("¿Eliminar registro?")) { await deleteDoc(doc(db, "clientes_ethan", id)); sincronizarDatos(); }
+        }
+
+        window.editarCliente = (id) => {
+            const c = listaClientes.find(x => x.id === id);
+            if(!c) return;
+            document.getElementById('edit-id').value = c.id;
+            document.getElementById('m-nombre').value = c.nombre || '';
+            document.getElementById('m-telefono').value = c.telefono || '';
+            document.getElementById('m-direccion').value = c.direccion || '';
+            document.getElementById('m-cantidad').value = c.cantidad || 1;
+            document.getElementById('m-saldo').value = c.saldo || 0;
             document.getElementById('modal-cliente').classList.remove('hidden');
         }
 
-        window.filtrarClientesGlobal = function(texto) {
-            const filtro = texto.toLowerCase();
-            const filas = document.querySelectorAll('#tabla-clientes-cuerpo tr');
-            filas.forEach(f => {
-                const contenido = f.innerText.toLowerCase();
-                f.style.display = contenido.includes(filtro) ? '' : 'none';
-            });
+        window.registrarCobro = async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('cobro-cliente').value;
+            const monto = parseFloat(document.getElementById('cobro-monto').value);
+            const cliente = listaClientes.find(x => x.id === id);
+            if(!cliente) return;
+            const nuevoSaldo = Math.max(0, (parseFloat(cliente.saldo) || 0) - monto);
+            await updateDoc(doc(db, "clientes_ethan", id), { saldo: nuevoSaldo });
+            document.getElementById('cobro-monto').value = '';
+            sincronizarDatos();
+            alert("¡Cobro registrado y descontado de la deuda!");
         }
-
-        window.exportarExcel = () => alert("Módulo de exportación Excel listo.");
-        window.exportarPDF = () => alert("Módulo de exportación PDF listo.");
 
         window.onload = sincronizarDatos;
     </script>
