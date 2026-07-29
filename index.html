@@ -53,7 +53,7 @@
                 </div>
             </nav>
         </div>
-        <div class="p-4 border-t border-slate-800 text-xs text-slate-500">Comercial Ethan Cloud v3.4</div>
+        <div class="p-4 border-t border-slate-800 text-xs text-slate-500">Comercial Ethan Cloud v3.5</div>
     </aside>
 
     <!-- Contenido Principal -->
@@ -387,7 +387,7 @@
                 </div>
             </div>
 
-            <!-- ENTRADAS / SALIDAS PERSONALES (Limpio) -->
+            <!-- ENTRADAS / SALIDAS PERSONALES -->
             <div id="vista-movimientos" class="space-y-6 hidden">
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
                     <h2 class="font-bold text-slate-800 text-base">Registrar Movimiento Personal</h2>
@@ -442,7 +442,7 @@
                 </div>
             </div>
 
-            <!-- CONTROL COMBUSTIBLE (Limpio) -->
+            <!-- CONTROL COMBUSTIBLE -->
             <div id="vista-combustible" class="space-y-6 hidden">
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
                     <h2 class="font-bold text-slate-800 text-base">Registro Rápido de Combustible (Camioneta)</h2>
@@ -460,8 +460,22 @@
                         </div>
                     </form>
                 </div>
+                
                 <div class="space-y-4">
-                    <h2 class="font-bold text-slate-800 text-base">Historial de Combustible</h2>
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                        <div>
+                            <h2 class="font-bold text-slate-800 text-base">Historial de Combustible</h2>
+                            <p id="info-filtro-combustible" class="text-xs text-slate-500 mt-0.5">Mostrando todos los registros</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <label for="filtro-mes-combustible" class="text-xs font-semibold text-slate-600 flex items-center gap-1.5 cursor-pointer bg-slate-100 hover:bg-slate-200 px-3 py-2 rounded-lg transition">
+                                <i class="fa-solid fa-calendar-days text-amber-600"></i> Filtrar por Mes/Año:
+                            </label>
+                            <input type="month" id="filtro-mes-combustible" onchange="filtrarCombustiblePorMes()" class="bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs font-medium focus:outline-none focus:border-amber-500">
+                            <button onclick="limpiarFiltroCombustible()" class="text-xs text-rose-600 hover:text-rose-800 font-semibold px-2 py-1" title="Ver todo">Ver Todos</button>
+                        </div>
+                    </div>
+
                     <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
                         <table class="w-full text-left border-collapse text-sm">
                             <thead>
@@ -850,13 +864,15 @@
                 });
                 document.getElementById('tabla-calendario-cuerpo').innerHTML = htmlCal || '<tr><td colspan="6" class="p-4 text-center text-slate-400">Sin fechas de pago programadas</td></tr>';
 
-                // Finanzas Personales & Movimientos (Limpio de datos predeterminados)
+                // Finanzas Personales & Movimientos
                 const snapMov = await getDocs(collection(db, "movimientos_personales_ethan"));
                 listaMovimientos = [];
                 snapMov.forEach(d => listaMovimientos.push({ id: d.id, ...d.data() }));
 
+                // ORDENAR MOVIMIENTOS POR FECHA (Más reciente primero)
+                listaMovimientos.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+
                 let htmlMov = '';
-                let htmlComb = '';
                 let ingHoy = 0, ingSem = 0, ingMes = 0;
                 let gasHoy = 0, gasSem = 0, gasMes = 0;
                 let combustibleTotal = 0;
@@ -871,15 +887,6 @@
 
                     if(m.categoria === 'Combustible') {
                         combustibleTotal += montoNum;
-                        htmlComb += `
-                            <tr class="hover:bg-slate-50 border-b border-slate-100">
-                                <td class="p-3 text-slate-600">${m.fecha || '-'}</td>
-                                <td class="p-3 font-medium text-slate-800">${m.categoria || '-'}</td>
-                                <td class="p-3 font-semibold text-amber-600">$${montoNum.toFixed(2)}</td>
-                                <td class="p-3 text-slate-500">${m.descripcion || '-'}</td>
-                                <td class="p-3 text-center"><button onclick="eliminarMovimiento('${m.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button></td>
-                            </tr>
-                        `;
                     }
 
                     if(m.tipo === 'Entrada') {
@@ -904,8 +911,10 @@
                     `;
                 });
 
-                document.getElementById('tabla-movimientos-cuerpo').innerHTML = htmlMov || '<tr><td colspan="6" class="p-4 text-center text-slate-400">Sin movimientos registrados. Agrega tus entradas o salidas arriba.</td></tr>';
-                document.getElementById('tabla-combustible-cuerpo').innerHTML = htmlComb || '<tr><td colspan="5" class="p-4 text-center text-slate-400">Sin registros de combustible. Agrega tus cargas arriba.</td></tr>';
+                document.getElementById('tabla-movimientos-cuerpo').innerHTML = htmlMov || '<tr><td colspan="6" class="p-4 text-center text-slate-400">Sin movimientos registrados.</td></tr>';
+                
+                // Renderizar historial de combustible (aplicando filtro si existe)
+                renderizarHistorialCombustible();
 
                 document.getElementById('fin-ing-hoy').innerText = `$${ingHoy.toFixed(2)}`;
                 document.getElementById('fin-ing-sem').innerText = `$${ingSem.toFixed(2)}`;
@@ -952,6 +961,51 @@
                 console.error(e);
                 dot.className = "w-3 h-3 rounded-full bg-rose-500";
             }
+        }
+
+        // FUNCIÓN PARA RENDERIZAR Y FILTRAR COMBUSTIBLE POR MES/AÑO
+        window.renderizarHistorialCombustible = () => {
+            const filtroMesInput = document.getElementById('filtro-mes-combustible').value;
+            let htmlComb = '';
+            let sumaFiltrada = 0;
+            let cantidadRegistros = 0;
+
+            // Filtrar solo los movimientos de categoría Combustible
+            let listaCombustible = listaMovimientos.filter(m => m.categoria === 'Combustible');
+
+            // Si hay un filtro de mes seleccionado (formato "YYYY-MM")
+            if(filtroMesInput) {
+                listaCombustible = listaCombustible.filter(m => m.fecha && m.fecha.startsWith(filtroMesInput));
+                document.getElementById('info-filtro-combustible').innerText = `Filtrado por el mes: ${filtroMesInput}`;
+            } else {
+                document.getElementById('info-filtro-combustible').innerText = `Mostrando todos los registros ordenados por fecha`;
+            }
+
+            listaCombustible.forEach(m => {
+                const montoNum = parseFloat(m.monto || 0);
+                sumaFiltrada += montoNum;
+                cantidadRegistros++;
+                htmlComb += `
+                    <tr class="hover:bg-slate-50 border-b border-slate-100">
+                        <td class="p-3 text-slate-600">${m.fecha || '-'}</td>
+                        <td class="p-3 font-medium text-slate-800">${m.categoria || '-'}</td>
+                        <td class="p-3 font-semibold text-amber-600">$${montoNum.toFixed(2)}</td>
+                        <td class="p-3 text-slate-500">${m.descripcion || '-'}</td>
+                        <td class="p-3 text-center"><button onclick="eliminarMovimiento('${m.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button></td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('tabla-combustible-cuerpo').innerHTML = htmlComb || '<tr><td colspan="5" class="p-4 text-center text-slate-400">Sin registros de combustible para este periodo.</td></tr>';
+        }
+
+        window.filtrarCombustiblePorMes = () => {
+            renderizarHistorialCombustible();
+        }
+
+        window.limpiarFiltroCombustible = () => {
+            document.getElementById('filtro-mes-combustible').value = '';
+            renderizarHistorialCombustible();
         }
 
         window.guardarMovimientoPersonal = async (e) => {
