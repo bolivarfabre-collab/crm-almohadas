@@ -40,6 +40,7 @@
                 
                 <p class="px-3 text-[10px] tracking-wider text-slate-500 uppercase font-semibold mt-4 mb-1">Finanzas Personales</p>
                 <a href="#" onclick="cambiarVista('finanzas')" id="nav-finanzas" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition"><i class="fa-solid fa-wallet w-5"></i> Dashboard Financiero</a>
+                <a href="#" onclick="cambiarVista('caja')" id="nav-caja" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition"><i class="fa-solid fa-cash-register w-5"></i> Caja (Efectivo/Cuentas)</a>
                 <a href="#" onclick="cambiarVista('movimientos')" id="nav-movimientos" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition"><i class="fa-solid fa-right-left w-5"></i> Entradas / Salidas</a>
                 <a href="#" onclick="cambiarVista('combustible')" id="nav-combustible" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition"><i class="fa-solid fa-gas-pump w-5"></i> Control Combustible</a>
 
@@ -65,7 +66,7 @@
                 </div>
             </nav>
         </div>
-        <div class="p-4 border-t border-slate-800 text-xs text-slate-500">Comercial Ethan Cloud v3.9</div>
+        <div class="p-4 border-t border-slate-800 text-xs text-slate-500">Comercial Ethan Cloud v4.0</div>
     </aside>
 
     <!-- Contenido Principal -->
@@ -88,7 +89,6 @@
             <!-- DASHBOARD GENERAL -->
             <div id="vista-dashboard" class="space-y-6">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    
                     <div onclick="cambiarVista('clientes')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden">
                         <div class="flex items-center justify-between mb-2">
                             <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Clientes Activos</span>
@@ -129,7 +129,6 @@
                         <h3 id="dash-total-cobrado" class="text-3xl font-bold mt-1 text-emerald-600">$0.00</h3>
                     </div>
 
-                    <!-- UTILIDAD NETA (EXCLUSIVA DEL NEGOCIO DE ALMOHADAS) -->
                     <div onclick="cambiarVista('ventas')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden border-l-4 border-l-indigo-600">
                         <div class="flex items-center justify-between mb-2">
                             <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Utilidad Neta Almohadas (Mes)*</span>
@@ -139,7 +138,6 @@
                         <span class="text-[10px] text-slate-400 block mt-1">*Ventas menos costo de mercadería</span>
                     </div>
 
-                    <!-- UTILIDAD HISTÓRICA (EXCLUSIVA DEL NEGOCIO DE ALMOHADAS) -->
                     <div onclick="cambiarVista('ventas')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-emerald-500 transition relative overflow-hidden border-l-4 border-l-emerald-600">
                         <div class="flex items-center justify-between mb-2">
                             <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Utilidad Histórica Almohadas</span>
@@ -149,7 +147,6 @@
                         <span class="text-[10px] text-slate-400 block mt-1">Ganancia neta acumulada de almohadas</span>
                     </div>
 
-                    <!-- INVERSIÓN TOTAL (MES) -->
                     <div onclick="cambiarVista('inventario')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-cyan-500 transition relative overflow-hidden border-l-4 border-l-cyan-600">
                         <div class="flex items-center justify-between mb-2">
                             <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Inversión Total (Mes)</span>
@@ -159,7 +156,6 @@
                         <span class="text-[10px] text-slate-400 block mt-1">Compras de almohadas este mes</span>
                     </div>
 
-                    <!-- INVERSIÓN TOTAL HISTÓRICA -->
                     <div onclick="cambiarVista('inventario')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-teal-500 transition relative overflow-hidden border-l-4 border-l-teal-600">
                         <div class="flex items-center justify-between mb-2">
                             <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Inversión Total Histórica</span>
@@ -192,7 +188,6 @@
                         </div>
                         <h3 id="dash-gasto-combustible" class="text-3xl font-bold mt-1 text-amber-600">$0.00</h3>
                     </div>
-
                 </div>
             </div>
 
@@ -439,6 +434,56 @@
                 </div>
             </div>
 
+            <!-- NUEVA VISTA: CAJA (EFECTIVO Y CUENTAS PERSONALES) -->
+            <div id="vista-caja" class="space-y-6 hidden">
+                <div class="flex justify-between items-center bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                    <div>
+                        <h2 class="font-bold text-slate-800 text-base">Control de Caja (Dinero Disponible)</h2>
+                        <p class="text-xs text-slate-500">Maneja la información del dinero con el que cuentas actualmente de forma independiente.</p>
+                    </div>
+                    <div class="bg-emerald-50 border border-emerald-200 px-4 py-2 rounded-xl text-right">
+                        <span class="text-[10px] uppercase font-semibold text-emerald-600 block">Total en Caja</span>
+                        <span id="caja-total-general" class="text-xl font-bold text-emerald-700">$0.00</span>
+                    </div>
+                </div>
+
+                <!-- Formulario de Agregar / Editar Caja -->
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                    <h3 id="caja-titulo-form" class="font-bold text-slate-800 text-base">Agregar Cuenta o Efectivo en Caja</h3>
+                    <form onsubmit="guardarItemCaja(event)" class="grid grid-cols-1 sm:grid-cols-4 gap-4 text-sm">
+                        <input type="hidden" id="caja-id">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Nombre / Cuenta</label>
+                            <input type="text" id="caja-nombre" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2" placeholder="Ej: Efectivo, Banco Pichincha...">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Monto ($)</label>
+                            <input type="number" step="0.01" id="caja-monto" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2" placeholder="0.00">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Descripción / Detalle</label>
+                            <input type="text" id="caja-obs" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2" placeholder="Ej: Dinero en billetera...">
+                        </div>
+                        <div class="flex items-end gap-2">
+                            <button type="submit" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white p-2 rounded-lg font-medium shadow-sm transition">Guardar</button>
+                            <button type="button" onclick="limpiarFormularioCaja()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-3 py-2 rounded-lg font-medium transition">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Tabla de Caja -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-sm">
+                        <thead>
+                            <tr class="bg-[#0B132B] text-white text-xs uppercase">
+                                <th class="p-3">Cuenta / Origen</th><th class="p-3">Monto Disponible</th><th class="p-3">Descripción</th><th class="p-3 text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-caja-cuerpo" class="divide-y divide-slate-100 text-xs sm:text-sm"></tbody>
+                    </table>
+                </div>
+            </div>
+
             <!-- ENTRADAS / SALIDAS PERSONALES -->
             <div id="vista-movimientos" class="space-y-6 hidden">
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
@@ -472,7 +517,6 @@
                                 <option value="Agregar Manual">Agregar manualmente...</option>
                             </select>
                         </div>
-                        <!-- Campo manual dinámico -->
                         <div id="contenedor-cat-manual" class="sm:col-span-4 hidden">
                             <label class="block text-xs font-semibold text-slate-600 mb-1">Especifique nueva categoría</label>
                             <input type="text" id="mov-cat-manual" placeholder="Escriba la nueva categoría..." class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2">
@@ -487,14 +531,11 @@
                     </form>
                 </div>
                 
-                <!-- HISTORIAL SEPARADO POR SEMANAS -->
                 <div class="space-y-4">
                     <div class="flex justify-between items-center">
                         <h2 class="font-bold text-slate-800 text-base">Historial de Entradas y Salidas por Semanas (Lunes a Domingo)</h2>
                     </div>
-                    <div id="contenedor-historial-semanas" class="space-y-4">
-                        <!-- Las semanas se inyectarán dinámicamente aquí -->
-                    </div>
+                    <div id="contenedor-historial-semanas" class="space-y-4"></div>
                 </div>
             </div>
 
@@ -625,42 +666,6 @@
         </div>
     </div>
 
-    <!-- MODAL DETALLES DEL CLIENTE -->
-    <div id="modal-detalle-cliente" class="fixed inset-0 bg-black/50 backdrop-blur-xs hidden flex items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-4 border border-slate-100 max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-                <h3 id="det-nombre-cliente" class="font-bold text-slate-800 text-lg">Detalles del Cliente</h3>
-                <button onclick="cerrarModalDetalle()" class="text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="grid grid-cols-3 gap-4 text-sm bg-slate-50 p-4 rounded-xl border border-slate-100">
-                <div><p class="text-xs text-slate-400 font-semibold uppercase">Teléfono</p><p id="det-tel" class="font-medium text-slate-800">-</p></div>
-                <div><p class="text-xs text-slate-400 font-semibold uppercase">Dirección</p><p id="det-dir" class="font-medium text-slate-800">-</p></div>
-                <div><p class="text-xs text-slate-400 font-semibold uppercase">Saldo / Deuda Total</p><p id="det-saldo" class="font-bold text-rose-600">$0.00</p></div>
-            </div>
-            <div>
-                <h4 class="font-bold text-slate-700 text-sm mb-2">Historial de Ventas</h4>
-                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
-                    <table class="w-full text-left border-collapse text-xs">
-                        <thead><tr class="bg-slate-800 text-white uppercase"><th class="p-2">Fecha</th><th class="p-2">Cant.</th><th class="p-2">Total ($)</th><th class="p-2">Tipo</th><th class="p-2">Vendedor</th><th class="p-2">Cuota ($)</th></tr></thead>
-                        <tbody id="tabla-detalles-ventas" class="divide-y divide-slate-100"></tbody>
-                    </table>
-                </div>
-            </div>
-            <div>
-                <h4 class="font-bold text-slate-700 text-sm mb-2">Historial de Cobros / Abonos</h4>
-                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
-                    <table class="w-full text-left border-collapse text-xs">
-                        <thead><tr class="bg-slate-800 text-white uppercase"><th class="p-2">Fecha de Pago</th><th class="p-2">Monto Abonado ($)</th></tr></thead>
-                        <tbody id="tabla-detalles-cobros" class="divide-y divide-slate-100"></tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="flex justify-end pt-2">
-                <button onclick="cerrarModalDetalle()" class="px-4 py-2 rounded-lg bg-slate-900 text-white text-sm font-medium">Cerrar</button>
-            </div>
-        </div>
-    </div>
-
     <!-- SCRIPT FIREBASE Y LÓGICA -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -683,9 +688,9 @@
         let listaPagos = [];
         let listaInventario = [];
         let listaMovimientos = [];
+        let listaCaja = [];
         let vistaActualActiva = 'dashboard';
 
-        // FUNCIÓN PARA CONTROLAR EL MENÚ LATERAL EN MÓVIL
         window.toggleSidebarMovil = () => {
             const sidebar = document.getElementById('sidebar-principal');
             const overlay = document.getElementById('sidebar-overlay');
@@ -695,7 +700,7 @@
 
         window.cambiarVista = (v) => {
             vistaActualActiva = v;
-            ['dashboard', 'clientes', 'ventas', 'pagos', 'comisiones', 'inventario', 'calendario', 'finanzas', 'movimientos', 'combustible'].forEach(id => {
+            ['dashboard', 'clientes', 'ventas', 'pagos', 'comisiones', 'inventario', 'calendario', 'finanzas', 'caja', 'movimientos', 'combustible'].forEach(id => {
                 const el = document.getElementById(`vista-${id}`);
                 if(el) el.classList.add('hidden');
                 const nav = document.getElementById(`nav-${id}`);
@@ -706,7 +711,6 @@
             const activeNav = document.getElementById(`nav-${v}`);
             if(activeNav) activeNav.className = "flex items-center gap-3 px-3 py-2 rounded-lg bg-indigo-900/50 text-white font-medium";
 
-            // Si estamos en celular, cerrar el menú automáticamente al cambiar de vista
             if(window.innerWidth < 768) {
                 const sidebar = document.getElementById('sidebar-principal');
                 const overlay = document.getElementById('sidebar-overlay');
@@ -779,7 +783,6 @@
                 });
                 document.getElementById('tabla-inventario-cuerpo').innerHTML = htmlInv || '<tr><td colspan="5" class="p-4 text-center text-slate-400">Sin compras registradas</td></tr>';
 
-                // Mostrar Inversiones en el Dashboard
                 document.getElementById('dash-inversion-mes').innerText = `$${inversionMesTotal.toFixed(2)}`;
                 document.getElementById('dash-inversion-historica').innerText = `$${inversionHistoricaTotal.toFixed(2)}`;
 
@@ -857,7 +860,7 @@
 
                     htmlClientes += `
                         <tr class="hover:bg-slate-50 border-b border-slate-100">
-                            <td class="p-3 font-medium text-indigo-600 cursor-pointer hover:underline" onclick="verDetalleCliente('${item.id}')">${item.nombre || ''}</td>
+                            <td class="p-3 font-medium text-indigo-600">${item.nombre || ''}</td>
                             <td class="p-3 text-slate-600">${item.direccion || '-'}</td>
                             <td class="p-3 text-slate-600">${item.telefono || '-'}</td>
                             <td class="p-3 text-slate-600 font-semibold">${artTotales}</td>
@@ -881,115 +884,40 @@
                 document.getElementById('dash-clientes').innerText = listaClientes.length;
                 document.getElementById('dash-deuda').innerText = `$${totalDeuda.toFixed(2)}`;
 
-                // Historial de Pagos
-                let htmlPagos = '';
-                listaPagos.forEach(p => {
-                    htmlPagos += `
-                        <tr class="hover:bg-slate-50 border-b border-slate-100">
-                            <td class="p-3 text-slate-600">${p.fecha || '-'}</td>
-                            <td class="p-3 font-medium text-slate-900">${p.nombre || ''}</td>
-                            <td class="p-3 font-semibold text-emerald-600">$${(parseFloat(p.monto) || 0).toFixed(2)}</td>
-                            <td class="p-3 text-slate-600">$${(parseFloat(p.saldoAnt) || 0).toFixed(2)}</td>
-                            <td class="p-3 font-semibold text-rose-600">$${(parseFloat(p.saldoNuevo) || 0).toFixed(2)}</td>
-                            <td class="p-3 text-slate-500">${p.observaciones || '-'}</td>
-                            <td class="p-3 text-center"><button onclick="eliminarPago('${p.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button></td>
-                        </tr>
-                    `;
-                });
-                document.getElementById('tabla-pagos-cuerpo').innerHTML = htmlPagos || '<tr><td colspan="7" class="p-4 text-center text-slate-400">Sin pagos registrados</td></tr>';
+                // 5. CAJA (NUEVA SECCIÓN INDEPENDIENTE)
+                const snapCaja = await getDocs(collection(db, "caja_personales_ethan"));
+                listaCaja = [];
+                snapCaja.forEach(d => listaCaja.push({ id: d.id, ...d.data() }));
 
-                // Ventas General
-                let htmlVentas = '';
-                listaVentas.forEach(item => {
-                    const cant = parseInt(item.cantidad || 1);
-                    const total = parseFloat(item.total || (cant * 40));
-                    htmlVentas += `
+                let htmlCaja = '';
+                let totalCajaGeneral = 0;
+                listaCaja.forEach(c => {
+                    const monto = parseFloat(c.monto || 0);
+                    totalCajaGeneral += monto;
+                    htmlCaja += `
                         <tr class="hover:bg-slate-50 border-b border-slate-100">
-                            <td class="p-3 text-slate-600">${item.fecha || '-'}</td>
-                            <td class="p-3 font-medium text-slate-900">${item.nombre || ''}</td>
-                            <td class="p-3 text-slate-600">${cant}</td>
-                            <td class="p-3 text-slate-600">$${total.toFixed(2)}</td>
-                            <td class="p-3"><span class="px-2 py-1 text-xs rounded-full ${item.tipo === 'Contado' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">${item.tipo || 'Crédito'}</span></td>
-                            <td class="p-3 text-slate-600">${item.vendedor || '-'}</td>
+                            <td class="p-3 font-semibold text-slate-900">${c.nombre || '-'}</td>
+                            <td class="p-3 font-bold text-emerald-600">$${monto.toFixed(2)}</td>
+                            <td class="p-3 text-slate-500">${c.observacion || '-'}</td>
                             <td class="p-3 text-center space-x-2">
-                                <button onclick="editarVenta('${item.id}')" class="text-indigo-600 hover:text-indigo-800"><i class="fa-solid fa-pen"></i></button>
-                                <button onclick="eliminarVenta('${item.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
+                                <button onclick="editarItemCaja('${c.id}')" class="text-indigo-600 hover:text-indigo-800"><i class="fa-solid fa-pen"></i></button>
+                                <button onclick="eliminarItemCaja('${c.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
                             </td>
                         </tr>
                     `;
                 });
-                document.getElementById('tabla-ventas-cuerpo').innerHTML = htmlVentas || '<tr><td colspan="7" class="p-4 text-center text-slate-400">Sin ventas registradas</td></tr>';
+                document.getElementById('tabla-caja-cuerpo').innerHTML = htmlCaja || '<tr><td colspan="4" class="p-4 text-center text-slate-400">Sin registros en caja</td></tr>';
+                document.getElementById('caja-total-general').innerText = `$${totalCajaGeneral.toFixed(2)}`;
 
-                // Comisiones
-                let htmlComisiones = '';
-                let totalPendienteComision = 0;
-                let totalPagadaComision = 0;
-
-                listaVentas.forEach(item => {
-                    const cantAlmohadas = parseInt(item.cantidad || 1);
-                    const comisionTotalVenta = cantAlmohadas * 5;
-                    const estadoComision = item.estadoComision || 'Pendiente';
-
-                    if(estadoComision === 'Pagada') {
-                        totalPagadaComision += comisionTotalVenta;
-                    } else {
-                        totalPendienteComision += comisionTotalVenta;
-                    }
-
-                    const badgeColor = estadoComision === 'Pagada' ? 'text-emerald-600 font-semibold' : 'text-rose-600 font-semibold';
-
-                    htmlComisiones += `
-                        <tr class="hover:bg-slate-50 border-b border-slate-100">
-                            <td class="p-3 text-slate-900 font-medium">${item.vendedor || 'George'}</td>
-                            <td class="p-3 text-slate-700">${item.nombre || ''}</td>
-                            <td class="p-3 text-slate-600">$${(parseFloat(item.total) || (cantAlmohadas * 40)).toFixed(2)}</td>
-                            <td class="p-3 font-semibold text-slate-900">$${comisionTotalVenta.toFixed(2)}</td>
-                            <td class="p-3 ${badgeColor}">${estadoComision}</td>
-                            <td class="p-3 text-center">
-                                <button onclick="toggleEstadoComision('${item.id}', '${estadoComision}')" class="bg-[#0B132B] hover:bg-indigo-900 text-white px-3 py-1 rounded-lg text-xs font-semibold shadow-sm transition">Marcar</button>
-                            </td>
-                        </tr>
-                    `;
-                });
-
-                document.getElementById('comision-pendiente').innerText = `$${totalPendienteComision.toFixed(2)}`;
-                document.getElementById('comision-pagada').innerText = `$${totalPagadaComision.toFixed(2)}`;
-                document.getElementById('dash-comisiones-pendientes').innerText = `$${totalPendienteComision.toFixed(2)}`;
-                document.getElementById('tabla-comisiones-cuerpo').innerHTML = htmlComisiones || '<tr><td colspan="6" class="p-4 text-center text-slate-400">Sin comisiones registradas</td></tr>';
-
-                // Calendario de Cobros
-                let htmlCal = '';
-                listaVentas.forEach(v => {
-                    if(v.proximoPago) {
-                        const clienteObj = listaClientes.find(c => c.id === v.clienteId || c.nombre === v.nombre);
-                        const saldoCli = clienteObj ? (clienteObj.saldoActualCalculado || 0) : 0;
-                        htmlCal += `
-                            <tr class="hover:bg-slate-50 border-b border-slate-100">
-                                <td class="p-3 font-semibold text-indigo-600">${v.proximoPago}</td>
-                                <td class="p-3 font-medium text-slate-900">${v.nombre || ''}</td>
-                                <td class="p-3 text-slate-600">${v.telefono || '-'}</td>
-                                <td class="p-3 font-semibold text-emerald-600">$${(parseFloat(v.cuota) || 10).toFixed(2)}</td>
-                                <td class="p-3 font-semibold text-rose-600">$${saldoCli.toFixed(2)}</td>
-                                <td class="p-3 text-slate-500">${v.observaciones || '-'}</td>
-                            </tr>
-                        `;
-                    }
-                });
-                document.getElementById('tabla-calendario-cuerpo').innerHTML = htmlCal || '<tr><td colspan="6" class="p-4 text-center text-slate-400">Sin fechas de pago programadas</td></tr>';
-
-                // Finanzas Personales & Movimientos
+                // 6. Movimientos Personales y Combustible
                 const snapMov = await getDocs(collection(db, "movimientos_personales_ethan"));
                 listaMovimientos = [];
                 snapMov.forEach(d => listaMovimientos.push({ id: d.id, ...d.data() }));
-
-                // ORDENAR MOVIMIENTOS POR FECHA (Más reciente primero)
                 listaMovimientos.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
 
                 let ingHoy = 0, ingSem = 0, ingMes = 0;
                 let gasHoy = 0, gasSem = 0, gasMes = 0;
                 let combustibleTotal = 0;
-
-                // Rangos actualizados de Lunes a Domingo para cálculos generales
                 const { inicioSemanaActual, finSemanaActual } = obtenerRangosSemanales();
 
                 listaMovimientos.forEach(m => {
@@ -999,9 +927,7 @@
                     const fechaMov = m.fecha ? new Date(m.fecha + 'T00:00:00') : null;
                     const esEstaSemana = fechaMov && (fechaMov >= inicioSemanaActual && fechaMov <= finSemanaActual);
 
-                    if(m.categoria === 'Combustible') {
-                        combustibleTotal += montoNum;
-                    }
+                    if(m.categoria === 'Combustible') combustibleTotal += montoNum;
 
                     if(m.tipo === 'Entrada') {
                         if(esHoy) ingHoy += montoNum;
@@ -1014,10 +940,7 @@
                     }
                 });
 
-                // Renderizar Movimientos Personales Agrupados por Semanas (Lunes a Domingo)
                 renderizarMovimientosPorSemanas();
-
-                // Renderizar historial de combustible y calcular totales de semana actual / anterior
                 renderizarHistorialCombustible();
 
                 document.getElementById('fin-ing-hoy').innerText = `$${ingHoy.toFixed(2)}`;
@@ -1028,65 +951,32 @@
                 document.getElementById('fin-gas-sem').innerText = `$${gasSem.toFixed(2)}`;
                 document.getElementById('fin-gas-mes').innerText = `$${gasMes.toFixed(2)}`;
 
-                const balDia = ingHoy - gasHoy;
-                const balSem = ingSem - gasSem;
-                const balMes = ingMes - gasMes;
-
-                document.getElementById('fin-bal-dia').innerText = `$${balDia.toFixed(2)}`;
-                document.getElementById('fin-bal-sem').innerText = `$${balSem.toFixed(2)}`;
-                document.getElementById('fin-bal-mes').innerText = `$${balMes.toFixed(2)}`;
+                document.getElementById('fin-bal-dia').innerText = `$${(ingHoy - gasHoy).toFixed(2)}`;
+                document.getElementById('fin-bal-sem').innerText = `$${(ingSem - gasSem).toFixed(2)}`;
+                document.getElementById('fin-bal-mes').innerText = `$${(ingMes - gasMes).toFixed(2)}`;
 
                 document.getElementById('fin-comb-total').innerText = `$${combustibleTotal.toFixed(2)}`;
                 document.getElementById('dash-gasto-combustible').innerText = `$${combustibleTotal.toFixed(2)}`;
                 
-                // CÁLCULO DE LA UTILIDAD NETA DEL MES (EXCLUSIVAMENTE DEL NEGOCIO DE ALMOHADAS)
                 let ventasMesTotal = 0;
                 let costoMercaderiaMes = 0;
-
                 listaVentas.forEach(v => {
                     if(v.fecha && v.fecha.startsWith(mesActualStr)) {
                         ventasMesTotal += parseFloat(v.total || (v.cantidad * 40));
-                        const cantV = parseInt(v.cantidad || 1);
-                        costoMercaderiaMes += cantV * costoPromedio;
+                        costoMercaderiaMes += parseInt(v.cantidad || 1) * costoPromedio;
                     }
                 });
+                document.getElementById('dash-utilidad-neta').innerText = `$${(ventasMesTotal - costoMercaderiaMes).toFixed(2)}`;
 
-                let utilidadNetaMes = ventasMesTotal - costoMercaderiaMes;
-                document.getElementById('dash-utilidad-neta').innerText = `$${utilidadNetaMes.toFixed(2)}`;
-
-                // CÁLCULO DE LA UTILIDAD HISTÓRICA (EXCLUSIVAMENTE DEL NEGOCIO DE ALMOHADAS)
                 let ventasTotalGlobal = 0;
                 let costoMercaderiaGlobal = 0;
-
                 listaVentas.forEach(v => {
                     ventasTotalGlobal += parseFloat(v.total || (v.cantidad * 40));
-                    const cantV = parseInt(v.cantidad || 1);
-                    costoMercaderiaGlobal += cantV * costoPromedio;
+                    costoMercaderiaGlobal += parseInt(v.cantidad || 1) * costoPromedio;
                 });
+                document.getElementById('dash-utilidad-historica').innerText = `$${(ventasTotalGlobal - costoMercaderiaGlobal).toFixed(2)}`;
 
-                let utilidadHistoricaGlobal = ventasTotalGlobal - costoMercaderiaGlobal;
-                document.getElementById('dash-utilidad-historica').innerText = `$${utilidadHistoricaGlobal.toFixed(2)}`;
-
-                const porcGastoComb = gasMes > 0 ? ((combustibleTotal / gasMes) * 100).toFixed(1) : '0';
-                document.getElementById('fin-porc-comb').innerText = `${porcGastoComb}%`;
-
-                const contenedorGrafico = document.getElementById('contenedor-grafico-finanzas');
-                contenedorGrafico.innerHTML = `
-                    <div class="flex flex-col items-center gap-2 h-full justify-end">
-                        <div class="w-12 bg-emerald-500 rounded-t-lg transition-all duration-500" style="height: ${Math.min(100, (ingMes > 0 ? (ingMes/300)*100 : 0))}%;"></div>
-                        <span class="text-xs font-semibold text-slate-500">Ingresos</span>
-                    </div>
-                    <div class="flex flex-col items-center gap-2 h-full justify-end">
-                        <div class="w-12 bg-rose-500 rounded-t-lg transition-all duration-500" style="height: ${Math.min(100, (gasMes > 0 ? (gasMes/300)*100 : 0))}%;"></div>
-                        <span class="text-xs font-semibold text-slate-500">Gastos</span>
-                    </div>
-                `;
-
-                const hoy = new Date().toISOString().split('T')[0];
-                document.getElementById('pago-fecha').value = hoy;
-                document.getElementById('inv-fecha').value = hoy;
-                document.getElementById('mov-fecha').value = hoy;
-                document.getElementById('comb-fecha').value = hoy;
+                document.getElementById('fin-porc-comb').innerText = `${gasMes > 0 ? ((combustibleTotal / gasMes) * 100).toFixed(1) : '0'}%`;
 
                 dot.className = "w-3 h-3 rounded-full bg-emerald-500";
             } catch(e) {
@@ -1095,7 +985,51 @@
             }
         }
 
-        // FUNCIONES DE FECHAS CORREGIDAS: SEMANAS ESTRICTAS DE LUNES A DOMINGO
+        // FUNCIONES DE CAJA
+        window.guardarItemCaja = async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('caja-id').value;
+            const data = {
+                nombre: document.getElementById('caja-nombre').value,
+                monto: parseFloat(document.getElementById('caja-monto').value) || 0,
+                observacion: document.getElementById('caja-obs').value
+            };
+            if(id) {
+                await updateDoc(doc(db, "caja_personales_ethan", id), data);
+            } else {
+                await addDoc(collection(db, "caja_personales_ethan"), data);
+            }
+            limpiarFormularioCaja();
+            sincronizarDatos();
+            alert("¡Información de caja guardada con éxito!");
+        }
+
+        window.editarItemCaja = (id) => {
+            const item = listaCaja.find(x => x.id === id);
+            if(!item) return;
+            document.getElementById('caja-id').value = item.id;
+            document.getElementById('caja-nombre').value = item.nombre || '';
+            document.getElementById('caja-monto').value = item.monto || '';
+            document.getElementById('caja-obs').value = item.observacion || '';
+            document.getElementById('caja-titulo-form').innerText = "Editar Cuenta / Efectivo en Caja";
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        window.eliminarItemCaja = async (id) => {
+            if(confirm("¿Estás seguro de eliminar este registro de caja?")) {
+                await deleteDoc(doc(db, "caja_personales_ethan", id));
+                sincronizarDatos();
+            }
+        }
+
+        window.limpiarFormularioCaja = () => {
+            document.getElementById('caja-id').value = '';
+            document.getElementById('caja-nombre').value = '';
+            document.getElementById('caja-monto').value = '';
+            document.getElementById('caja-obs').value = '';
+            document.getElementById('caja-titulo-form').innerText = "Agregar Cuenta o Efectivo en Caja";
+        }
+
         function obtenerLunesDeLaSemana(d) {
             const fecha = new Date(d);
             const dia = fecha.getDay();
@@ -1108,96 +1042,70 @@
             const ano = lunes.getFullYear();
             const primerDiaAno = new Date(ano, 0, 1);
             const dias = Math.floor((lunes - primerDiaAno) / (24 * 60 * 60 * 1000));
-            const numSemana = Math.floor(dias / 7) + 1;
-            return `${ano}-W${String(numSemana).padStart(2, '0')}`;
+            return `${ano}-W${String(Math.floor(dias / 7) + 1).padStart(2, '0')}`;
         }
 
         function obtenerNombreSemana(d) {
             const lunes = obtenerLunesDeLaSemana(d);
             const domingo = new Date(lunes);
             domingo.setDate(lunes.getDate() + 6);
-
             const opciones = { month: 'short', day: 'numeric' };
-            const fLunes = lunes.toLocaleDateString('es-ES', opciones);
-            const fDomingo = domingo.toLocaleDateString('es-ES', opciones);
-            return `Semana del ${fLunes} al ${fDomingo} de ${lunes.getFullYear()}`;
+            return `Semana del ${lunes.toLocaleDateString('es-ES', opciones)} al ${domingo.toLocaleDateString('es-ES', opciones)} de ${lunes.getFullYear()}`;
         }
 
         function obtenerRangosSemanales() {
             const ahora = new Date();
             const lunesActual = obtenerLunesDeLaSemana(ahora);
             lunesActual.setHours(0, 0, 0, 0);
-
             const domingoActual = new Date(lunesActual);
             domingoActual.setDate(lunesActual.getDate() + 6);
             domingoActual.setHours(23, 59, 59, 999);
-
             const lunesAnterior = new Date(lunesActual);
             lunesAnterior.setDate(lunesActual.getDate() - 7);
-
             const domingoAnterior = new Date(domingoActual);
             domingoAnterior.setDate(domingoActual.getDate() - 7);
-
-            return { 
-                inicioSemanaActual: lunesActual, 
-                finSemanaActual: domingoActual, 
-                inicioSemanaAnterior: lunesAnterior, 
-                finSemanaAnterior: domingoAnterior 
-            };
+            return { inicioSemanaActual: lunesActual, finSemanaActual: domingoActual, inicioSemanaAnterior: lunesAnterior, finSemanaAnterior: domingoAnterior };
         }
 
-        // FUNCIÓN PARA AGRUPAR Y RENDERIZAR MOVIMIENTOS POR SEMANAS
         window.renderizarMovimientosPorSemanas = () => {
             const contenedor = document.getElementById('contenedor-historial-semanas');
             if(!listaMovimientos || listaMovimientos.length === 0) {
                 contenedor.innerHTML = '<div class="bg-white p-4 rounded-xl border border-slate-200 text-center text-slate-400 text-sm">Sin movimientos personales registrados.</div>';
                 return;
             }
-
             const semanasMap = {};
             listaMovimientos.forEach(m => {
                 if(!m.fecha) return;
                 const d = new Date(m.fecha + 'T00:00:00');
                 const idSemana = obtenerIdSemana(d);
                 if(!semanasMap[idSemana]) {
-                    semanasMap[idSemana] = {
-                        titulo: obtenerNombreSemana(d),
-                        movimientos: [],
-                        totalEntradas: 0,
-                        totalSalidas: 0
-                    };
+                    semanasMap[idSemana] = { titulo: obtenerNombreSemana(d), movimientos: [], totalEntradas: 0, totalSalidas: 0 };
                 }
                 semanasMap[idSemana].movimientos.push(m);
                 const monto = parseFloat(m.monto || 0);
                 if(m.tipo === 'Entrada') semanasMap[idSemana].totalEntradas += monto;
                 else semanasMap[idSemana].totalSalidas += monto;
             });
-
             const semanasOrdenadas = Object.keys(semanasMap).sort().reverse();
-
             let htmlFinal = '';
             semanasOrdenadas.forEach((semKey, index) => {
                 const sem = semanasMap[semKey];
                 const balanceSemanal = sem.totalEntradas - sem.totalSalidas;
-                const colorBalance = balanceSemanal >= 0 ? 'text-emerald-600' : 'text-rose-600';
                 const isOpen = index === 0 ? '' : 'hidden';
                 const rotateIcon = index === 0 ? 'rotate-180' : '';
-
                 let filasMovs = '';
                 sem.movimientos.forEach(m => {
-                    const montoNum = parseFloat(m.monto || 0);
                     filasMovs += `
                         <tr class="hover:bg-slate-50 border-b border-slate-100">
                             <td class="p-3 text-slate-600">${m.fecha || '-'}</td>
                             <td class="p-3"><span class="px-2 py-1 text-xs rounded-full ${m.tipo === 'Entrada' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}">${m.tipo}</span></td>
                             <td class="p-3 font-medium text-slate-800">${m.categoria || '-'}</td>
-                            <td class="p-3 font-semibold ${m.tipo === 'Entrada' ? 'text-emerald-600' : 'text-rose-600'}">$${montoNum.toFixed(2)}</td>
+                            <td class="p-3 font-semibold ${m.tipo === 'Entrada' ? 'text-emerald-600' : 'text-rose-600'}">$${parseFloat(m.monto || 0).toFixed(2)}</td>
                             <td class="p-3 text-slate-500">${m.descripcion || '-'}</td>
                             <td class="p-3 text-center"><button onclick="eliminarMovimiento('${m.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button></td>
                         </tr>
                     `;
                 });
-
                 htmlFinal += `
                     <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden mb-4">
                         <button onclick="toggleAcordeonSemana('${semKey}')" class="w-full bg-slate-900 text-white p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-left hover:bg-slate-800 transition">
@@ -1208,7 +1116,7 @@
                             <div class="flex items-center gap-4 text-xs font-semibold">
                                 <span class="bg-emerald-900/60 text-emerald-300 px-2.5 py-1 rounded-md">Entradas: +$${sem.totalEntradas.toFixed(2)}</span>
                                 <span class="bg-rose-900/60 text-rose-300 px-2.5 py-1 rounded-md">Salidas: -$${sem.totalSalidas.toFixed(2)}</span>
-                                <span class="bg-slate-800 text-white px-2.5 py-1 rounded-md border border-slate-700">Balance: <span class="${colorBalance}">$${balanceSemanal.toFixed(2)}</span></span>
+                                <span class="bg-slate-800 text-white px-2.5 py-1 rounded-md border border-slate-700">Balance: <span class="${balanceSemanal >= 0 ? 'text-emerald-400' : 'text-rose-400'}">$${balanceSemanal.toFixed(2)}</span></span>
                             </div>
                         </button>
                         <div id="semana-body-${semKey}" class="${isOpen} overflow-x-auto">
@@ -1218,45 +1126,32 @@
                                         <th class="p-3">Fecha</th><th class="p-3">Tipo</th><th class="p-3">Categoría</th><th class="p-3">Monto</th><th class="p-3">Descripción</th><th class="p-3 text-center">Acciones</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-slate-100 text-xs sm:text-sm">
-                                    ${filasMovs}
-                                </tbody>
+                                <tbody class="divide-y divide-slate-100 text-xs sm:text-sm">${filasMovs}</tbody>
                             </table>
                         </div>
                     </div>
                 `;
             });
-
             contenedor.innerHTML = htmlFinal;
         }
 
         window.toggleAcordeonSemana = (semKey) => {
-            const body = document.getElementById(`semana-body-${semKey}`);
-            const icono = document.getElementById(`icono-sem-${semKey}`);
-            body.classList.toggle('hidden');
-            icono.classList.toggle('rotate-180');
+            document.getElementById(`semana-body-${semKey}`).classList.toggle('hidden');
+            document.getElementById(`icono-sem-${semKey}`).classList.toggle('rotate-180');
         }
 
         window.renderizarHistorialCombustible = () => {
             const filtroMesInput = document.getElementById('filtro-mes-combustible').value;
-            let htmlComb = '';
-            
             let listaCombustible = listaMovimientos.filter(m => m.categoria === 'Combustible');
             const { inicioSemanaActual, finSemanaActual, inicioSemanaAnterior, finSemanaAnterior } = obtenerRangosSemanales();
-            let totalSemanaActual = 0;
-            let totalSemanaAnterior = 0;
+            let totalSemanaActual = 0, totalSemanaAnterior = 0;
 
             listaCombustible.forEach(m => {
                 if(!m.fecha) return;
                 const fechaMov = new Date(m.fecha + 'T00:00:00');
                 const monto = parseFloat(m.monto || 0);
-
-                if(fechaMov >= inicioSemanaActual && fechaMov <= finSemanaActual) {
-                    totalSemanaActual += monto;
-                }
-                if(fechaMov >= inicioSemanaAnterior && fechaMov <= finSemanaAnterior) {
-                    totalSemanaAnterior += monto;
-                }
+                if(fechaMov >= inicioSemanaActual && fechaMov <= finSemanaActual) totalSemanaActual += monto;
+                if(fechaMov >= inicioSemanaAnterior && fechaMov <= finSemanaAnterior) totalSemanaAnterior += monto;
             });
 
             document.getElementById('comb-total-sem-actual').innerText = `$${totalSemanaActual.toFixed(2)}`;
@@ -1264,34 +1159,21 @@
 
             if(filtroMesInput) {
                 listaCombustible = listaCombustible.filter(m => m.fecha && m.fecha.startsWith(filtroMesInput));
-                document.getElementById('info-filtro-combustible').innerText = `Filtrado por el mes: ${filtroMesInput}`;
-            } else {
-                document.getElementById('info-filtro-combustible').innerText = `Mostrando todos los registros ordenados por fecha`;
             }
 
+            let htmlComb = '';
             listaCombustible.forEach(m => {
-                const montoNum = parseFloat(m.monto || 0);
                 htmlComb += `
                     <tr class="hover:bg-slate-50 border-b border-slate-100">
                         <td class="p-3 text-slate-600">${m.fecha || '-'}</td>
                         <td class="p-3 font-medium text-slate-800">${m.categoria || '-'}</td>
-                        <td class="p-3 font-semibold text-amber-600">$${montoNum.toFixed(2)}</td>
+                        <td class="p-3 font-semibold text-amber-600">$${parseFloat(m.monto || 0).toFixed(2)}</td>
                         <td class="p-3 text-slate-500">${m.descripcion || '-'}</td>
                         <td class="p-3 text-center"><button onclick="eliminarMovimiento('${m.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button></td>
                     </tr>
                 `;
             });
-
-            document.getElementById('tabla-combustible-cuerpo').innerHTML = htmlComb || '<tr><td colspan="5" class="p-4 text-center text-slate-400">Sin registros de combustible para este periodo.</td></tr>';
-        }
-
-        window.filtrarCombustiblePorMes = () => {
-            renderizarHistorialCombustible();
-        }
-
-        window.limpiarFiltroCombustible = () => {
-            document.getElementById('filtro-mes-combustible').value = '';
-            renderizarHistorialCombustible();
+            document.getElementById('tabla-combustible-cuerpo').innerHTML = htmlComb || '<tr><td colspan="5" class="p-4 text-center text-slate-400">Sin registros de combustible.</td></tr>';
         }
 
         window.guardarMovimientoPersonal = async (e) => {
@@ -1299,165 +1181,53 @@
             let categoriaFinal = document.getElementById('mov-cat').value;
             if(categoriaFinal === 'Agregar Manual') {
                 categoriaFinal = document.getElementById('mov-cat-manual').value.trim();
-                if(!categoriaFinal) {
-                    alert("Por favor especifique la categoría manual.");
-                    return;
-                }
             }
-
-            const data = {
+            await addDoc(collection(db, "movimientos_personales_ethan"), {
                 fecha: document.getElementById('mov-fecha').value,
                 tipo: document.getElementById('mov-tipo').value,
                 monto: parseFloat(document.getElementById('mov-monto').value) || 0,
                 categoria: categoriaFinal,
                 descripcion: document.getElementById('mov-obs').value
-            };
-            await addDoc(collection(db, "movimientos_personales_ethan"), data);
-            document.getElementById('mov-monto').value = '';
-            document.getElementById('mov-obs').value = '';
-            document.getElementById('mov-cat-manual').value = '';
-            document.getElementById('contenedor-cat-manual').classList.add('hidden');
-            document.getElementById('mov-cat').value = 'Combustible';
+            });
             sincronizarDatos();
-            alert("¡Movimiento personal guardado con éxito!");
+            alert("¡Movimiento guardado!");
         }
 
         window.guardarCombustibleRapido = async (e) => {
             e.preventDefault();
-            const data = {
+            await addDoc(collection(db, "movimientos_personales_ethan"), {
                 fecha: document.getElementById('comb-fecha').value,
                 tipo: 'Salida',
                 monto: parseFloat(document.getElementById('comb-monto').value) || 0,
                 categoria: 'Combustible',
                 descripcion: 'Carga de gasolina camioneta'
-            };
-            await addDoc(collection(db, "movimientos_personales_ethan"), data);
-            document.getElementById('comb-monto').value = '';
+            });
             sincronizarDatos();
-            alert("¡Carga de combustible registrada con éxito!");
+            alert("¡Carga registrada!");
         }
 
         window.eliminarMovimiento = async (id) => {
-            if(confirm("¿Eliminar este movimiento?")) {
-                await deleteDoc(doc(db, "movimientos_personales_ethan", id));
-                sincronizarDatos();
-            }
+            if(confirm("¿Eliminar?")) { await deleteDoc(doc(db, "movimientos_personales_ethan", id)); sincronizarDatos(); }
         }
-
-        window.descargarRespaldoJSON = () => {
-            try {
-                const datosRespaldo = {
-                    fechaRespaldo: new Date().toISOString(),
-                    clientes: listaClientes,
-                    ventas: listaVentas,
-                    cobros: listaPagos,
-                    inventario: listaInventario,
-                    movimientosPersonales: listaMovimientos
-                };
-                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(datosRespaldo, null, 2));
-                const downloadAnchor = document.createElement('a');
-                downloadAnchor.setAttribute("href", dataStr);
-                downloadAnchor.setAttribute("download", `respaldo_crm_ethan_${new Date().toISOString().split('T')[0]}.json`);
-                document.body.appendChild(downloadAnchor);
-                downloadAnchor.click();
-                downloadAnchor.remove();
-                alert("¡Respaldo de datos descargado con éxito!");
-            } catch (error) {
-                console.error(error);
-                alert("Hubo un error al generar el respaldo.");
-            }
-        };
-
-        window.restaurarRespaldoJSON = (event) => {
-            const archivo = event.target.files[0];
-            if (!archivo) return;
-            const lector = new FileReader();
-            lector.onload = function(e) {
-                try {
-                    const contenido = JSON.parse(e.target.result);
-                    if (contenido && contenido.clientes && contenido.ventas) {
-                        listaClientes = contenido.clientes || [];
-                        listaVentas = contenido.ventas || [];
-                        listaPagos = contenido.cobros || [];
-                        listaInventario = contenido.inventario || [];
-                        listaMovimientos = contenido.movimientosPersonales || [];
-                        alert("¡Respaldo cargado con éxito en la vista previa del sistema!");
-                        sincronizarDatos();
-                    } else {
-                        alert("El archivo JSON no tiene el formato correcto.");
-                    }
-                } catch (err) {
-                    console.error(err);
-                    alert("Error al leer el archivo JSON.");
-                }
-            };
-            lector.readAsText(archivo);
-        };
 
         window.descargarCodigoHTML = () => {
-            try {
-                const codigoActual = document.documentElement.outerHTML;
-                const blob = new Blob([codigoActual], { type: 'text/html;charset=utf-8' });
-                const url = URL.createObjectURL(blob);
-                const downloadAnchor = document.createElement('a');
-                downloadAnchor.href = url;
-                downloadAnchor.download = "index.html";
-                document.body.appendChild(downloadAnchor);
-                downloadAnchor.click();
-                downloadAnchor.remove();
-                URL.revokeObjectURL(url);
-                alert("¡Código HTML descargado con éxito!");
-            } catch (error) {
-                console.error(error);
-                alert("Hubo un error al descargar el código.");
-            }
+            const blob = new Blob([document.documentElement.outerHTML], { type: 'text/html;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "index.html";
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
         };
-
-        window.toggleEstadoComision = async (idVenta, estadoActual) => {
-            const nuevoEstado = estadoActual === 'Pendiente' ? 'Pagada' : 'Pendiente';
-            await updateDoc(doc(db, "ventas_ethan", idVenta), { estadoComision: nuevoEstado });
-            sincronizarDatos();
-        }
 
         window.guardarCompraInventario = async (e) => {
             e.preventDefault();
             const id = document.getElementById('inv-id').value;
-            const data = {
-                fecha: document.getElementById('inv-fecha').value,
-                cantidad: parseInt(document.getElementById('inv-cantidad').value) || 0,
-                costoTotal: parseFloat(document.getElementById('inv-costo-total').value) || 0
-            };
-            if(id) { await updateDoc(doc(db, "inventario_ethan", id), data); } 
-            else { await addDoc(collection(db, "inventario_ethan"), data); }
-            document.getElementById('inv-id').value = '';
-            document.getElementById('inv-cantidad').value = '';
-            document.getElementById('inv-costo-total').value = '';
-            document.getElementById('inv-titulo-form').innerText = "Ingresar Mercadería";
+            const data = { fecha: document.getElementById('inv-fecha').value, cantidad: parseInt(document.getElementById('inv-cantidad').value) || 0, costoTotal: parseFloat(document.getElementById('inv-costo-total').value) || 0 };
+            if(id) await updateDoc(doc(db, "inventario_ethan", id), data); else await addDoc(collection(db, "inventario_ethan"), data);
             sincronizarDatos();
-            alert("¡Operación de inventario guardada con éxito!");
-        }
-
-        window.editarCompraInventario = (id) => {
-            const item = listaInventario.find(x => x.id === id);
-            if(!item) return;
-            document.getElementById('inv-id').value = item.id;
-            document.getElementById('inv-fecha').value = item.fecha || '';
-            document.getElementById('inv-cantidad').value = item.cantidad || '';
-            document.getElementById('inv-costo-total').value = item.costoTotal || '';
-            document.getElementById('inv-titulo-form').innerText = "Editar Compra de Mercadería";
-            window.scrollTo({top: 0, behavior: 'smooth'});
-        }
-
-        window.eliminarCompraInventario = async (id) => {
-            if(confirm("¿Estás seguro de eliminar esta compra del inventario?")) {
-                await deleteDoc(doc(db, "inventario_ethan", id));
-                sincronizarDatos();
-            }
-        }
-
-        window.actualizarSaldoActual = (select) => {
-            const cliente = listaClientes.find(c => c.id === select.value);
-            document.getElementById('pago-saldo-actual').value = cliente ? (cliente.saldoActualCalculado || 0).toFixed(2) : '';
         }
 
         window.registrarPago = async (e) => {
@@ -1465,27 +1235,11 @@
             const idCliente = document.getElementById('pago-cliente').value;
             const montoPago = parseFloat(document.getElementById('pago-monto').value) || 0;
             const cliente = listaClientes.find(x => x.id === idCliente);
-            if(!cliente) return;
-            const saldoAnt = cliente.saldoActualCalculado || 0;
-            const saldoNuevo = Math.max(0, saldoAnt - montoPago);
-
+            const saldoAnt = cliente ? (cliente.saldoActualCalculado || 0) : 0;
             await addDoc(collection(db, "cobros_ethan"), {
-                clienteId: idCliente,
-                nombre: cliente.nombre,
-                monto: montoPago,
-                fecha: document.getElementById('pago-fecha').value,
-                saldoAnt: saldoAnt,
-                saldoNuevo: saldoNuevo,
-                observaciones: document.getElementById('pago-obs').value
+                clienteId: idCliente, nombre: cliente ? cliente.nombre : '', monto: montoPago, fecha: document.getElementById('pago-fecha').value, saldoAnt: saldoAnt, saldoNuevo: Math.max(0, saldoAnt - montoPago), observaciones: document.getElementById('pago-obs').value
             });
-            document.getElementById('pago-monto').value = '';
-            document.getElementById('pago-obs').value = '';
             sincronizarDatos();
-            alert("¡Pago registrado con éxito!");
-        }
-
-        window.eliminarPago = async (id) => {
-            if(confirm("¿Eliminar este pago?")) { await deleteDoc(doc(db, "cobros_ethan", id)); sincronizarDatos(); }
         }
 
         window.abrirModalCliente = () => { document.getElementById('form-cliente').reset(); document.getElementById('m-id').value = ''; document.getElementById('modal-cliente').classList.remove('hidden'); }
@@ -1494,17 +1248,8 @@
             e.preventDefault();
             const id = document.getElementById('m-id').value;
             const data = { nombre: document.getElementById('m-nombre').value, telefono: document.getElementById('m-telefono').value, direccion: document.getElementById('m-direccion').value };
-            if(id) { await updateDoc(doc(db, "clientes_ethan", id), data); } else { await addDoc(collection(db, "clientes_ethan"), data); }
+            if(id) await updateDoc(doc(db, "clientes_ethan", id), data); else await addDoc(collection(db, "clientes_ethan"), data);
             cerrarModalCliente(); sincronizarDatos();
-        }
-        window.editarCliente = (id) => {
-            const c = listaClientes.find(x => x.id === id);
-            if(!c) return;
-            document.getElementById('m-id').value = c.id;
-            document.getElementById('m-nombre').value = c.nombre || '';
-            document.getElementById('m-telefono').value = c.telefono || '';
-            document.getElementById('m-direccion').value = c.direccion || '';
-            document.getElementById('modal-cliente').classList.remove('hidden');
         }
 
         window.abrirModalVenta = () => {
@@ -1520,215 +1265,16 @@
             const cliente = listaClientes.find(c => c.id === select.value);
             if(cliente) { document.getElementById('v-telefono').value = cliente.telefono || ''; document.getElementById('v-direccion').value = cliente.direccion || ''; }
         }
-        window.calcularTotalVenta = () => {
-            const cant = parseFloat(document.getElementById('v-cantidad').value) || 0;
-            const precio = parseFloat(document.getElementById('v-precio').value) || 0;
-            document.getElementById('v-total').value = (cant * precio).toFixed(2);
-        }
         window.guardarVenta = async (e) => {
             e.preventDefault();
-            const id = document.getElementById('v-id').value;
             const select = document.getElementById('v-cliente-select');
-            const data = {
-                fecha: document.getElementById('v-fecha').value,
-                clienteId: select.value,
-                nombre: select.options[select.selectedIndex].text,
-                telefono: document.getElementById('v-telefono').value,
-                direccion: document.getElementById('v-direccion').value,
-                vendedor: document.getElementById('v-vendedor').value,
-                cantidad: parseInt(document.getElementById('v-cantidad').value) || 1,
-                precioUnitario: parseFloat(document.getElementById('v-precio').value) || 40,
-                total: parseFloat(document.getElementById('v-total').value),
-                tipo: document.getElementById('v-tipo').value,
-                formaPago: document.getElementById('v-forma-pago').value,
-                cuota: parseFloat(document.getElementById('v-cuota').value) || 0,
-                proximoPago: document.getElementById('v-proximo-pago').value,
-                observaciones: document.getElementById('v-obs').value,
-                estadoComision: 'Pendiente'
-            };
-            if(id) { await updateDoc(doc(db, "ventas_ethan", id), data); } else { await addDoc(collection(db, "ventas_ethan"), data); }
-            cerrarModalVenta(); sincronizarDatos(); alert("¡Venta guardada con éxito!");
-        }
-        window.editarVenta = (id) => {
-            const v = listaVentas.find(x => x.id === id);
-            if(!v) return;
-            abrirModalVenta();
-            document.getElementById('v-id').value = v.id;
-            document.getElementById('v-fecha').value = v.fecha || '';
-            document.getElementById('v-cliente-select').value = v.clienteId || '';
-            document.getElementById('v-telefono').value = v.telefono || '';
-            document.getElementById('v-direccion').value = v.direccion || '';
-            document.getElementById('v-vendedor').value = v.vendedor || 'George';
-            document.getElementById('v-cantidad').value = v.cantidad || 1;
-            document.getElementById('v-precio').value = v.precioUnitario || 40;
-            document.getElementById('v-total').value = v.total || 40;
-            document.getElementById('v-tipo').value = v.tipo || 'Crédito';
-            document.getElementById('v-forma-pago').value = v.formaPago || 'Semanal';
-            document.getElementById('v-cuota').value = v.cuota || 10;
-            document.getElementById('v-proximo-pago').value = v.proximoPago || '';
-            document.getElementById('v-obs').value = v.observaciones || '';
-        }
-
-        window.verDetalleCliente = (id) => {
-            const cliente = listaClientes.find(c => c.id === id);
-            if(!cliente) return;
-            document.getElementById('det-nombre-cliente').innerText = cliente.nombre || 'Cliente';
-            document.getElementById('det-tel').innerText = cliente.telefono || 'Sin teléfono';
-            document.getElementById('det-dir').innerText = cliente.direccion || 'Sin dirección';
-
-            const ventasCliente = listaVentas.filter(v => v.clienteId === id || v.nombre === cliente.nombre);
-            const pagosCliente = listaPagos.filter(p => p.clienteId === id || p.nombre === cliente.nombre);
-
-            let totalV = 0, totalC = 0, htmlV = '', htmlC = '';
-            ventasCliente.forEach(v => {
-                totalV += parseFloat(v.total || 0);
-                htmlV += `<tr class="border-b border-slate-100"><td class="p-2">${v.fecha || '-'}</td><td class="p-2">${v.cantidad || 1}</td><td class="p-2 font-medium">$${(parseFloat(v.total) || 0).toFixed(2)}</td><td class="p-2">${v.tipo || 'Crédito'}</td><td class="p-2">${v.vendedor || '-'}</td><td class="p-2 font-semibold text-indigo-600">$${(parseFloat(v.cuota) || 0).toFixed(2)}</td></tr>`;
+            await addDoc(collection(db, "ventas_ethan"), {
+                fecha: document.getElementById('v-fecha').value, clienteId: select.value, nombre: select.options[select.selectedIndex].text, telefono: document.getElementById('v-telefono').value, direccion: document.getElementById('v-direccion').value, vendedor: document.getElementById('v-vendedor').value, cantidad: parseInt(document.getElementById('v-cantidad').value) || 1, precioUnitario: parseFloat(document.getElementById('v-precio').value) || 40, total: parseFloat(document.getElementById('v-total').value), tipo: document.getElementById('v-tipo').value, formaPago: document.getElementById('v-forma-pago').value, cuota: parseFloat(document.getElementById('v-cuota').value) || 0, proximoPago: document.getElementById('v-proximo-pago').value, observaciones: document.getElementById('v-obs').value, estadoComision: 'Pendiente'
             });
-            document.getElementById('tabla-detalles-ventas').innerHTML = htmlV || '<tr><td colspan="6" class="p-3 text-center text-slate-400">Sin ventas.</td></tr>';
-
-            pagosCliente.forEach(p => {
-                totalC += parseFloat(p.monto || 0);
-                htmlC += `<tr class="border-b border-slate-100"><td class="p-2">${p.fecha || '-'}</td><td class="p-2 font-semibold text-emerald-600">$${(parseFloat(p.monto) || 0).toFixed(2)}</td></tr>`;
-            });
-            document.getElementById('tabla-detalles-cobros').innerHTML = htmlC || '<tr><td colspan="2" class="p-3 text-center text-slate-400">Sin pagos registrados.</td></tr>';
-
-            document.getElementById('det-saldo').innerText = `$${Math.max(0, totalV - totalC).toFixed(2)}`;
-            document.getElementById('modal-detalle-cliente').classList.add('hidden'); 
-            document.getElementById('modal-detalle-cliente').classList.remove('hidden');
+            cerrarModalVenta(); sincronizarDatos();
         }
-        window.cerrarModalDetalle = () => document.getElementById('modal-detalle-cliente').classList.add('hidden');
 
-        window.eliminarCliente = async (id) => { if(confirm("¿Eliminar cliente?")) { await deleteDoc(doc(db, "clientes_ethan", id)); sincronizarDatos(); } }
-        window.eliminarVenta = async (id) => { if(confirm("¿Eliminar venta?")) { await deleteDoc(doc(db, "ventas_ethan", id)); sincronizarDatos(); } }
-
-        // FUNCIONALIDAD DE EXPORTACIÓN A EXCEL Y PDF BASADA EN LA VISTA ACTUAL
-        window.exportarExcelVistaActual = () => {
-            try {
-                let nombreArchivo = `reporte_${vistaActualActiva}_${new Date().toISOString().split('T')[0]}.xlsx`;
-                let datosExportar = [];
-                let tituloHoja = "Reporte";
-
-                if (vistaActualActiva === 'clientes') {
-                    tituloHoja = "Clientes";
-                    datosExportar = listaClientes.map(c => ({
-                        "Nombre": c.nombre || '',
-                        "Dirección": c.direccion || '',
-                        "Teléfono": c.telefono || '',
-                        "Saldo Deuda ($)": c.saldoActualCalculado || 0
-                    }));
-                } else if (vistaActualActiva === 'ventas') {
-                    tituloHoja = "Ventas";
-                    datosExportar = listaVentas.map(v => ({
-                        "Fecha": v.fecha || '',
-                        "Cliente": v.nombre || '',
-                        "Cantidad": v.cantidad || 1,
-                        "Total ($)": v.total || 0,
-                        "Tipo": v.tipo || '',
-                        "Vendedor": v.vendedor || ''
-                    }));
-                } else if (vistaActualActiva === 'pagos') {
-                    tituloHoja = "Cobros";
-                    datosExportar = listaPagos.map(p => ({
-                        "Fecha": p.fecha || '',
-                        "Cliente": p.nombre || '',
-                        "Monto ($)": p.monto || 0,
-                        "Saldo Anterior ($)": p.saldoAnt || 0,
-                        "Saldo Nuevo ($)": p.saldoNuevo || 0,
-                        "Observaciones": p.observaciones || ''
-                    }));
-                } else if (vistaActualActiva === 'inventario') {
-                    tituloHoja = "Inventario";
-                    datosExportar = listaInventario.map(i => ({
-                        "Fecha": i.fecha || '',
-                        "Cantidad Comprada": i.cantidad || 0,
-                        "Costo Total ($)": i.costoTotal || 0
-                    }));
-                } else if (vistaActualActiva === 'movimientos' || vistaActualActiva === 'finanzas') {
-                    tituloHoja = "Movimientos Personales";
-                    datosExportar = listaMovimientos.map(m => ({
-                        "Fecha": m.fecha || '',
-                        "Tipo": m.tipo || '',
-                        "Categoría": m.categoria || '',
-                        "Monto ($)": m.monto || 0,
-                        "Descripción": m.descripcion || ''
-                    }));
-                } else {
-                    alert("Exportación no disponible para esta sección.");
-                    return;
-                }
-
-                if (datosExportar.length === 0) {
-                    alert("No hay datos para exportar en esta vista.");
-                    return;
-                }
-
-                const worksheet = XLSX.utils.json_to_sheet(datosExportar);
-                const workbook = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(workbook, worksheet, tituloHoja);
-                XLSX.writeFile(workbook, nombreArchivo);
-            } catch (error) {
-                console.error(error);
-                alert("Error al exportar a Excel.");
-            }
-        };
-
-        window.exportarPdfVistaActual = () => {
-            try {
-                const { jsPDF } = window.jspdf;
-                const docPdf = new jsPDF();
-                let tituloReporte = `Reporte de ${vistaActualActiva.toUpperCase()}`;
-                let cabeceras = [];
-                let filas = [];
-
-                if (vistaActualActiva === 'clientes') {
-                    cabeceras = ["Nombre", "Dirección", "Teléfono", "Saldo Deuda ($)"];
-                    filas = listaClientes.map(c => [c.nombre || '', c.direccion || '', c.telefono || '', (c.saldoActualCalculado || 0).toFixed(2)]);
-                } else if (vistaActualActiva === 'ventas') {
-                    cabeceras = ["Fecha", "Cliente", "Cant.", "Total ($)", "Tipo", "Vendedor"];
-                    filas = listaVentas.map(v => [v.fecha || '', v.nombre || '', v.cantidad || 1, (v.total || 0).toFixed(2), v.tipo || '', v.vendedor || '']);
-                } else if (vistaActualActiva === 'pagos') {
-                    cabeceras = ["Fecha", "Cliente", "Monto ($)", "Saldo Nuevo ($)", "Observaciones"];
-                    filas = listaPagos.map(p => [p.fecha || '', p.nombre || '', (p.monto || 0).toFixed(2), (p.saldoNuevo || 0).toFixed(2), p.observaciones || '']);
-                } else if (vistaActualActiva === 'inventario') {
-                    cabeceras = ["Fecha", "Cantidad", "Costo Total ($)"];
-                    filas = listaInventario.map(i => [i.fecha || '', i.cantidad || 0, (i.costoTotal || 0).toFixed(2)]);
-                } else if (vistaActualActiva === 'movimientos' || vistaActualActiva === 'finanzas') {
-                    cabeceras = ["Fecha", "Tipo", "Categoría", "Monto ($)", "Descripción"];
-                    filas = listaMovimientos.map(m => [m.fecha || '', m.tipo || '', m.categoria || '', (m.monto || 0).toFixed(2), m.descripcion || '']);
-                } else {
-                    alert("Exportación PDF no disponible para esta sección.");
-                    return;
-                }
-
-                if (filas.length === 0) {
-                    alert("No hay datos para generar el PDF.");
-                    return;
-                }
-
-                docPdf.setFontSize(16);
-                docPdf.text(tituloReporte, 14, 20);
-                docPdf.setFontSize(10);
-                docPdf.text(`Generado: ${new Date().toLocaleDateString()}`, 14, 26);
-
-                docPdf.autoTable({
-                    startY: 32,
-                    head: [cabeceras],
-                    body: filas,
-                    theme: 'grid',
-                    headStyles: { fillColor: [11, 19, 43] }
-                });
-
-                docPdf.save(`reporte_${vistaActualActiva}_${new Date().toISOString().split('T')[0]}.pdf`);
-            } catch (error) {
-                console.error(error);
-                alert("Error al generar el PDF.");
-            }
-        };
-
-        // INICIALIZAR SISTEMA AL CARGAR LA PÁGINA
-        window.onload = () => {
-            sincronizarDatos();
-        };
+        window.onload = () => { sincronizarDatos(); cambiarVista('dashboard'); };
     </script>
 </body>
 </html>
