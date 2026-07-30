@@ -7,16 +7,24 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
-<body class="bg-slate-100 text-slate-800 min-h-screen flex">
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col md:flex-row relative">
+
+    <!-- BOTÓN FLOTANTE MÓVIL (MENÚ HAMBURGUESA) -->
+    <button onclick="toggleSidebarMovil()" class="md:hidden fixed top-3 left-3 z-50 bg-[#0B132B] text-white p-2.5 rounded-xl shadow-lg border border-slate-700 focus:outline-none flex items-center justify-center">
+        <i class="fa-solid fa-bars text-base"></i>
+    </button>
+
+    <!-- OVERLAY PARA CERRAR EL MENÚ EN MÓVIL AL HACER CLIC FUERA -->
+    <div id="sidebar-overlay" onclick="toggleSidebarMovil()" class="fixed inset-0 bg-black/50 z-30 hidden md:hidden"></div>
 
     <!-- Barra Lateral (Sidebar) -->
-    <aside class="w-64 bg-[#0B132B] text-slate-300 flex flex-col justify-between hidden md:flex shrink-0">
+    <aside id="sidebar-principal" class="fixed md:static inset-y-0 left-0 z-40 w-64 bg-[#0B132B] text-slate-300 flex flex-col justify-between transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out shrink-0">
         <div>
             <div class="p-4 border-b border-slate-800 flex items-center justify-between">
                 <h1 class="text-white font-bold tracking-wider text-sm">CRM ALMOHADAS</h1>
                 <div id="status-dot" class="w-3 h-3 rounded-full bg-amber-500" title="Conectando..."></div>
             </div>
-            <nav class="p-2 space-y-1 text-sm">
+            <nav class="p-2 space-y-1 text-sm overflow-y-auto max-h-[calc(100vh-120px)]">
                 <p class="px-3 text-[10px] tracking-wider text-slate-500 uppercase font-semibold mb-1">Negocio</p>
                 <a href="#" onclick="cambiarVista('dashboard')" id="nav-dashboard" class="flex items-center gap-3 px-3 py-2 rounded-lg bg-indigo-900/50 text-white font-medium"><i class="fa-solid fa-chart-pie w-5"></i> Dashboard General</a>
                 <a href="#" onclick="cambiarVista('clientes')" id="nav-clientes" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800/60 transition"><i class="fa-solid fa-users w-5"></i> Clientes</a>
@@ -57,21 +65,21 @@
     </aside>
 
     <!-- Contenido Principal -->
-    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
-        <header class="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-6 shadow-sm z-10">
-            <div class="flex items-center gap-4 w-96">
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden w-full">
+        <header class="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-4 md:px-6 shadow-sm z-10">
+            <div class="flex items-center gap-4 w-full md:w-96 pl-12 md:pl-0">
                 <div class="relative w-full">
                     <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-sm"></i>
                     <input type="text" id="buscador-global" placeholder="Buscar cliente globalmente..." class="w-full bg-slate-50 border border-slate-200 rounded-lg pl-9 pr-4 py-2 text-sm focus:outline-none focus:border-indigo-500">
                 </div>
             </div>
-            <div class="flex items-center gap-3">
+            <div class="hidden sm:flex items-center gap-3">
                 <button onclick="alert('Exportado a Excel con éxito')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition"><i class="fa-solid fa-file-excel"></i> Exportar Excel</button>
                 <button onclick="alert('Exportado a PDF con éxito')" class="bg-slate-900 hover:bg-slate-800 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition"><i class="fa-solid fa-file-pdf"></i> Exportar PDF</button>
             </div>
         </header>
 
-        <main class="flex-1 overflow-y-auto p-6 space-y-6">
+        <main class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
             
             <!-- DASHBOARD GENERAL -->
             <div id="vista-dashboard" class="space-y-6">
@@ -652,6 +660,14 @@
         let listaInventario = [];
         let listaMovimientos = [];
 
+        // FUNCIÓN PARA CONTROLAR EL MENÚ LATERAL EN MÓVIL
+        window.toggleSidebarMovil = () => {
+            const sidebar = document.getElementById('sidebar-principal');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        };
+
         window.cambiarVista = (v) => {
             ['dashboard', 'clientes', 'ventas', 'pagos', 'comisiones', 'inventario', 'calendario', 'finanzas', 'movimientos', 'combustible'].forEach(id => {
                 const el = document.getElementById(`vista-${id}`);
@@ -663,6 +679,16 @@
             if(vistaActiva) vistaActiva.classList.remove('hidden');
             const activeNav = document.getElementById(`nav-${v}`);
             if(activeNav) activeNav.className = "flex items-center gap-3 px-3 py-2 rounded-lg bg-indigo-900/50 text-white font-medium";
+
+            // Si estamos en celular, cerrar el menú automáticamente al cambiar de vista
+            if(window.innerWidth < 768) {
+                const sidebar = document.getElementById('sidebar-principal');
+                const overlay = document.getElementById('sidebar-overlay');
+                if(!sidebar.classList.contains('-translate-x-full')) {
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+            }
         }
 
         window.toggleMenuRespaldo = () => {
@@ -1052,7 +1078,7 @@
         function obtenerLunesDeLaSemana(d) {
             const fecha = new Date(d);
             const dia = fecha.getDay();
-            const diff = fecha.getDate() - dia + (dia === 0 ? -6 : 1); // Ajustar si es domingo (0) o cualquier otro día
+            const diff = fecha.getDate() - dia + (dia === 0 ? -6 : 1);
             return new Date(fecha.setDate(diff));
         }
 
@@ -1107,7 +1133,6 @@
                 return;
             }
 
-            // Agrupar por semana estricta (Lunes a Domingo)
             const semanasMap = {};
             listaMovimientos.forEach(m => {
                 if(!m.fecha) return;
@@ -1127,7 +1152,6 @@
                 else semanasMap[idSemana].totalSalidas += monto;
             });
 
-            // Ordenar semanas de la más reciente a la más antigua
             const semanasOrdenadas = Object.keys(semanasMap).sort().reverse();
 
             let htmlFinal = '';
@@ -1560,4 +1584,3 @@
     </script>
 </body>
 </html>
-```[cite: 7]
