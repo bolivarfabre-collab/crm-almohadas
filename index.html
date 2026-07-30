@@ -129,24 +129,24 @@
                         <h3 id="dash-total-cobrado" class="text-3xl font-bold mt-1 text-emerald-600">$0.00</h3>
                     </div>
 
-                    <!-- UTILIDAD NETA (EXCLUYENDO COMBUSTIBLE) -->
-                    <div onclick="cambiarVista('finanzas')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden border-l-4 border-l-indigo-600">
+                    <!-- UTILIDAD NETA (EXCLUSIVA DEL NEGOCIO DE ALMOHADAS) -->
+                    <div onclick="cambiarVista('ventas')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden border-l-4 border-l-indigo-600">
                         <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Utilidad Neta (Mes)*</span>
+                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Utilidad Neta Almohadas (Mes)*</span>
                             <i class="fa-solid fa-chart-line text-indigo-600"></i>
                         </div>
                         <h3 id="dash-utilidad-neta" class="text-3xl font-bold mt-1 text-indigo-600">$0.00</h3>
-                        <span class="text-[10px] text-slate-400 block mt-1">*Sin incluir gasto de combustible</span>
+                        <span class="text-[10px] text-slate-400 block mt-1">*Ventas menos costo de mercadería</span>
                     </div>
 
-                    <!-- UTILIDAD HISTÓRICA -->
-                    <div onclick="cambiarVista('finanzas')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-emerald-500 transition relative overflow-hidden border-l-4 border-l-emerald-600">
+                    <!-- UTILIDAD HISTÓRICA (EXCLUSIVA DEL NEGOCIO DE ALMOHADAS) -->
+                    <div onclick="cambiarVista('ventas')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-emerald-500 transition relative overflow-hidden border-l-4 border-l-emerald-600">
                         <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Utilidad Histórica (Total)</span>
+                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Utilidad Histórica Almohadas</span>
                             <i class="fa-solid fa-piggy-bank text-emerald-600"></i>
                         </div>
                         <h3 id="dash-utilidad-historica" class="text-3xl font-bold mt-1 text-emerald-600">$0.00</h3>
-                        <span class="text-[10px] text-slate-400 block mt-1">Ganancia neta acumulada global</span>
+                        <span class="text-[10px] text-slate-400 block mt-1">Ganancia neta acumulada de almohadas</span>
                     </div>
 
                     <div onclick="cambiarVista('pagos')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden">
@@ -1008,10 +1008,9 @@
                 document.getElementById('fin-comb-total').innerText = `$${combustibleTotal.toFixed(2)}`;
                 document.getElementById('dash-gasto-combustible').innerText = `$${combustibleTotal.toFixed(2)}`;
                 
-                // CÁLCULO DE LA UTILIDAD NETA DEL MES (EXCLUYENDO COMBUSTIBLE)
+                // CÁLCULO DE LA UTILIDAD NETA DEL MES (EXCLUSIVAMENTE DEL NEGOCIO DE ALMOHADAS)
                 let ventasMesTotal = 0;
                 let costoMercaderiaMes = 0;
-                let otrosGastosMesSinCombustible = 0;
 
                 listaVentas.forEach(v => {
                     if(v.fecha && v.fecha.startsWith(mesActualStr)) {
@@ -1021,21 +1020,12 @@
                     }
                 });
 
-                listaMovimientos.forEach(m => {
-                    if(m.fecha && m.fecha.startsWith(mesActualStr) && m.tipo === 'Salida') {
-                        if(m.categoria !== 'Combustible') {
-                            otrosGastosMesSinCombustible += parseFloat(m.monto || 0);
-                        }
-                    }
-                });
-
-                let utilidadNetaMes = ventasMesTotal - costoMercaderiaMes - otrosGastosMesSinCombustible;
+                let utilidadNetaMes = ventasMesTotal - costoMercaderiaMes;
                 document.getElementById('dash-utilidad-neta').innerText = `$${utilidadNetaMes.toFixed(2)}`;
 
-                // CÁLCULO DE LA UTILIDAD HISTÓRICA (GLOBAL)
+                // CÁLCULO DE LA UTILIDAD HISTÓRICA (EXCLUSIVAMENTE DEL NEGOCIO DE ALMOHADAS)
                 let ventasTotalGlobal = 0;
                 let costoMercaderiaGlobal = 0;
-                let otrosGastosGlobalSinCombustible = 0;
 
                 listaVentas.forEach(v => {
                     ventasTotalGlobal += parseFloat(v.total || (v.cantidad * 40));
@@ -1043,13 +1033,7 @@
                     costoMercaderiaGlobal += cantV * costoPromedio;
                 });
 
-                listaMovimientos.forEach(m => {
-                    if(m.tipo === 'Salida' && m.categoria !== 'Combustible') {
-                        otrosGastosGlobalSinCombustible += parseFloat(m.monto || 0);
-                    }
-                });
-
-                let utilidadHistoricaGlobal = ventasTotalGlobal - costoMercaderiaGlobal - otrosGastosGlobalSinCombustible;
+                let utilidadHistoricaGlobal = ventasTotalGlobal - costoMercaderiaGlobal;
                 document.getElementById('dash-utilidad-historica').innerText = `$${utilidadHistoricaGlobal.toFixed(2)}`;
 
                 const porcGastoComb = gasMes > 0 ? ((combustibleTotal / gasMes) * 100).toFixed(1) : '0';
@@ -1625,33 +1609,11 @@
                     tituloHoja = "Inventario";
                     datosExportar = listaInventario.map(i => ({
                         "Fecha": i.fecha || '',
-                        "Cantidad": i.cantidad || 0,
+                        "Cantidad Comprada": i.cantidad || 0,
                         "Costo Total ($)": i.costoTotal || 0
                     }));
-                } else if (vistaActualActiva === 'comisiones') {
-                    tituloHoja = "Comisiones";
-                    datosExportar = listaVentas.map(v => ({
-                        "Vendedor": v.vendedor || 'George',
-                        "Cliente": v.nombre || '',
-                        "Venta Total ($)": v.total || 0,
-                        "Comisión ($)": (parseInt(v.cantidad || 1) * 5),
-                        "Estado": v.estadoComision || 'Pendiente'
-                    }));
-                } else if (vistaActualActiva === 'calendario') {
-                    tituloHoja = "CalendarioCobros";
-                    datosExportar = listaVentas.filter(v => v.proximoPago).map(v => {
-                        const clienteObj = listaClientes.find(c => c.id === v.clienteId || c.nombre === v.nombre);
-                        return {
-                            "Próximo Pago": v.proximoPago || '',
-                            "Cliente": v.nombre || '',
-                            "Teléfono": v.telefono || '',
-                            "Valor Cuota ($)": v.cuota || 0,
-                            "Saldo Deuda ($)": clienteObj ? (clienteObj.saldoActualCalculado || 0) : 0,
-                            "Observación": v.observaciones || ''
-                        };
-                    });
-                } else if (vistaActualActiva === 'movimientos' || vistaActualActiva === 'combustible' || vistaActualActiva === 'finanzas') {
-                    tituloHoja = "MovimientosPersonales";
+                } else if (vistaActualActiva === 'movimientos' || vistaActualActiva === 'finanzas') {
+                    tituloHoja = "Movimientos Personales";
                     datosExportar = listaMovimientos.map(m => ({
                         "Fecha": m.fecha || '',
                         "Tipo": m.tipo || '',
@@ -1659,18 +1621,20 @@
                         "Monto ($)": m.monto || 0,
                         "Descripción": m.descripcion || ''
                     }));
-                } else {
-                    // Dashboard u otro por defecto exporta ventas generales
-                    tituloHoja = "DashboardGeneral_Ventas";
-                    datosExportar = listaVentas.map(v => ({
-                        "Fecha": v.fecha || '',
-                        "Cliente": v.nombre || '',
-                        "Total ($)": v.total || 0
+                } else if (vistaActualActiva === 'combustible') {
+                    tituloHoja = "Combustible";
+                    datosExportar = listaMovimientos.filter(m => m.categoria === 'Combustible').map(m => ({
+                        "Fecha": m.fecha || '',
+                        "Monto ($)": m.monto || 0,
+                        "Descripción": m.descripcion || ''
                     }));
+                } else {
+                    alert("Seleccione una vista válida para exportar.");
+                    return;
                 }
 
-                if (datosExportar.length === 0) {
-                    alert("No hay datos disponibles para exportar en esta vista.");
+                if(datosExportar.length === 0) {
+                    alert("No hay datos en esta vista para exportar.");
                     return;
                 }
 
@@ -1678,74 +1642,74 @@
                 const workbook = XLSX.utils.book_new();
                 XLSX.utils.book_append_sheet(workbook, worksheet, tituloHoja);
                 XLSX.writeFile(workbook, nombreArchivo);
-                alert("¡Exportado a Excel con éxito!");
+                alert("¡Exportación a Excel completada con éxito!");
             } catch (error) {
                 console.error(error);
-                alert("Hubo un error al exportar a Excel.");
+                alert("Ocurrió un error al exportar a Excel.");
             }
         };
 
         window.exportarPdfVistaActual = () => {
             try {
                 const { jsPDF } = window.jspdf;
-                const docPdf = new jsPDF();
-                let tituloReporte = `Reporte CRM - Comercial Ethan (${vistaActualActiva.toUpperCase()})`;
-                let columnas = [];
+                const doc = new jsPDF();
+                let tituloReporte = `Reporte de ${vistaActualActiva.toUpperCase()}`;
+                let cabeceras = [];
                 let filas = [];
 
                 if (vistaActualActiva === 'clientes') {
-                    columnas = ["Nombre", "Dirección", "Teléfono", "Saldo Deuda"];
-                    filas = listaClientes.map(c => [c.nombre || '', c.direccion || '', c.telefono || '', `$${(c.saldoActualCalculado || 0).toFixed(2)}`]);
+                    cabeceras = ["Nombre", "Dirección", "Teléfono", "Saldo Deuda ($)"];
+                    filas = listaClientes.map(c => [c.nombre || '', c.direccion || '', c.telefono || '', (c.saldoActualCalculado || 0).toFixed(2)]);
                 } else if (vistaActualActiva === 'ventas') {
-                    columnas = ["Fecha", "Cliente", "Cant.", "Total", "Tipo", "Vendedor"];
-                    filas = listaVentas.map(v => [v.fecha || '', v.nombre || '', v.cantidad || 1, `$${(v.total || 0).toFixed(2)}`, v.tipo || '', v.vendedor || '']);
+                    cabeceras = ["Fecha", "Cliente", "Cant.", "Total ($)", "Tipo", "Vendedor"];
+                    filas = listaVentas.map(v => [v.fecha || '', v.nombre || '', v.cantidad || 1, (v.total || 0).toFixed(2), v.tipo || '', v.vendedor || '']);
                 } else if (vistaActualActiva === 'pagos') {
-                    columnas = ["Fecha", "Cliente", "Monto", "Saldo Ant.", "Saldo Nuevo", "Obs."];
-                    filas = listaPagos.map(p => [p.fecha || '', p.nombre || '', `$${(p.monto || 0).toFixed(2)}`, `$${(p.saldoAnt || 0).toFixed(2)}`, `$${(p.saldoNuevo || 0).toFixed(2)}`, p.observaciones || '']);
+                    cabeceras = ["Fecha", "Cliente", "Monto ($)", "Saldo Ant ($)", "Saldo Nuevo ($)"];
+                    filas = listaPagos.map(p => [p.fecha || '', p.nombre || '', (p.monto || 0).toFixed(2), (p.saldoAnt || 0).toFixed(2), (p.saldoNuevo || 0).toFixed(2)]);
                 } else if (vistaActualActiva === 'inventario') {
-                    columnas = ["Fecha", "Cantidad", "Costo Total"];
-                    filas = listaInventario.map(i => [i.fecha || '', i.cantidad || 0, `$${(i.costoTotal || 0).toFixed(2)}`]);
-                } else if (vistaActualActiva === 'comisiones') {
-                    columnas = ["Vendedor", "Cliente", "Venta Total", "Comisión", "Estado"];
-                    filas = listaVentas.map(v => [v.vendedor || 'George', v.nombre || '', `$${(v.total || 0).toFixed(2)}`, `$${(parseInt(v.cantidad || 1) * 5).toFixed(2)}`, v.estadoComision || 'Pendiente']);
-                } else if (vistaActualActiva === 'calendario') {
-                    columnas = ["Próx. Pago", "Cliente", "Teléfono", "Cuota", "Saldo Deuda"];
-                    filas = listaVentas.filter(v => v.proximoPago).map(v => {
-                        const clienteObj = listaClientes.find(c => c.id === v.clienteId || c.nombre === v.nombre);
-                        return [v.proximoPago || '', v.nombre || '', v.telefono || '', `$${(v.cuota || 0).toFixed(2)}`, `$${(clienteObj ? clienteObj.saldoActualCalculado : 0).toFixed(2)}`];
-                    });
+                    cabeceras = ["Fecha", "Cantidad", "Costo Total ($)"];
+                    filas = listaInventario.map(i => [i.fecha || '', i.cantidad || 0, (i.costoTotal || 0).toFixed(2)]);
+                } else if (vistaActualActiva === 'movimientos' || vistaActualActiva === 'finanzas') {
+                    cabeceras = ["Fecha", "Tipo", "Categoría", "Monto ($)", "Descripción"];
+                    filas = listaMovimientos.map(m => [m.fecha || '', m.tipo || '', m.categoria || '', (m.monto || 0).toFixed(2), m.descripcion || '']);
+                } else if (vistaActualActiva === 'combustible') {
+                    cabeceras = ["Fecha", "Monto ($)", "Descripción"];
+                    filas = listaMovimientos.filter(m => m.categoria === 'Combustible').map(m => [m.fecha || '', (m.monto || 0).toFixed(2), m.descripcion || '']);
                 } else {
-                    columnas = ["Fecha", "Tipo", "Categoría", "Monto", "Descripción"];
-                    filas = listaMovimientos.map(m => [m.fecha || '', m.tipo || '', m.categoria || '', `$${(m.monto || 0).toFixed(2)}`, m.descripcion || '']);
-                }
-
-                if (filas.length === 0) {
-                    alert("No hay datos disponibles para exportar en esta vista.");
+                    alert("Seleccione una vista válida para exportar.");
                     return;
                 }
 
-                docPdf.setFontSize(14);
-                docPdf.text(tituloReporte, 14, 20);
-                docPdf.setFontSize(10);
-                docPdf.text(`Fecha de emisión: ${new Date().toLocaleDateString()}`, 14, 26);
+                if(filas.length === 0) {
+                    alert("No hay datos en esta vista para exportar.");
+                    return;
+                }
 
-                docPdf.autoTable({
-                    startY: 32,
-                    head: [columnas],
+                doc.setFontSize(16);
+                doc.text(tituloReporte, 14, 20);
+                doc.setFontSize(10);
+                doc.text(`Comercial Ethan - Fecha: ${new Date().toISOString().split('T')[0]}`, 14, 28);
+
+                doc.autoTable({
+                    startY: 34,
+                    head: [cabeceras],
                     body: filas,
                     theme: 'grid',
                     headStyles: { fillColor: [11, 19, 43] }
                 });
 
-                docPdf.save(`reporte_${vistaActualActiva}_${new Date().toISOString().split('T')[0]}.pdf`);
-                alert("¡Exportado a PDF con éxito!");
+                doc.save(`reporte_${vistaActualActiva}_${new Date().toISOString().split('T')[0]}.pdf`);
+                alert("¡Exportación a PDF completada con éxito!");
             } catch (error) {
                 console.error(error);
-                alert("Hubo un error al generar el PDF.");
+                alert("Ocurrió un error al exportar a PDF.");
             }
         };
 
-        window.onload = sincronizarDatos;
+        // INICIALIZAR AL CARGAR LA PÁGINA
+        window.addEventListener('DOMContentLoaded', () => {
+            sincronizarDatos();
+        });
     </script>
 </body>
 </html>
