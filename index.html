@@ -6,6 +6,10 @@
     <title>CRM Almohadillas - Comercial Ethan</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Librerías para Exportar a Excel y PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col md:flex-row relative">
 
@@ -74,8 +78,8 @@
                 </div>
             </div>
             <div class="hidden sm:flex items-center gap-3">
-                <button onclick="alert('Exportado a Excel con éxito')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition"><i class="fa-solid fa-file-excel"></i> Exportar Excel</button>
-                <button onclick="alert('Exportado a PDF con éxito')" class="bg-slate-900 hover:bg-slate-800 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition"><i class="fa-solid fa-file-pdf"></i> Exportar PDF</button>
+                <button onclick="exportarExcelVistaActual()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition"><i class="fa-solid fa-file-excel"></i> Exportar Excel</button>
+                <button onclick="exportarPdfVistaActual()" class="bg-slate-900 hover:bg-slate-800 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition"><i class="fa-solid fa-file-pdf"></i> Exportar PDF</button>
             </div>
         </header>
 
@@ -659,6 +663,7 @@
         let listaPagos = [];
         let listaInventario = [];
         let listaMovimientos = [];
+        let vistaActualActiva = 'dashboard';
 
         // FUNCIÓN PARA CONTROLAR EL MENÚ LATERAL EN MÓVIL
         window.toggleSidebarMovil = () => {
@@ -669,6 +674,7 @@
         };
 
         window.cambiarVista = (v) => {
+            vistaActualActiva = v;
             ['dashboard', 'clientes', 'ventas', 'pagos', 'comisiones', 'inventario', 'calendario', 'finanzas', 'movimientos', 'combustible'].forEach(id => {
                 const el = document.getElementById(`vista-${id}`);
                 if(el) el.classList.add('hidden');
@@ -1579,6 +1585,165 @@
 
         window.eliminarCliente = async (id) => { if(confirm("¿Eliminar cliente?")) { await deleteDoc(doc(db, "clientes_ethan", id)); sincronizarDatos(); } }
         window.eliminarVenta = async (id) => { if(confirm("¿Eliminar venta?")) { await deleteDoc(doc(db, "ventas_ethan", id)); sincronizarDatos(); } }
+
+        // FUNCIONALIDAD DE EXPORTACIÓN A EXCEL Y PDF BASADA EN LA VISTA ACTUAL
+        window.exportarExcelVistaActual = () => {
+            try {
+                let nombreArchivo = `reporte_${vistaActualActiva}_${new Date().toISOString().split('T')[0]}.xlsx`;
+                let datosExportar = [];
+                let tituloHoja = "Reporte";
+
+                if (vistaActualActiva === 'clientes') {
+                    tituloHoja = "Clientes";
+                    datosExportar = listaClientes.map(c => ({
+                        "Nombre": c.nombre || '',
+                        "Dirección": c.direccion || '',
+                        "Teléfono": c.telefono || '',
+                        "Saldo Deuda ($)": c.saldoActualCalculado || 0
+                    }));
+                } else if (vistaActualActiva === 'ventas') {
+                    tituloHoja = "Ventas";
+                    datosExportar = listaVentas.map(v => ({
+                        "Fecha": v.fecha || '',
+                        "Cliente": v.nombre || '',
+                        "Cantidad": v.cantidad || 1,
+                        "Total ($)": v.total || 0,
+                        "Tipo": v.tipo || '',
+                        "Vendedor": v.vendedor || ''
+                    }));
+                } else if (vistaActualActiva === 'pagos') {
+                    tituloHoja = "Cobros";
+                    datosExportar = listaPagos.map(p => ({
+                        "Fecha": p.fecha || '',
+                        "Cliente": p.nombre || '',
+                        "Monto ($)": p.monto || 0,
+                        "Saldo Anterior ($)": p.saldoAnt || 0,
+                        "Saldo Nuevo ($)": p.saldoNuevo || 0,
+                        "Observaciones": p.observaciones || ''
+                    }));
+                } else if (vistaActualActiva === 'inventario') {
+                    tituloHoja = "Inventario";
+                    datosExportar = listaInventario.map(i => ({
+                        "Fecha": i.fecha || '',
+                        "Cantidad": i.cantidad || 0,
+                        "Costo Total ($)": i.costoTotal || 0
+                    }));
+                } else if (vistaActualActiva === 'comisiones') {
+                    tituloHoja = "Comisiones";
+                    datosExportar = listaVentas.map(v => ({
+                        "Vendedor": v.vendedor || 'George',
+                        "Cliente": v.nombre || '',
+                        "Venta Total ($)": v.total || 0,
+                        "Comisión ($)": (parseInt(v.cantidad || 1) * 5),
+                        "Estado": v.estadoComision || 'Pendiente'
+                    }));
+                } else if (vistaActualActiva === 'calendario') {
+                    tituloHoja = "CalendarioCobros";
+                    datosExportar = listaVentas.filter(v => v.proximoPago).map(v => {
+                        const clienteObj = listaClientes.find(c => c.id === v.clienteId || c.nombre === v.nombre);
+                        return {
+                            "Próximo Pago": v.proximoPago || '',
+                            "Cliente": v.nombre || '',
+                            "Teléfono": v.telefono || '',
+                            "Valor Cuota ($)": v.cuota || 0,
+                            "Saldo Deuda ($)": clienteObj ? (clienteObj.saldoActualCalculado || 0) : 0,
+                            "Observación": v.observaciones || ''
+                        };
+                    });
+                } else if (vistaActualActiva === 'movimientos' || vistaActualActiva === 'combustible' || vistaActualActiva === 'finanzas') {
+                    tituloHoja = "MovimientosPersonales";
+                    datosExportar = listaMovimientos.map(m => ({
+                        "Fecha": m.fecha || '',
+                        "Tipo": m.tipo || '',
+                        "Categoría": m.categoria || '',
+                        "Monto ($)": m.monto || 0,
+                        "Descripción": m.descripcion || ''
+                    }));
+                } else {
+                    // Dashboard u otro por defecto exporta ventas generales
+                    tituloHoja = "DashboardGeneral_Ventas";
+                    datosExportar = listaVentas.map(v => ({
+                        "Fecha": v.fecha || '',
+                        "Cliente": v.nombre || '',
+                        "Total ($)": v.total || 0
+                    }));
+                }
+
+                if (datosExportar.length === 0) {
+                    alert("No hay datos disponibles para exportar en esta vista.");
+                    return;
+                }
+
+                const worksheet = XLSX.utils.json_to_sheet(datosExportar);
+                const workbook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, tituloHoja);
+                XLSX.writeFile(workbook, nombreArchivo);
+                alert("¡Exportado a Excel con éxito!");
+            } catch (error) {
+                console.error(error);
+                alert("Hubo un error al exportar a Excel.");
+            }
+        };
+
+        window.exportarPdfVistaActual = () => {
+            try {
+                const { jsPDF } = window.jspdf;
+                const docPdf = new jsPDF();
+                let tituloReporte = `Reporte CRM - Comercial Ethan (${vistaActualActiva.toUpperCase()})`;
+                let columnas = [];
+                let filas = [];
+
+                if (vistaActualActiva === 'clientes') {
+                    columnas = ["Nombre", "Dirección", "Teléfono", "Saldo Deuda"];
+                    filas = listaClientes.map(c => [c.nombre || '', c.direccion || '', c.telefono || '', `$${(c.saldoActualCalculado || 0).toFixed(2)}`]);
+                } else if (vistaActualActiva === 'ventas') {
+                    columnas = ["Fecha", "Cliente", "Cant.", "Total", "Tipo", "Vendedor"];
+                    filas = listaVentas.map(v => [v.fecha || '', v.nombre || '', v.cantidad || 1, `$${(v.total || 0).toFixed(2)}`, v.tipo || '', v.vendedor || '']);
+                } else if (vistaActualActiva === 'pagos') {
+                    columnas = ["Fecha", "Cliente", "Monto", "Saldo Ant.", "Saldo Nuevo", "Obs."];
+                    filas = listaPagos.map(p => [p.fecha || '', p.nombre || '', `$${(p.monto || 0).toFixed(2)}`, `$${(p.saldoAnt || 0).toFixed(2)}`, `$${(p.saldoNuevo || 0).toFixed(2)}`, p.observaciones || '']);
+                } else if (vistaActualActiva === 'inventario') {
+                    columnas = ["Fecha", "Cantidad", "Costo Total"];
+                    filas = listaInventario.map(i => [i.fecha || '', i.cantidad || 0, `$${(i.costoTotal || 0).toFixed(2)}`]);
+                } else if (vistaActualActiva === 'comisiones') {
+                    columnas = ["Vendedor", "Cliente", "Venta Total", "Comisión", "Estado"];
+                    filas = listaVentas.map(v => [v.vendedor || 'George', v.nombre || '', `$${(v.total || 0).toFixed(2)}`, `$${(parseInt(v.cantidad || 1) * 5).toFixed(2)}`, v.estadoComision || 'Pendiente']);
+                } else if (vistaActualActiva === 'calendario') {
+                    columnas = ["Próx. Pago", "Cliente", "Teléfono", "Cuota", "Saldo Deuda"];
+                    filas = listaVentas.filter(v => v.proximoPago).map(v => {
+                        const clienteObj = listaClientes.find(c => c.id === v.clienteId || c.nombre === v.nombre);
+                        return [v.proximoPago || '', v.nombre || '', v.telefono || '', `$${(v.cuota || 0).toFixed(2)}`, `$${(clienteObj ? clienteObj.saldoActualCalculado : 0).toFixed(2)}`];
+                    });
+                } else {
+                    columnas = ["Fecha", "Tipo", "Categoría", "Monto", "Descripción"];
+                    filas = listaMovimientos.map(m => [m.fecha || '', m.tipo || '', m.categoria || '', `$${(m.monto || 0).toFixed(2)}`, m.descripcion || '']);
+                }
+
+                if (filas.length === 0) {
+                    alert("No hay datos disponibles para exportar en esta vista.");
+                    return;
+                }
+
+                docPdf.setFontSize(14);
+                docPdf.text(tituloReporte, 14, 20);
+                docPdf.setFontSize(10);
+                docPdf.text(`Fecha de emisión: ${new Date().toLocaleDateString()}`, 14, 26);
+
+                docPdf.autoTable({
+                    startY: 32,
+                    head: [columnas],
+                    body: filas,
+                    theme: 'grid',
+                    headStyles: { fillColor: [11, 19, 43] }
+                });
+
+                docPdf.save(`reporte_${vistaActualActiva}_${new Date().toISOString().split('T')[0]}.pdf`);
+                alert("¡Exportado a PDF con éxito!");
+            } catch (error) {
+                console.error(error);
+                alert("Hubo un error al generar el PDF.");
+            }
+        };
 
         window.onload = sincronizarDatos;
     </script>
