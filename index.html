@@ -149,6 +149,26 @@
                         <span class="text-[10px] text-slate-400 block mt-1">Ganancia neta acumulada de almohadas</span>
                     </div>
 
+                    <!-- INVERSIÓN TOTAL (MES) -->
+                    <div onclick="cambiarVista('inventario')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-cyan-500 transition relative overflow-hidden border-l-4 border-l-cyan-600">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Inversión Total (Mes)</span>
+                            <i class="fa-solid fa-money-bill-trend-up text-cyan-600"></i>
+                        </div>
+                        <h3 id="dash-inversion-mes" class="text-3xl font-bold mt-1 text-cyan-600">$0.00</h3>
+                        <span class="text-[10px] text-slate-400 block mt-1">Compras de almohadas este mes</span>
+                    </div>
+
+                    <!-- INVERSIÓN TOTAL HISTÓRICA -->
+                    <div onclick="cambiarVista('inventario')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-teal-500 transition relative overflow-hidden border-l-4 border-l-teal-600">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Inversión Total Histórica</span>
+                            <i class="fa-solid fa-vault text-teal-600"></i>
+                        </div>
+                        <h3 id="dash-inversion-historica" class="text-3xl font-bold mt-1 text-teal-600">$0.00</h3>
+                        <span class="text-[10px] text-slate-400 block mt-1">Acumulado histórico en mercadería</span>
+                    </div>
+
                     <div onclick="cambiarVista('pagos')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden">
                         <div class="flex items-center justify-between mb-2">
                             <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Saldo Pendiente (Deuda)</span>
@@ -726,6 +746,11 @@
 
                 let totalComprado = 0;
                 let costoTotalGasto = 0;
+                let inversionMesTotal = 0;
+                let inversionHistoricaTotal = 0;
+                const hoyStr = new Date().toISOString().split('T')[0];
+                const mesActualStr = hoyStr.substring(0, 7);
+
                 let htmlInv = '';
                 listaInventario.forEach(item => {
                     const cant = parseInt(item.cantidad || 0);
@@ -733,6 +758,11 @@
                     const costoUnit = cant > 0 ? (costoTot / cant) : 0;
                     totalComprado += cant;
                     costoTotalGasto += costoTot;
+                    inversionHistoricaTotal += costoTot;
+
+                    if(item.fecha && item.fecha.startsWith(mesActualStr)) {
+                        inversionMesTotal += costoTot;
+                    }
 
                     htmlInv += `
                         <tr class="hover:bg-slate-50 border-b border-slate-100">
@@ -748,6 +778,10 @@
                     `;
                 });
                 document.getElementById('tabla-inventario-cuerpo').innerHTML = htmlInv || '<tr><td colspan="5" class="p-4 text-center text-slate-400">Sin compras registradas</td></tr>';
+
+                // Mostrar Inversiones en el Dashboard
+                document.getElementById('dash-inversion-mes').innerText = `$${inversionMesTotal.toFixed(2)}`;
+                document.getElementById('dash-inversion-historica').innerText = `$${inversionHistoricaTotal.toFixed(2)}`;
 
                 // 2. Ventas
                 const snapVentas = await getDocs(collection(db, "ventas_ethan"));
@@ -954,9 +988,6 @@
                 let ingHoy = 0, ingSem = 0, ingMes = 0;
                 let gasHoy = 0, gasSem = 0, gasMes = 0;
                 let combustibleTotal = 0;
-
-                const hoyStr = new Date().toISOString().split('T')[0];
-                const mesActualStr = hoyStr.substring(0, 7);
 
                 // Rangos actualizados de Lunes a Domingo para cálculos generales
                 const { inicioSemanaActual, finSemanaActual } = obtenerRangosSemanales();
@@ -1621,20 +1652,13 @@
                         "Monto ($)": m.monto || 0,
                         "Descripción": m.descripcion || ''
                     }));
-                } else if (vistaActualActiva === 'combustible') {
-                    tituloHoja = "Combustible";
-                    datosExportar = listaMovimientos.filter(m => m.categoria === 'Combustible').map(m => ({
-                        "Fecha": m.fecha || '',
-                        "Monto ($)": m.monto || 0,
-                        "Descripción": m.descripcion || ''
-                    }));
                 } else {
-                    alert("Seleccione una vista válida para exportar.");
+                    alert("Exportación no disponible para esta sección.");
                     return;
                 }
 
-                if(datosExportar.length === 0) {
-                    alert("No hay datos en esta vista para exportar.");
+                if (datosExportar.length === 0) {
+                    alert("No hay datos para exportar en esta vista.");
                     return;
                 }
 
@@ -1642,17 +1666,16 @@
                 const workbook = XLSX.utils.book_new();
                 XLSX.utils.book_append_sheet(workbook, worksheet, tituloHoja);
                 XLSX.writeFile(workbook, nombreArchivo);
-                alert("¡Exportación a Excel completada con éxito!");
             } catch (error) {
                 console.error(error);
-                alert("Ocurrió un error al exportar a Excel.");
+                alert("Error al exportar a Excel.");
             }
         };
 
         window.exportarPdfVistaActual = () => {
             try {
                 const { jsPDF } = window.jspdf;
-                const doc = new jsPDF();
+                const docPdf = new jsPDF();
                 let tituloReporte = `Reporte de ${vistaActualActiva.toUpperCase()}`;
                 let cabeceras = [];
                 let filas = [];
@@ -1664,52 +1687,48 @@
                     cabeceras = ["Fecha", "Cliente", "Cant.", "Total ($)", "Tipo", "Vendedor"];
                     filas = listaVentas.map(v => [v.fecha || '', v.nombre || '', v.cantidad || 1, (v.total || 0).toFixed(2), v.tipo || '', v.vendedor || '']);
                 } else if (vistaActualActiva === 'pagos') {
-                    cabeceras = ["Fecha", "Cliente", "Monto ($)", "Saldo Ant ($)", "Saldo Nuevo ($)"];
-                    filas = listaPagos.map(p => [p.fecha || '', p.nombre || '', (p.monto || 0).toFixed(2), (p.saldoAnt || 0).toFixed(2), (p.saldoNuevo || 0).toFixed(2)]);
+                    cabeceras = ["Fecha", "Cliente", "Monto ($)", "Saldo Nuevo ($)", "Observaciones"];
+                    filas = listaPagos.map(p => [p.fecha || '', p.nombre || '', (p.monto || 0).toFixed(2), (p.saldoNuevo || 0).toFixed(2), p.observaciones || '']);
                 } else if (vistaActualActiva === 'inventario') {
                     cabeceras = ["Fecha", "Cantidad", "Costo Total ($)"];
                     filas = listaInventario.map(i => [i.fecha || '', i.cantidad || 0, (i.costoTotal || 0).toFixed(2)]);
                 } else if (vistaActualActiva === 'movimientos' || vistaActualActiva === 'finanzas') {
                     cabeceras = ["Fecha", "Tipo", "Categoría", "Monto ($)", "Descripción"];
                     filas = listaMovimientos.map(m => [m.fecha || '', m.tipo || '', m.categoria || '', (m.monto || 0).toFixed(2), m.descripcion || '']);
-                } else if (vistaActualActiva === 'combustible') {
-                    cabeceras = ["Fecha", "Monto ($)", "Descripción"];
-                    filas = listaMovimientos.filter(m => m.categoria === 'Combustible').map(m => [m.fecha || '', (m.monto || 0).toFixed(2), m.descripcion || '']);
                 } else {
-                    alert("Seleccione una vista válida para exportar.");
+                    alert("Exportación PDF no disponible para esta sección.");
                     return;
                 }
 
-                if(filas.length === 0) {
-                    alert("No hay datos en esta vista para exportar.");
+                if (filas.length === 0) {
+                    alert("No hay datos para generar el PDF.");
                     return;
                 }
 
-                doc.setFontSize(16);
-                doc.text(tituloReporte, 14, 20);
-                doc.setFontSize(10);
-                doc.text(`Comercial Ethan - Fecha: ${new Date().toISOString().split('T')[0]}`, 14, 28);
+                docPdf.setFontSize(16);
+                docPdf.text(tituloReporte, 14, 20);
+                docPdf.setFontSize(10);
+                docPdf.text(`Generado: ${new Date().toLocaleDateString()}`, 14, 26);
 
-                doc.autoTable({
-                    startY: 34,
+                docPdf.autoTable({
+                    startY: 32,
                     head: [cabeceras],
                     body: filas,
                     theme: 'grid',
                     headStyles: { fillColor: [11, 19, 43] }
                 });
 
-                doc.save(`reporte_${vistaActualActiva}_${new Date().toISOString().split('T')[0]}.pdf`);
-                alert("¡Exportación a PDF completada con éxito!");
+                docPdf.save(`reporte_${vistaActualActiva}_${new Date().toISOString().split('T')[0]}.pdf`);
             } catch (error) {
                 console.error(error);
-                alert("Ocurrió un error al exportar a PDF.");
+                alert("Error al generar el PDF.");
             }
         };
 
-        // INICIALIZAR AL CARGAR LA PÁGINA
-        window.addEventListener('DOMContentLoaded', () => {
+        // INICIALIZAR SISTEMA AL CARGAR LA PÁGINA
+        window.onload = () => {
             sincronizarDatos();
-        });
+        };
     </script>
 </body>
 </html>
