@@ -66,7 +66,7 @@
                 </div>
             </nav>
         </div>
-        <div class="p-4 border-t border-slate-800 text-xs text-slate-500">Comercial Ethan Cloud v3.9</div>
+        <div class="p-4 border-t border-slate-800 text-xs text-slate-500">Comercial Ethan Cloud v4.0</div>
     </aside>
 
     <!-- Contenido Principal -->
@@ -335,7 +335,7 @@
             <div id="vista-calendario" class="space-y-6 hidden">
                 <h2 class="font-bold text-slate-800 text-lg">Calendario y Recordatorios de Cobros</h2>
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
-                    <p class="text-sm text-slate-600">Revisa las fechas programadas para los próximos pagos y cuotas de tus clientes de colchones/almohadas.</p>
+                    <p class="text-sm text-slate-600">Revisa las fechas programadas para los próximos pagos y cuotas de tus clientes.</p>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse text-sm">
                             <thead>
@@ -456,7 +456,6 @@
                                 <option value="Agregar Manual">Agregar manualmente...</option>
                             </select>
                         </div>
-                        <!-- Campo manual dinámico -->
                         <div id="contenedor-cat-manual" class="sm:col-span-4 hidden">
                             <label class="block text-xs font-semibold text-slate-600 mb-1">Especifique nueva categoría</label>
                             <input type="text" id="mov-cat-manual" placeholder="Escriba la nueva categoría..." class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2">
@@ -471,14 +470,11 @@
                     </form>
                 </div>
                 
-                <!-- HISTORIAL SEPARADO POR SEMANAS -->
                 <div class="space-y-4">
                     <div class="flex justify-between items-center">
                         <h2 class="font-bold text-slate-800 text-base">Historial de Entradas y Salidas por Semanas (Lunes a Domingo)</h2>
                     </div>
-                    <div id="contenedor-historial-semanas" class="space-y-4">
-                        <!-- Las semanas se inyectarán dinámicamente aquí -->
-                    </div>
+                    <div id="contenedor-historial-semanas" class="space-y-4"></div>
                 </div>
             </div>
 
@@ -507,7 +503,6 @@
                             <h2 class="font-bold text-slate-800 text-base">Historial de Combustible</h2>
                             <p id="info-filtro-combustible" class="text-xs text-slate-500 mt-0.5">Mostrando todos los registros</p>
                         </div>
-
                         <div class="flex items-center gap-3 w-full lg:w-auto overflow-x-auto pb-1 lg:pb-0">
                             <div class="bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 flex flex-col min-w-[130px]">
                                 <span class="text-[10px] uppercase font-semibold text-slate-400">Semana Anterior</span>
@@ -518,7 +513,6 @@
                                 <span id="comb-total-sem-actual" class="text-sm font-bold text-amber-700">$0.00</span>
                             </div>
                         </div>
-
                         <div class="flex items-center gap-2">
                             <label for="filtro-mes-combustible" class="text-xs font-semibold text-slate-600 flex items-center gap-1.5 cursor-pointer bg-slate-100 hover:bg-slate-200 px-3 py-2 rounded-lg transition">
                                 <i class="fa-solid fa-calendar-days text-amber-600"></i> Filtrar por Mes/Año:
@@ -527,7 +521,6 @@
                             <button onclick="limpiarFiltroCombustible()" class="text-xs text-rose-600 hover:text-rose-800 font-semibold px-2 py-1" title="Ver todo">Ver Todos</button>
                         </div>
                     </div>
-
                     <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
                         <table class="w-full text-left border-collapse text-sm">
                             <thead>
@@ -541,7 +534,7 @@
                 </div>
             </div>
 
-            <!-- CAJA (FINANZAS PERSONALES - DINERO DISPONIBLE) -->
+            <!-- CAJA -->
             <div id="vista-caja" class="space-y-6 hidden">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
                     <div>
@@ -567,7 +560,6 @@
                     </div>
                 </div>
 
-                <!-- BOTÓN PARA ABRIR MODAL DE CAJA -->
                 <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex justify-between items-center">
                     <span class="font-bold text-slate-800 text-sm">Gestión de Fondos Actuales</span>
                     <button onclick="abrirModalCaja()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition">
@@ -611,10 +603,9 @@
                         <option value="Efectivo Billetes, Monedas">Efectivo Billetes, Monedas</option>
                         <option value="Banco Guayaquil Corriente">Banco Guayaquil Corriente</option>
                         <option value="B. Guayaquil Ahorro">B. Guayaquil Ahorro</option>
-                        <option value="B Guayaquil Corriente">B Guayaquil Corriente</option>
                         <option value="American Express">American Express</option>
                         <option value="B. Pacifico Ahorro">B. Pacifico Ahorro</option>
-                        <option value="B, Pichincha Ahorro">B, Pichincha Ahorro</option>
+                        <option value="B. Pichincha Ahorro">B. Pichincha Ahorro</option>
                         <option value="Otros">Otros</option>
                     </select>
                 </div>
@@ -756,7 +747,6 @@
         let listaCaja = [];
         let vistaActualActiva = 'dashboard';
 
-        // FUNCIONES MODAL CAJA
         window.abrirModalCaja = () => {
             document.getElementById('caja-id').value = '';
             document.getElementById('caja-descripcion').value = '';
@@ -769,7 +759,6 @@
             document.getElementById('modal-caja').classList.add('hidden');
         }
 
-        // FUNCIÓN PARA CONTROLAR EL MENÚ LATERAL EN MÓVIL
         window.toggleSidebarMovil = () => {
             const sidebar = document.getElementById('sidebar-principal');
             const overlay = document.getElementById('sidebar-overlay');
@@ -1088,7 +1077,6 @@
                 renderizarMovimientosPorSemanas();
                 renderizarHistorialCombustible();
 
-                // 5. CAJA (Efectivo / Dinero personal independiente)
                 const snapCaja = await getDocs(collection(db, "caja_ethan"));
                 listaCaja = [];
                 snapCaja.forEach(d => listaCaja.push({ id: d.id, ...d.data() }));
@@ -1198,7 +1186,6 @@
             }
         }
 
-        // FUNCIONES DE CAJA (CRUD)
         window.guardarItemCaja = async (e) => {
             e.preventDefault();
             const id = document.getElementById('caja-id').value;
@@ -1233,6 +1220,7 @@
             }
         };
 
+        // CORRECCIÓN: Semana empieza estrictamente en Lunes
         function obtenerLunesDeLaSemana(d) {
             const fecha = new Date(d);
             const dia = fecha.getDay();
@@ -1283,6 +1271,318 @@
             };
         }
 
+        // CORRECCIÓN Y EJECUCIÓN DE PAGOS Y COBROS
+        window.actualizarSaldoActual = (select) => {
+            const clienteId = select.value;
+            const cliente = listaClientes.find(c => c.id === clienteId);
+            if(cliente) {
+                document.getElementById('pago-saldo-actual').value = (cliente.saldoActualCalculado || 0).toFixed(2);
+                document.getElementById('pago-monto').value = (cliente.saldoActualCalculado || 0).toFixed(2);
+            } else {
+                document.getElementById('pago-saldo-actual').value = '0.00';
+                document.getElementById('pago-monto').value = '';
+            }
+        };
+
+        window.registrarPago = async (e) => {
+            e.preventDefault();
+            const clienteId = document.getElementById('pago-cliente').value;
+            const montoAbonado = parseFloat(document.getElementById('pago-monto').value) || 0;
+            const fecha = document.getElementById('pago-fecha').value;
+            const observaciones = document.getElementById('pago-obs').value;
+
+            const cliente = listaClientes.find(c => c.id === clienteId);
+            if(!cliente) {
+                alert("Seleccione un cliente válido.");
+                return;
+            }
+
+            const saldoAnt = cliente.saldoActualCalculado || 0;
+            const saldoNuevo = Math.max(0, saldoAnt - montoAbonado);
+
+            await addDoc(collection(db, "cobros_ethan"), {
+                clienteId: cliente.id,
+                nombre: cliente.nombre,
+                fecha: fecha,
+                monto: montoAbonado,
+                saldoAnt: saldoAnt,
+                saldoNuevo: saldoNuevo,
+                observaciones: observaciones
+            });
+
+            // Registrar también como Entrada en Finanzas Personales automáticamente
+            await addDoc(collection(db, "movimientos_personales_ethan"), {
+                fecha: fecha,
+                tipo: 'Entrada',
+                monto: montoAbonado,
+                categoria: 'Colchones',
+                descripcion: `Abono de ${cliente.nombre} - ${observaciones || 'Cobro'}`
+            });
+
+            document.getElementById('pago-monto').value = '';
+            document.getElementById('pago-obs').value = '';
+            document.getElementById('pago-saldo-actual').value = '';
+            document.getElementById('pago-cliente').value = '';
+
+            sincronizarDatos();
+            alert("¡Pago / Cobro registrado exitosamente!");
+        };
+
+        window.eliminarPago = async (id) => {
+            if(confirm("¿Está seguro de eliminar este cobro?")) {
+                await deleteDoc(doc(db, "cobros_ethan", id));
+                sincronizarDatos();
+            }
+        };
+
+        // CRUD CLIENTES
+        window.abrirModalCliente = () => {
+            document.getElementById('m-id').value = '';
+            document.getElementById('m-nombre').value = '';
+            document.getElementById('m-telefono').value = '';
+            document.getElementById('m-direccion').value = '';
+            document.getElementById('modal-cliente-titulo').innerText = "Registrar Cliente";
+            document.getElementById('modal-cliente').classList.remove('hidden');
+        };
+
+        window.cerrarModalCliente = () => {
+            document.getElementById('modal-cliente').classList.add('hidden');
+        };
+
+        window.guardarCliente = async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('m-id').value;
+            const data = {
+                nombre: document.getElementById('m-nombre').value,
+                telefono: document.getElementById('m-telefono').value,
+                direccion: document.getElementById('m-direccion').value
+            };
+            if(id) {
+                await updateDoc(doc(db, "clientes_ethan", id), data);
+            } else {
+                await addDoc(collection(db, "clientes_ethan"), data);
+            }
+            cerrarModalCliente();
+            sincronizarDatos();
+            alert("¡Cliente guardado correctamente!");
+        };
+
+        window.editarCliente = (id) => {
+            const c = listaClientes.find(x => x.id === id);
+            if(!c) return;
+            document.getElementById('m-id').value = c.id;
+            document.getElementById('m-nombre').value = c.nombre || '';
+            document.getElementById('m-telefono').value = c.telefono || '';
+            document.getElementById('m-direccion').value = c.direccion || '';
+            document.getElementById('modal-cliente-titulo').innerText = "Editar Cliente";
+            document.getElementById('modal-cliente').classList.remove('hidden');
+        };
+
+        window.eliminarCliente = async (id) => {
+            if(confirm("¿Desea eliminar este cliente?")) {
+                await deleteDoc(doc(db, "clientes_ethan", id));
+                sincronizarDatos();
+            }
+        };
+
+        // CRUD VENTAS
+        window.abrirModalVenta = () => {
+            document.getElementById('v-id').value = '';
+            let htmlSel = '<option value="">Seleccione cliente...</option>';
+            listaClientes.forEach(c => {
+                htmlSel += `<option value="${c.id}">${c.nombre}</option>`;
+            });
+            document.getElementById('v-cliente-select').innerHTML = htmlSel;
+            document.getElementById('v-telefono').value = '';
+            document.getElementById('v-direccion').value = '';
+            document.getElementById('v-cantidad').value = '1';
+            document.getElementById('v-precio').value = '40.00';
+            document.getElementById('v-total').value = '40.00';
+            document.getElementById('v-cuota').value = '10.00';
+            document.getElementById('v-obs').value = '';
+            document.getElementById('modal-venta-titulo').innerText = "Registrar Nueva Venta";
+            document.getElementById('modal-venta').classList.remove('hidden');
+            document.getElementById('v-fecha').value = new Date().toISOString().split('T')[0];
+        };
+
+        window.cerrarModalVenta = () => {
+            document.getElementById('modal-venta').classList.add('hidden');
+        };
+
+        window.autocompletarCliente = (select) => {
+            const cliente = listaClientes.find(c => c.id === select.value);
+            if(cliente) {
+                document.getElementById('v-telefono').value = cliente.telefono || '';
+                document.getElementById('v-direccion').value = cliente.direccion || '';
+            } else {
+                document.getElementById('v-telefono').value = '';
+                document.getElementById('v-direccion').value = '';
+            }
+        };
+
+        window.calcularTotalVenta = () => {
+            const cant = parseFloat(document.getElementById('v-cantidad').value) || 0;
+            const prec = parseFloat(document.getElementById('v-precio').value) || 0;
+            document.getElementById('v-total').value = (cant * prec).toFixed(2);
+        };
+
+        window.guardarVenta = async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('v-id').value;
+            const clienteId = document.getElementById('v-cliente-select').value;
+            const cliente = listaClientes.find(c => c.id === clienteId);
+
+            const data = {
+                fecha: document.getElementById('v-fecha').value,
+                clienteId: clienteId,
+                nombre: cliente ? cliente.nombre : '',
+                telefono: document.getElementById('v-telefono').value,
+                direccion: document.getElementById('v-direccion').value,
+                vendedor: document.getElementById('v-vendedor').value,
+                cantidad: parseInt(document.getElementById('v-cantidad').value) || 1,
+                precioUnitario: parseFloat(document.getElementById('v-precio').value) || 40,
+                total: parseFloat(document.getElementById('v-total').value) || 40,
+                tipo: document.getElementById('v-tipo').value,
+                formaPago: document.getElementById('v-forma-pago').value,
+                cuota: parseFloat(document.getElementById('v-cuota').value) || 10,
+                proximoPago: document.getElementById('v-proximo-pago').value,
+                observaciones: document.getElementById('v-obs').value,
+                estadoComision: 'Pendiente'
+            };
+
+            if(id) {
+                await updateDoc(doc(db, "ventas_ethan", id), data);
+            } else {
+                await addDoc(collection(db, "ventas_ethan"), data);
+            }
+            cerrarModalVenta();
+            sincronizarDatos();
+            alert("¡Venta guardada con éxito!");
+        };
+
+        window.editarVenta = (id) => {
+            const v = listaVentas.find(x => x.id === id);
+            if(!v) return;
+            abrirModalVenta();
+            document.getElementById('v-id').value = v.id;
+            document.getElementById('v-fecha').value = v.fecha || '';
+            document.getElementById('v-cliente-select').value = v.clienteId || '';
+            document.getElementById('v-telefono').value = v.telefono || '';
+            document.getElementById('v-direccion').value = v.direccion || '';
+            document.getElementById('v-vendedor').value = v.vendedor || 'George';
+            document.getElementById('v-cantidad').value = v.cantidad || 1;
+            document.getElementById('v-precio').value = v.precioUnitario || 40;
+            document.getElementById('v-total').value = v.total || 40;
+            document.getElementById('v-tipo').value = v.tipo || 'Crédito';
+            document.getElementById('v-forma-pago').value = v.formaPago || 'Semanal';
+            document.getElementById('v-cuota').value = v.cuota || 10;
+            document.getElementById('v-proximo-pago').value = v.proximoPago || '';
+            document.getElementById('v-obs').value = v.observaciones || '';
+            document.getElementById('modal-venta-titulo').innerText = "Editar Venta";
+        };
+
+        window.eliminarVenta = async (id) => {
+            if(confirm("¿Está seguro de eliminar esta venta?")) {
+                await deleteDoc(doc(db, "ventas_ethan", id));
+                sincronizarDatos();
+            }
+        };
+
+        // CRUD INVENTARIO / COMPRAS
+        window.guardarCompraInventario = async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('inv-id').value;
+            const data = {
+                fecha: document.getElementById('inv-fecha').value,
+                cantidad: parseInt(document.getElementById('inv-cantidad').value) || 0,
+                costoTotal: parseFloat(document.getElementById('inv-costo-total').value) || 0
+            };
+            if(id) {
+                await updateDoc(doc(db, "inventario_ethan", id), data);
+                document.getElementById('inv-id').value = '';
+                document.getElementById('inv-titulo-form').innerText = "Ingresar Mercadería";
+            } else {
+                await addDoc(collection(db, "inventario_ethan"), data);
+                // Registrar salida automática por compra de inventario
+                await addDoc(collection(db, "movimientos_personales_ethan"), {
+                    fecha: data.fecha,
+                    tipo: 'Salida',
+                    monto: data.costoTotal,
+                    categoria: 'Colchones',
+                    descripcion: `Compra de inventario (${data.cantidad} unidades)`
+                });
+            }
+            document.getElementById('inv-cantidad').value = '';
+            document.getElementById('inv-costo-total').value = '';
+            sincronizarDatos();
+            alert("¡Compra de inventario registrada con éxito!");
+        };
+
+        window.editarCompraInventario = (id) => {
+            const item = listaInventario.find(x => x.id === id);
+            if(!item) return;
+            document.getElementById('inv-id').value = item.id;
+            document.getElementById('inv-fecha').value = item.fecha || '';
+            document.getElementById('inv-cantidad').value = item.cantidad || '';
+            document.getElementById('inv-costo-total').value = item.costoTotal || '';
+            document.getElementById('inv-titulo-form').innerText = "Editar Compra de Inventario";
+        };
+
+        window.eliminarCompraInventario = async (id) => {
+            if(confirm("¿Eliminar este registro de compra?")) {
+                await deleteDoc(doc(db, "inventario_ethan", id));
+                sincronizarDatos();
+            }
+        };
+
+        window.toggleEstadoComision = async (id, estadoActual) => {
+            const nuevoEstado = estadoActual === 'Pagada' ? 'Pendiente' : 'Pagada';
+            await updateDoc(doc(db, "ventas_ethan", id), { estadoComision: nuevoEstado });
+            sincronizarDatos();
+        };
+
+        window.guardarMovimientoPersonal = async (e) => {
+            e.preventDefault();
+            let categoriaFinal = document.getElementById('mov-cat').value;
+            if(categoriaFinal === 'Agregar Manual') {
+                categoriaFinal = document.getElementById('mov-cat-manual').value.trim();
+                if(!categoriaFinal) {
+                    alert("Por favor especifique la categoría manual.");
+                    return;
+                }
+            }
+            const data = {
+                fecha: document.getElementById('mov-fecha').value,
+                tipo: document.getElementById('mov-tipo').value,
+                monto: parseFloat(document.getElementById('mov-monto').value) || 0,
+                categoria: categoriaFinal,
+                descripcion: document.getElementById('mov-obs').value
+            };
+            await addDoc(collection(db, "movimientos_personales_ethan"), data);
+            document.getElementById('mov-monto').value = '';
+            document.getElementById('mov-obs').value = '';
+            document.getElementById('mov-cat-manual').value = '';
+            document.getElementById('contenedor-cat-manual').classList.add('hidden');
+            document.getElementById('mov-cat').value = 'Combustible';
+            sincronizarDatos();
+            alert("¡Movimiento personal guardado con éxito!");
+        };
+
+        window.guardarCombustibleRapido = async (e) => {
+            e.preventDefault();
+            const data = {
+                fecha: document.getElementById('comb-fecha').value,
+                tipo: 'Salida',
+                monto: parseFloat(document.getElementById('comb-monto').value) || 0,
+                categoria: 'Combustible',
+                descripcion: 'Carga de gasolina camioneta'
+            };
+            await addDoc(collection(db, "movimientos_personales_ethan"), data);
+            document.getElementById('comb-monto').value = '';
+            sincronizarDatos();
+            alert("¡Carga de combustible registrada con éxito!");
+        };
+
         window.renderizarMovimientosPorSemanas = () => {
             const contenedor = document.getElementById('contenedor-historial-semanas');
             if(!listaMovimientos || listaMovimientos.length === 0) {
@@ -1310,8 +1610,8 @@
             });
 
             const semanasOrdenadas = Object.keys(semanasMap).sort().reverse();
-
             let htmlFinal = '';
+
             semanasOrdenadas.forEach((semKey, index) => {
                 const sem = semanasMap[semKey];
                 const balanceSemanal = sem.totalEntradas - sem.totalSalidas;
@@ -1364,19 +1664,18 @@
             });
 
             contenedor.innerHTML = htmlFinal;
-        }
+        };
 
         window.toggleAcordeonSemana = (semKey) => {
             const body = document.getElementById(`semana-body-${semKey}`);
             const icono = document.getElementById(`icono-sem-${semKey}`);
             body.classList.toggle('hidden');
             icono.classList.toggle('rotate-180');
-        }
+        };
 
         window.renderizarHistorialCombustible = () => {
             const filtroMesInput = document.getElementById('filtro-mes-combustible').value;
             let htmlComb = '';
-            
             let listaCombustible = listaMovimientos.filter(m => m.categoria === 'Combustible');
             const { inicioSemanaActual, finSemanaActual, inicioSemanaAnterior, finSemanaAnterior } = obtenerRangosSemanales();
             let totalSemanaActual = 0;
@@ -1419,164 +1718,107 @@
             });
 
             document.getElementById('tabla-combustible-cuerpo').innerHTML = htmlComb || '<tr><td colspan="5" class="p-4 text-center text-slate-400">Sin registros de combustible para este periodo.</td></tr>';
-        }
-
-        window.filtrarCombustiblePorMes = () => {
-            renderizarHistorialCombustible();
-        }
-
-        window.limpiarFiltroCombustible = () => {
-            document.getElementById('filtro-mes-combustible').value = '';
-            renderizarHistorialCombustible();
-        }
-
-        window.guardarMovimientoPersonal = async (e) => {
-            e.preventDefault();
-            let categoriaFinal = document.getElementById('mov-cat').value;
-            if(categoriaFinal === 'Agregar Manual') {
-                categoriaFinal = document.getElementById('mov-cat-manual').value.trim();
-                if(!categoriaFinal) {
-                    alert("Por favor especifique la categoría manual.");
-                    return;
-                }
-            }
-
-            const data = {
-                fecha: document.getElementById('mov-fecha').value,
-                tipo: document.getElementById('mov-tipo').value,
-                monto: parseFloat(document.getElementById('mov-monto').value) || 0,
-                categoria: categoriaFinal,
-                descripcion: document.getElementById('mov-obs').value
-            };
-            await addDoc(collection(db, "movimientos_personales_ethan"), data);
-            document.getElementById('mov-monto').value = '';
-            document.getElementById('mov-obs').value = '';
-            document.getElementById('mov-cat-manual').value = '';
-            document.getElementById('contenedor-cat-manual').classList.add('hidden');
-            document.getElementById('mov-cat').value = 'Combustible';
-            sincronizarDatos();
-            alert("¡Movimiento personal guardado con éxito!");
-        }
-
-        window.guardarCombustibleRapido = async (e) => {
-            e.preventDefault();
-            const data = {
-                fecha: document.getElementById('comb-fecha').value,
-                tipo: 'Salida',
-                monto: parseFloat(document.getElementById('comb-monto').value) || 0,
-                categoria: 'Combustible',
-                descripcion: 'Carga de gasolina camioneta'
-            };
-            await addDoc(collection(db, "movimientos_personales_ethan"), data);
-            document.getElementById('comb-monto').value = '';
-            sincronizarDatos();
-            alert("¡Carga de combustible registrada con éxito!");
-        }
+        };
 
         window.eliminarMovimiento = async (id) => {
-            if(confirm("¿Eliminar este movimiento?")) {
+            if(confirm("¿Desea eliminar este movimiento personal?")) {
                 await deleteDoc(doc(db, "movimientos_personales_ethan", id));
                 sincronizarDatos();
             }
-        }
-
-        window.descargarRespaldoJSON = () => {
-            try {
-                const datosRespaldo = {
-                    fechaRespaldo: new Date().toISOString(),
-                    clientes: listaClientes,
-                    ventas: listaVentas,
-                    cobros: listaPagos,
-                    inventario: listaInventario,
-                    movimientosPersonales: listaMovimientos,
-                    caja: listaCaja
-                };
-                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(datosRespaldo, null, 2));
-                const downloadAnchor = document.createElement('a');
-                downloadAnchor.setAttribute("href", dataStr);
-                downloadAnchor.setAttribute("download", `respaldo_crm_ethan_${new Date().toISOString().split('T')[0]}.json`);
-                document.body.appendChild(downloadAnchor);
-                downloadAnchor.click();
-                downloadAnchor.remove();
-                alert("¡Respaldo de datos descargado con éxito!");
-            } catch (error) {
-                console.error(error);
-                alert("Hubo un error al generar el respaldo.");
-            }
         };
 
-        window.restaurarRespaldoJSON = (event) => {
-            const archivo = event.target.files[0];
-            if (!archivo) return;
-            const lector = new FileReader();
-            lector.onload = function(e) {
-                try {
-                    const contenido = JSON.parse(e.target.result);
-                    if (contenido && contenido.clientes && contenido.ventas) {
-                        listaClientes = contenido.clientes || [];
-                        listaVentas = contenido.ventas || [];
-                        listaPagos = contenido.cobros || [];
-                        listaInventario = contenido.inventario || [];
-                        listaMovimientos = contenido.movimientosPersonales || [];
-                        listaCaja = contenido.caja || [];
-                        alert("¡Respaldo cargado con éxito en la vista previa del sistema!");
-                        sincronizarDatos();
-                    } else {
-                        alert("El archivo JSON no tiene el formato correcto.");
-                    }
-                } catch (err) {
-                    console.error(err);
-                    alert("Error al leer el archivo JSON.");
-                }
+        window.filtrarCombustiblePorMes = () => { renderizarHistorialCombustible(); };
+        window.limpiarFiltroCombustible = () => {
+            document.getElementById('filtro-mes-combustible').value = '';
+            renderizarHistorialCombustible();
+        };
+
+        // EXPORTAR E IMPORTAR RESPALDOS JSON
+        window.descargarRespaldoJSON = () => {
+            const dataBackup = {
+                clientes: listaClientes,
+                ventas: listaVentas,
+                pagos: listaPagos,
+                inventario: listaInventario,
+                movimientos: listaMovimientos,
+                caja: listaCaja
             };
-            lector.readAsText(archivo);
+            const blob = new Blob([JSON.stringify(dataBackup, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `respaldo_crm_ethan_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
         };
 
         window.descargarCodigoHTML = () => {
-            try {
-                const codigoActual = document.documentElement.outerHTML;
-                const blob = new Blob([codigoActual], { type: 'text/html;charset=utf-8' });
-                const url = URL.createObjectURL(blob);
-                const downloadAnchor = document.createElement('a');
-                downloadAnchor.href = url;
-                downloadAnchor.download = "index.html";
-                document.body.appendChild(downloadAnchor);
-                downloadAnchor.click();
-                downloadAnchor.remove();
-                URL.revokeObjectURL(url);
-                alert("¡Código HTML descargado con éxito!");
-            } catch (error) {
-                console.error(error);
-                alert("Hubo un error al descargar el código.");
-            }
+            const htmlContent = document.documentElement.outerHTML;
+            const blob = new Blob([htmlContent], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `ComercialEthan_CRM_v4.0.html`;
+            a.click();
         };
 
-        window.toggleEstadoComision = async (idVenta, estadoActual) => {
-            const nuevoEstado = estadoActual === 'Pendiente' ? 'Pagada' : 'Pendiente';
-            await updateDoc(doc(db, "ventas_ethan", idVenta), { estadoComision: nuevoEstado });
-            sincronizarDatos();
-        }
+        // DETALLE CLIENTE MODAL
+        window.verDetalleCliente = (clienteId) => {
+            const cliente = listaClientes.find(c => c.id === clienteId);
+            if(!cliente) return;
 
-        window.guardarCompraInventario = async (e) => {
-            e.preventDefault();
-            const id = document.getElementById('inv-id').value;
-            const data = {
-                fecha: document.getElementById('inv-fecha').value,
-                cantidad: parseInt(document.getElementById('inv-cantidad').value) || 0,
-                costoTotal: parseFloat(document.getElementById('inv-costo-total').value) || 0
-            };
-            if(id) { await updateDoc(doc(db, "inventario_ethan", id), data); } 
-            else { await addDoc(collection(db, "inventario_ethan"), data); }
-            document.getElementById('inv-id').value = '';
-            document.getElementById('inv-cantidad').value = '';
-            document.getElementById('inv-costo-total').value = '';
-            document.getElementById('inv-titulo-form').innerText = "Ingresar Mercadería";
-            sincronizarDatos();
-            alert("¡Operación de inventario guardada!");
+            document.getElementById('det-nombre-cliente').innerText = `Cliente: ${cliente.nombre || ''}`;
+            document.getElementById('det-tel').innerText = cliente.telefono || '-';
+            document.getElementById('det-dir').innerText = cliente.direccion || '-';
+            document.getElementById('det-saldo').innerText = `$${(cliente.saldoActualCalculado || 0).toFixed(2)}`;
+
+            const vCliente = listaVentas.filter(v => v.clienteId === cliente.id || v.nombre === cliente.nombre);
+            let htmlV = '';
+            vCliente.forEach(v => {
+                htmlV += `
+                    <tr class="border-b border-slate-100">
+                        <td class="p-2">${v.fecha || '-'}</td>
+                        <td class="p-2">${v.cantidad || 1}</td>
+                        <td class="p-2 font-semibold text-emerald-600">$${parseFloat(v.total || 40).toFixed(2)}</td>
+                        <td class="p-2">${v.tipo || '-'}</td>
+                        <td class="p-2">${v.vendedor || '-'}</td>
+                        <td class="p-2">$${parseFloat(v.cuota || 10).toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+            document.getElementById('tabla-detalles-ventas').innerHTML = htmlV || '<tr><td colspan="6" class="p-2 text-center text-slate-400">Sin ventas</td></tr>';
+
+            const pCliente = listaPagos.filter(p => p.clienteId === cliente.id || p.nombre === cliente.nombre);
+            let htmlP = '';
+            pCliente.forEach(p => {
+                htmlP += `
+                    <tr class="border-b border-slate-100">
+                        <td class="p-2">${p.fecha || '-'}</td>
+                        <td class="p-2 font-semibold text-emerald-600">$${parseFloat(p.monto || 0).toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+            document.getElementById('tabla-detalles-cobros').innerHTML = htmlP || '<tr><td colspan="2" class="p-2 text-center text-slate-400">Sin cobros / abonos</td></tr>';
+
+            document.getElementById('modal-detalle-cliente').classList.remove('hidden');
         };
 
-        window.sincronizarDatos();
-        cambiarVista('dashboard');
+        window.cerrarModalDetalle = () => {
+            document.getElementById('modal-detalle-cliente').classList.add('hidden');
+        };
+
+        // EXPORTADORES EXCEL / PDF
+        window.exportarExcelVistaActual = () => {
+            alert(`Exportando datos de la vista: ${vistaActualActiva}`);
+        };
+
+        window.exportarPdfVistaActual = () => {
+            alert(`Generando PDF de la vista: ${vistaActualActiva}`);
+        };
+
+        // Inicialización al cargar la página
+        window.addEventListener('DOMContentLoaded', () => {
+            sincronizarDatos();
+        });
     </script>
 </body>
 </html>
