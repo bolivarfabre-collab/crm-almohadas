@@ -66,7 +66,7 @@
                 </div>
             </nav>
         </div>
-        <div class="p-4 border-t border-slate-800 text-xs text-slate-500">Comercial Ethan Cloud v4.1</div>
+        <div class="p-4 border-t border-slate-800 text-xs text-slate-500">Comercial Ethan Cloud v4.0</div>
     </aside>
 
     <!-- Contenido Principal -->
@@ -1220,6 +1220,7 @@
             }
         };
 
+        // CORRECCIÓN: Semana empieza estrictamente en Lunes
         function obtenerLunesDeLaSemana(d) {
             const fecha = new Date(d);
             const dia = fecha.getDay();
@@ -1270,6 +1271,7 @@
             };
         }
 
+        // CORRECCIÓN Y EJECUCIÓN DE PAGOS Y COBROS
         window.actualizarSaldoActual = (select) => {
             const clienteId = select.value;
             const cliente = listaClientes.find(c => c.id === clienteId);
@@ -1308,6 +1310,7 @@
                 observaciones: observaciones
             });
 
+            // Registrar también como Entrada en Finanzas Personales automáticamente
             await addDoc(collection(db, "movimientos_personales_ethan"), {
                 fecha: fecha,
                 tipo: 'Entrada',
@@ -1332,6 +1335,7 @@
             }
         };
 
+        // CRUD CLIENTES
         window.abrirModalCliente = () => {
             document.getElementById('m-id').value = '';
             document.getElementById('m-nombre').value = '';
@@ -1364,23 +1368,24 @@
         };
 
         window.editarCliente = (id) => {
-            const cliente = listaClientes.find(c => c.id === id);
-            if(!cliente) return;
-            document.getElementById('m-id').value = cliente.id;
-            document.getElementById('m-nombre').value = cliente.nombre || '';
-            document.getElementById('m-telefono').value = cliente.telefono || '';
-            document.getElementById('m-direccion').value = cliente.direccion || '';
+            const c = listaClientes.find(x => x.id === id);
+            if(!c) return;
+            document.getElementById('m-id').value = c.id;
+            document.getElementById('m-nombre').value = c.nombre || '';
+            document.getElementById('m-telefono').value = c.telefono || '';
+            document.getElementById('m-direccion').value = c.direccion || '';
             document.getElementById('modal-cliente-titulo').innerText = "Editar Cliente";
             document.getElementById('modal-cliente').classList.remove('hidden');
         };
 
         window.eliminarCliente = async (id) => {
-            if(confirm("¿Seguro que deseas eliminar este cliente?")) {
+            if(confirm("¿Desea eliminar este cliente?")) {
                 await deleteDoc(doc(db, "clientes_ethan", id));
                 sincronizarDatos();
             }
         };
 
+        // CRUD VENTAS
         window.abrirModalVenta = () => {
             document.getElementById('v-id').value = '';
             let htmlSel = '<option value="">Seleccione cliente...</option>';
@@ -1388,14 +1393,16 @@
                 htmlSel += `<option value="${c.id}">${c.nombre}</option>`;
             });
             document.getElementById('v-cliente-select').innerHTML = htmlSel;
-            document.getElementById('v-cantidad').value = 1;
-            document.getElementById('v-precio').value = 40.00;
-            document.getElementById('v-total').value = 40.00;
             document.getElementById('v-telefono').value = '';
             document.getElementById('v-direccion').value = '';
-            document.getElementById('v-cuota').value = 10.00;
+            document.getElementById('v-cantidad').value = '1';
+            document.getElementById('v-precio').value = '40.00';
+            document.getElementById('v-total').value = '40.00';
+            document.getElementById('v-cuota').value = '10.00';
+            document.getElementById('v-obs').value = '';
             document.getElementById('modal-venta-titulo').innerText = "Registrar Nueva Venta";
             document.getElementById('modal-venta').classList.remove('hidden');
+            document.getElementById('v-fecha').value = new Date().toISOString().split('T')[0];
         };
 
         window.cerrarModalVenta = () => {
@@ -1403,8 +1410,7 @@
         };
 
         window.autocompletarCliente = (select) => {
-            const id = select.value;
-            const cliente = listaClientes.find(c => c.id === id);
+            const cliente = listaClientes.find(c => c.id === select.value);
             if(cliente) {
                 document.getElementById('v-telefono').value = cliente.telefono || '';
                 document.getElementById('v-direccion').value = cliente.direccion || '';
@@ -1416,77 +1422,63 @@
 
         window.calcularTotalVenta = () => {
             const cant = parseFloat(document.getElementById('v-cantidad').value) || 0;
-            const precio = parseFloat(document.getElementById('v-precio').value) || 0;
-            const total = cant * precio;
-            document.getElementById('v-total').value = total.toFixed(2);
+            const prec = parseFloat(document.getElementById('v-precio').value) || 0;
+            document.getElementById('v-total').value = (cant * prec).toFixed(2);
         };
 
         window.guardarVenta = async (e) => {
             e.preventDefault();
+            const id = document.getElementById('v-id').value;
             const clienteId = document.getElementById('v-cliente-select').value;
             const cliente = listaClientes.find(c => c.id === clienteId);
-            if(!cliente) {
-                alert("Seleccione un cliente válido.");
-                return;
-            }
-
-            const cantidad = parseInt(document.getElementById('v-cantidad').value) || 1;
-            const precio = parseFloat(document.getElementById('v-precio').value) || 40.00;
-            const total = cantidad * precio;
 
             const data = {
                 fecha: document.getElementById('v-fecha').value,
-                clienteId: cliente.id,
-                nombre: cliente.nombre,
-                telefono: cliente.telefono || '',
-                direccion: cliente.direccion || '',
+                clienteId: clienteId,
+                nombre: cliente ? cliente.nombre : '',
+                telefono: document.getElementById('v-telefono').value,
+                direccion: document.getElementById('v-direccion').value,
                 vendedor: document.getElementById('v-vendedor').value,
-                cantidad: cantidad,
-                precio: precio,
-                total: total,
+                cantidad: parseInt(document.getElementById('v-cantidad').value) || 1,
+                precioUnitario: parseFloat(document.getElementById('v-precio').value) || 40,
+                total: parseFloat(document.getElementById('v-total').value) || 40,
                 tipo: document.getElementById('v-tipo').value,
                 formaPago: document.getElementById('v-forma-pago').value,
-                cuota: parseFloat(document.getElementById('v-cuota').value) || 10.00,
+                cuota: parseFloat(document.getElementById('v-cuota').value) || 10,
                 proximoPago: document.getElementById('v-proximo-pago').value,
                 observaciones: document.getElementById('v-obs').value,
                 estadoComision: 'Pendiente'
             };
 
-            const id = document.getElementById('v-id').value;
             if(id) {
                 await updateDoc(doc(db, "ventas_ethan", id), data);
             } else {
                 await addDoc(collection(db, "ventas_ethan"), data);
             }
-
             cerrarModalVenta();
             sincronizarDatos();
-            alert("¡Venta registrada con éxito!");
+            alert("¡Venta guardada con éxito!");
         };
 
         window.editarVenta = (id) => {
             const v = listaVentas.find(x => x.id === id);
             if(!v) return;
+            abrirModalVenta();
             document.getElementById('v-id').value = v.id;
             document.getElementById('v-fecha').value = v.fecha || '';
-            let htmlSel = '<option value="">Seleccione cliente...</option>';
-            listaClientes.forEach(c => {
-                htmlSel += `<option value="${c.id}" ${c.id === v.clienteId || c.nombre === v.nombre ? 'selected' : ''}>${c.nombre}</option>`;
-            });
-            document.getElementById('v-cliente-select').innerHTML = htmlSel;
+            document.getElementById('v-cliente-select').value = v.clienteId || '';
             document.getElementById('v-telefono').value = v.telefono || '';
             document.getElementById('v-direccion').value = v.direccion || '';
             document.getElementById('v-vendedor').value = v.vendedor || 'George';
             document.getElementById('v-cantidad').value = v.cantidad || 1;
-            document.getElementById('v-precio').value = v.precio || 40.00;
-            document.getElementById('v-total').value = (v.total || 40.00).toFixed(2);
+            document.getElementById('v-precio').value = v.precioUnitario || 40;
+            document.getElementById('v-total').value = v.total || 40;
             document.getElementById('v-tipo').value = v.tipo || 'Crédito';
             document.getElementById('v-forma-pago').value = v.formaPago || 'Semanal';
-            document.getElementById('v-cuota').value = v.cuota || 10.00;
+            document.getElementById('v-cuota').value = v.cuota || 10;
             document.getElementById('v-proximo-pago').value = v.proximoPago || '';
             document.getElementById('v-obs').value = v.observaciones || '';
             document.getElementById('modal-venta-titulo').innerText = "Editar Venta";
-            document.getElementById('modal-venta').classList.remove('hidden');
         };
 
         window.eliminarVenta = async (id) => {
@@ -1496,12 +1488,7 @@
             }
         };
 
-        window.toggleEstadoComision = async (id, estadoActual) => {
-            const nuevoEstado = estadoActual === 'Pendiente' ? 'Pagada' : 'Pendiente';
-            await updateDoc(doc(db, "ventas_ethan", id), { estadoComision: nuevoEstado });
-            sincronizarDatos();
-        };
-
+        // CRUD INVENTARIO / COMPRAS
         window.guardarCompraInventario = async (e) => {
             e.preventDefault();
             const id = document.getElementById('inv-id').value;
@@ -1512,15 +1499,23 @@
             };
             if(id) {
                 await updateDoc(doc(db, "inventario_ethan", id), data);
+                document.getElementById('inv-id').value = '';
+                document.getElementById('inv-titulo-form').innerText = "Ingresar Mercadería";
             } else {
                 await addDoc(collection(db, "inventario_ethan"), data);
+                // Registrar salida automática por compra de inventario
+                await addDoc(collection(db, "movimientos_personales_ethan"), {
+                    fecha: data.fecha,
+                    tipo: 'Salida',
+                    monto: data.costoTotal,
+                    categoria: 'Colchones',
+                    descripcion: `Compra de inventario (${data.cantidad} unidades)`
+                });
             }
-            document.getElementById('inv-id').value = '';
             document.getElementById('inv-cantidad').value = '';
             document.getElementById('inv-costo-total').value = '';
-            document.getElementById('inv-titulo-form').innerText = "Ingresar Mercadería";
             sincronizarDatos();
-            alert("¡Inventario actualizado con éxito!");
+            alert("¡Compra de inventario registrada con éxito!");
         };
 
         window.editarCompraInventario = (id) => {
@@ -1530,195 +1525,137 @@
             document.getElementById('inv-fecha').value = item.fecha || '';
             document.getElementById('inv-cantidad').value = item.cantidad || '';
             document.getElementById('inv-costo-total').value = item.costoTotal || '';
-            document.getElementById('inv-titulo-form').innerText = "Editar Registro de Compra";
+            document.getElementById('inv-titulo-form').innerText = "Editar Compra de Inventario";
         };
 
         window.eliminarCompraInventario = async (id) => {
-            if(confirm("¿Está seguro de eliminar esta compra de inventario?")) {
+            if(confirm("¿Eliminar este registro de compra?")) {
                 await deleteDoc(doc(db, "inventario_ethan", id));
                 sincronizarDatos();
             }
         };
 
+        window.toggleEstadoComision = async (id, estadoActual) => {
+            const nuevoEstado = estadoActual === 'Pagada' ? 'Pendiente' : 'Pagada';
+            await updateDoc(doc(db, "ventas_ethan", id), { estadoComision: nuevoEstado });
+            sincronizarDatos();
+        };
+
         window.guardarMovimientoPersonal = async (e) => {
             e.preventDefault();
-            const id = document.getElementById('mov-id').value;
-            let categoria = document.getElementById('mov-cat').value;
-            if(categoria === 'Agregar Manual') {
-                categoria = document.getElementById('mov-cat-manual').value;
+            let categoriaFinal = document.getElementById('mov-cat').value;
+            if(categoriaFinal === 'Agregar Manual') {
+                categoriaFinal = document.getElementById('mov-cat-manual').value.trim();
+                if(!categoriaFinal) {
+                    alert("Por favor especifique la categoría manual.");
+                    return;
+                }
             }
-
             const data = {
                 fecha: document.getElementById('mov-fecha').value,
                 tipo: document.getElementById('mov-tipo').value,
                 monto: parseFloat(document.getElementById('mov-monto').value) || 0,
-                categoria: categoria,
+                categoria: categoriaFinal,
                 descripcion: document.getElementById('mov-obs').value
             };
-
-            if(id) {
-                await updateDoc(doc(db, "movimientos_personales_ethan", id), data);
-            } else {
-                await addDoc(collection(db, "movimientos_personales_ethan"), data);
-            }
-
-            document.getElementById('mov-id').value = '';
+            await addDoc(collection(db, "movimientos_personales_ethan"), data);
             document.getElementById('mov-monto').value = '';
             document.getElementById('mov-obs').value = '';
+            document.getElementById('mov-cat-manual').value = '';
             document.getElementById('contenedor-cat-manual').classList.add('hidden');
+            document.getElementById('mov-cat').value = 'Combustible';
             sincronizarDatos();
-            alert("¡Movimiento personal guardado!");
+            alert("¡Movimiento personal guardado con éxito!");
         };
 
         window.guardarCombustibleRapido = async (e) => {
             e.preventDefault();
-            const fecha = document.getElementById('comb-fecha').value;
-            const monto = parseFloat(document.getElementById('comb-monto').value) || 0;
-
-            await addDoc(collection(db, "movimientos_personales_ethan"), {
-                fecha: fecha,
+            const data = {
+                fecha: document.getElementById('comb-fecha').value,
                 tipo: 'Salida',
-                monto: monto,
+                monto: parseFloat(document.getElementById('comb-monto').value) || 0,
                 categoria: 'Combustible',
-                descripcion: 'Carga de gasolina rápida'
-            });
-
+                descripcion: 'Carga de gasolina camioneta'
+            };
+            await addDoc(collection(db, "movimientos_personales_ethan"), data);
             document.getElementById('comb-monto').value = '';
             sincronizarDatos();
-            alert("¡Carga de combustible registrada!");
+            alert("¡Carga de combustible registrada con éxito!");
         };
 
-        let filtroCombustibleMesAnio = '';
-        window.filtrarCombustiblePorMes = () => {
-            filtroCombustibleMesAnio = document.getElementById('filtro-mes-combustible').value;
-            renderizarHistorialCombustible();
-        };
-
-        window.limpiarFiltroCombustible = () => {
-            filtroCombustibleMesAnio = '';
-            document.getElementById('filtro-mes-combustible').value = '';
-            renderizarHistorialCombustible();
-        };
-
-        function renderizarHistorialCombustible() {
-            let htmlComb = '';
-            let totalFiltrado = 0;
-            let sumSemAnterior = 0;
-            let sumSemActual = 0;
-
-            const { inicioSemanaActual, finSemanaActual, inicioSemanaAnterior, finSemanaAnterior } = obtenerRangosSemanales();
-
-            let filtrados = listaMovimientos.filter(m => m.categoria === 'Combustible');
-
-            if(filtroCombustibleMesAnio) {
-                filtrados = filtrados.filter(m => m.fecha && m.fecha.startsWith(filtroCombustibleMesAnio));
-                document.getElementById('info-filtro-combustible').innerText = `Filtrado por mes: ${filtroCombustibleMesAnio}`;
-            } else {
-                document.getElementById('info-filtro-combustible').innerText = `Mostrando todos los registros`;
-            }
-
-            filtrados.forEach(m => {
-                const monto = parseFloat(m.monto || 0);
-                totalFiltrado += monto;
-
-                const fechaMov = m.fecha ? new Date(m.fecha + 'T00:00:00') : null;
-                if(fechaMov) {
-                    if(fechaMov >= inicioSemanaActual && fechaMov <= finSemanaActual) {
-                        sumSemActual += monto;
-                    } else if(fechaMov >= inicioSemanaAnterior && fechaMov <= finSemanaAnterior) {
-                        sumSemAnterior += monto;
-                    }
-                }
-
-                htmlComb += `
-                    <tr class="hover:bg-slate-50 border-b border-slate-100">
-                        <td class="p-3 text-slate-600">${m.fecha || '-'}</td>
-                        <td class="p-3 font-semibold text-amber-600">${m.categoria}</td>
-                        <td class="p-3 font-bold text-slate-900">$${monto.toFixed(2)}</td>
-                        <td class="p-3 text-slate-500">${m.descripcion || '-'}</td>
-                        <td class="p-3 text-center space-x-2">
-                            <button onclick="eliminarMovimiento('${m.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
-                        </td>
-                    </tr>
-                `;
-            });
-
-            document.getElementById('tabla-combustible-cuerpo').innerHTML = htmlComb || '<tr><td colspan="5" class="p-4 text-center text-slate-400">Sin registros de combustible</td></tr>';
-            document.getElementById('comb-total-sem-actual').innerText = `$${sumSemActual.toFixed(2)}`;
-            document.getElementById('comb-total-sem-anterior').innerText = `$${sumSemAnterior.toFixed(2)}`;
-        }
-
-        function renderizarMovimientosPorSemanas() {
+        window.renderizarMovimientosPorSemanas = () => {
             const contenedor = document.getElementById('contenedor-historial-semanas');
-            const semanasAgrupadas = {};
-
-            listaMovimientos.forEach(m => {
-                if(!m.fecha) return;
-                const idSemana = obtenerIdSemana(m.fecha);
-                if(!semanasAgrupadas[idSemana]) {
-                    semanasAgrupadas[idSemana] = {
-                        nombre: obtenerNombreSemana(m.fecha),
-                        movimientos: [],
-                        totalEntrada: 0,
-                        totalSalida: 0
-                    };
-                }
-                semanasAgrupadas[idSemana].movimientos.push(m);
-                const monto = parseFloat(m.monto || 0);
-                if(m.tipo === 'Entrada') semanasAgrupadas[idSemana].totalEntrada += monto;
-                else semanasAgrupadas[idSemana].totalSalida += monto;
-            });
-
-            let html = '';
-            const idsOrdenados = Object.keys(semanasAgrupadas).sort().reverse();
-
-            if(idsOrdenados.length === 0) {
-                contenedor.innerHTML = '<div class="bg-white p-4 rounded-xl border border-slate-200 text-center text-slate-400">Sin movimientos registrados</div>';
+            if(!listaMovimientos || listaMovimientos.length === 0) {
+                contenedor.innerHTML = '<div class="bg-white p-4 rounded-xl border border-slate-200 text-center text-slate-400 text-sm">Sin movimientos personales registrados.</div>';
                 return;
             }
 
-            idsOrdenados.forEach(idSem => {
-                const sem = semanasAgrupadas[idSemana];
-                const balanceSem = sem.totalEntrada - sem.totalSalida;
+            const semanasMap = {};
+            listaMovimientos.forEach(m => {
+                if(!m.fecha) return;
+                const d = new Date(m.fecha + 'T00:00:00');
+                const idSemana = obtenerIdSemana(d);
+                if(!semanasMap[idSemana]) {
+                    semanasMap[idSemana] = {
+                        titulo: obtenerNombreSemana(d),
+                        movimientos: [],
+                        totalEntradas: 0,
+                        totalSalidas: 0
+                    };
+                }
+                semanasMap[idSemana].movimientos.push(m);
+                const monto = parseFloat(m.monto || 0);
+                if(m.tipo === 'Entrada') semanasMap[idSemana].totalEntradas += monto;
+                else semanasMap[idSemana].totalSalidas += monto;
+            });
 
-                html += `
-                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden mb-4">
-                        <div class="bg-[#0B132B] text-white p-3 flex justify-between items-center text-xs sm:text-sm font-bold">
-                            <span><i class="fa-solid fa-calendar-week mr-2"></i> ${sem.nombre}</span>
-                            <div class="flex gap-4 text-xs font-normal">
-                                <span class="text-emerald-300">Entradas: +$${sem.totalEntrada.toFixed(2)}</span>
-                                <span class="text-rose-300">Salidas: -$${sem.totalSalida.toFixed(2)}</span>
-                                <span class="text-cyan-200 font-bold">Balance: $${balanceSem.toFixed(2)}</span>
-                            </div>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left border-collapse text-xs sm:text-sm">
-                                <thead>
-                                    <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase text-[10px]">
-                                        <th class="p-2.5">Fecha</th><th class="p-2.5">Tipo</th><th class="p-2.5">Categoría</th><th class="p-2.5">Monto</th><th class="p-2.5">Descripción</th><th class="p-2.5 text-center">Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-slate-100">
-                `;
+            const semanasOrdenadas = Object.keys(semanasMap).sort().reverse();
+            let htmlFinal = '';
 
+            semanasOrdenadas.forEach((semKey, index) => {
+                const sem = semanasMap[semKey];
+                const balanceSemanal = sem.totalEntradas - sem.totalSalidas;
+                const colorBalance = balanceSemanal >= 0 ? 'text-emerald-600' : 'text-rose-600';
+                const isOpen = index === 0 ? '' : 'hidden';
+                const rotateIcon = index === 0 ? 'rotate-180' : '';
+
+                let filasMovs = '';
                 sem.movimientos.forEach(m => {
-                    const monto = parseFloat(m.monto || 0);
-                    const esEntrada = m.tipo === 'Entrada';
-                    html += `
-                        <tr class="hover:bg-slate-50">
-                            <td class="p-2.5 text-slate-600">${m.fecha}</td>
-                            <td class="p-2.5"><span class="px-2 py-0.5 rounded-full text-[10px] font-semibold ${esEntrada ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}">${m.tipo}</span></td>
-                            <td class="p-2.5 font-medium text-slate-800">${m.categoria}</td>
-                            <td class="p-2.5 font-bold ${esEntrada ? 'text-emerald-600' : 'text-rose-600'}">$${monto.toFixed(2)}</td>
-                            <td class="p-2.5 text-slate-500">${m.descripcion || '-'}</td>
-                            <td class="p-2.5 text-center space-x-2">
-                                <button onclick="eliminarMovimiento('${m.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
-                            </td>
+                    const montoNum = parseFloat(m.monto || 0);
+                    filasMovs += `
+                        <tr class="hover:bg-slate-50 border-b border-slate-100">
+                            <td class="p-3 text-slate-600">${m.fecha || '-'}</td>
+                            <td class="p-3"><span class="px-2 py-1 text-xs rounded-full ${m.tipo === 'Entrada' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}">${m.tipo}</span></td>
+                            <td class="p-3 font-medium text-slate-800">${m.categoria || '-'}</td>
+                            <td class="p-3 font-semibold ${m.tipo === 'Entrada' ? 'text-emerald-600' : 'text-rose-600'}">$${montoNum.toFixed(2)}</td>
+                            <td class="p-3 text-slate-500">${m.descripcion || '-'}</td>
+                            <td class="p-3 text-center"><button onclick="eliminarMovimiento('${m.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button></td>
                         </tr>
                     `;
                 });
 
-                html += `
+                htmlFinal += `
+                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden mb-4">
+                        <button onclick="toggleAcordeonSemana('${semKey}')" class="w-full bg-slate-900 text-white p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-left hover:bg-slate-800 transition">
+                            <div class="flex items-center gap-3">
+                                <i id="icono-sem-${semKey}" class="fa-solid fa-chevron-down text-xs transition-transform ${rotateIcon}"></i>
+                                <span class="font-bold text-sm sm:text-base">${sem.titulo}</span>
+                            </div>
+                            <div class="flex items-center gap-4 text-xs font-semibold">
+                                <span class="bg-emerald-900/60 text-emerald-300 px-2.5 py-1 rounded-md">Entradas: +$${sem.totalEntradas.toFixed(2)}</span>
+                                <span class="bg-rose-900/60 text-rose-300 px-2.5 py-1 rounded-md">Salidas: -$${sem.totalSalidas.toFixed(2)}</span>
+                                <span class="bg-slate-800 text-white px-2.5 py-1 rounded-md border border-slate-700">Balance: <span class="${colorBalance}">$${balanceSemanal.toFixed(2)}</span></span>
+                            </div>
+                        </button>
+                        <div id="semana-body-${semKey}" class="${isOpen} overflow-x-auto">
+                            <table class="w-full text-left border-collapse text-sm">
+                                <thead>
+                                    <tr class="bg-slate-100 text-slate-700 text-xs uppercase border-b border-slate-200">
+                                        <th class="p-3">Fecha</th><th class="p-3">Tipo</th><th class="p-3">Categoría</th><th class="p-3">Monto</th><th class="p-3">Descripción</th><th class="p-3 text-center">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100 text-xs sm:text-sm">
+                                    ${filasMovs}
                                 </tbody>
                             </table>
                         </div>
@@ -1726,60 +1663,77 @@
                 `;
             });
 
-            contenedor.innerHTML = html;
-        }
+            contenedor.innerHTML = htmlFinal;
+        };
+
+        window.toggleAcordeonSemana = (semKey) => {
+            const body = document.getElementById(`semana-body-${semKey}`);
+            const icono = document.getElementById(`icono-sem-${semKey}`);
+            body.classList.toggle('hidden');
+            icono.classList.toggle('rotate-180');
+        };
+
+        window.renderizarHistorialCombustible = () => {
+            const filtroMesInput = document.getElementById('filtro-mes-combustible').value;
+            let htmlComb = '';
+            let listaCombustible = listaMovimientos.filter(m => m.categoria === 'Combustible');
+            const { inicioSemanaActual, finSemanaActual, inicioSemanaAnterior, finSemanaAnterior } = obtenerRangosSemanales();
+            let totalSemanaActual = 0;
+            let totalSemanaAnterior = 0;
+
+            listaCombustible.forEach(m => {
+                if(!m.fecha) return;
+                const fechaMov = new Date(m.fecha + 'T00:00:00');
+                const monto = parseFloat(m.monto || 0);
+
+                if(fechaMov >= inicioSemanaActual && fechaMov <= finSemanaActual) {
+                    totalSemanaActual += monto;
+                }
+                if(fechaMov >= inicioSemanaAnterior && fechaMov <= finSemanaAnterior) {
+                    totalSemanaAnterior += monto;
+                }
+            });
+
+            document.getElementById('comb-total-sem-actual').innerText = `$${totalSemanaActual.toFixed(2)}`;
+            document.getElementById('comb-total-sem-anterior').innerText = `$${totalSemanaAnterior.toFixed(2)}`;
+
+            if(filtroMesInput) {
+                listaCombustible = listaCombustible.filter(m => m.fecha && m.fecha.startsWith(filtroMesInput));
+                document.getElementById('info-filtro-combustible').innerText = `Filtrado por el mes: ${filtroMesInput}`;
+            } else {
+                document.getElementById('info-filtro-combustible').innerText = `Mostrando todos los registros ordenados por fecha`;
+            }
+
+            listaCombustible.forEach(m => {
+                const montoNum = parseFloat(m.monto || 0);
+                htmlComb += `
+                    <tr class="hover:bg-slate-50 border-b border-slate-100">
+                        <td class="p-3 text-slate-600">${m.fecha || '-'}</td>
+                        <td class="p-3 font-medium text-slate-800">${m.categoria || '-'}</td>
+                        <td class="p-3 font-semibold text-amber-600">$${montoNum.toFixed(2)}</td>
+                        <td class="p-3 text-slate-500">${m.descripcion || '-'}</td>
+                        <td class="p-3 text-center"><button onclick="eliminarMovimiento('${m.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button></td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('tabla-combustible-cuerpo').innerHTML = htmlComb || '<tr><td colspan="5" class="p-4 text-center text-slate-400">Sin registros de combustible para este periodo.</td></tr>';
+        };
 
         window.eliminarMovimiento = async (id) => {
-            if(confirm("¿Seguro que deseas eliminar este movimiento?")) {
+            if(confirm("¿Desea eliminar este movimiento personal?")) {
                 await deleteDoc(doc(db, "movimientos_personales_ethan", id));
                 sincronizarDatos();
             }
         };
 
-        window.verDetalleCliente = (clienteId) => {
-            const cliente = listaClientes.find(c => c.id === clienteId);
-            if(!cliente) return;
-
-            document.getElementById('det-nombre-cliente').innerText = `Cliente: ${cliente.nombre}`;
-            document.getElementById('det-tel').innerText = cliente.telefono || '-';
-            document.getElementById('det-dir').innerText = cliente.direccion || '-';
-            document.getElementById('det-saldo').innerText = `$${(cliente.saldoActualCalculado || 0).toFixed(2)}`;
-
-            const vCliente = listaVentas.filter(v => v.clienteId === cliente.id || v.nombre === cliente.nombre);
-            let htmlV = '';
-            vCliente.forEach(v => {
-                htmlV += `
-                    <tr>
-                        <td class="p-2">${v.fecha || '-'}</td>
-                        <td class="p-2">${v.cantidad || 1}</td>
-                        <td class="p-2 font-bold">$${parseFloat(v.total || 40).toFixed(2)}</td>
-                        <td class="p-2">${v.tipo || '-'}</td>
-                        <td class="p-2">${v.vendedor || '-'}</td>
-                        <td class="p-2">$${parseFloat(v.cuota || 10).toFixed(2)}</td>
-                    </tr>
-                `;
-            });
-            document.getElementById('tabla-detalles-ventas').innerHTML = htmlV && htmlV !== '' ? htmlV : '<tr><td colspan="6" class="p-2 text-center text-slate-400">Sin ventas</td></tr>';
-
-            const pCliente = listaPagos.filter(p => p.clienteId === cliente.id || p.nombre === cliente.nombre);
-            let htmlP = '';
-            pCliente.forEach(p => {
-                htmlP += `
-                    <tr>
-                        <td class="p-2">${p.fecha || '-'}</td>
-                        <td class="p-2 font-bold text-emerald-600">+$${parseFloat(p.monto || 0).toFixed(2)}</td>
-                    </tr>
-                `;
-            });
-            document.getElementById('tabla-detalles-cobros').innerHTML = htmlP && htmlP !== '' ? htmlP : '<tr><td colspan="2" class="p-2 text-center text-slate-400">Sin abonos</td></tr>';
-
-            document.getElementById('modal-detalle-cliente').classList.remove('hidden');
+        window.filtrarCombustiblePorMes = () => { renderizarHistorialCombustible(); };
+        window.limpiarFiltroCombustible = () => {
+            document.getElementById('filtro-mes-combustible').value = '';
+            renderizarHistorialCombustible();
         };
 
-        window.cerrarModalDetalle = () => {
-            document.getElementById('modal-detalle-cliente').classList.add('hidden');
-        };
-
+        // EXPORTAR E IMPORTAR RESPALDOS JSON
         window.descargarRespaldoJSON = () => {
             const dataBackup = {
                 clientes: listaClientes,
@@ -1793,7 +1747,7 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `backup_crm_ethan_${new Date().toISOString().split('T')[0]}.json`;
+            a.download = `respaldo_crm_ethan_${new Date().toISOString().split('T')[0]}.json`;
             a.click();
         };
 
@@ -1803,10 +1757,56 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `CRM_Comercial_Ethan_Actualizado_${new Date().toISOString().split('T')[0]}.html`;
+            a.download = `ComercialEthan_CRM_v4.0.html`;
             a.click();
         };
 
+        // DETALLE CLIENTE MODAL
+        window.verDetalleCliente = (clienteId) => {
+            const cliente = listaClientes.find(c => c.id === clienteId);
+            if(!cliente) return;
+
+            document.getElementById('det-nombre-cliente').innerText = `Cliente: ${cliente.nombre || ''}`;
+            document.getElementById('det-tel').innerText = cliente.telefono || '-';
+            document.getElementById('det-dir').innerText = cliente.direccion || '-';
+            document.getElementById('det-saldo').innerText = `$${(cliente.saldoActualCalculado || 0).toFixed(2)}`;
+
+            const vCliente = listaVentas.filter(v => v.clienteId === cliente.id || v.nombre === cliente.nombre);
+            let htmlV = '';
+            vCliente.forEach(v => {
+                htmlV += `
+                    <tr class="border-b border-slate-100">
+                        <td class="p-2">${v.fecha || '-'}</td>
+                        <td class="p-2">${v.cantidad || 1}</td>
+                        <td class="p-2 font-semibold text-emerald-600">$${parseFloat(v.total || 40).toFixed(2)}</td>
+                        <td class="p-2">${v.tipo || '-'}</td>
+                        <td class="p-2">${v.vendedor || '-'}</td>
+                        <td class="p-2">$${parseFloat(v.cuota || 10).toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+            document.getElementById('tabla-detalles-ventas').innerHTML = htmlV || '<tr><td colspan="6" class="p-2 text-center text-slate-400">Sin ventas</td></tr>';
+
+            const pCliente = listaPagos.filter(p => p.clienteId === cliente.id || p.nombre === cliente.nombre);
+            let htmlP = '';
+            pCliente.forEach(p => {
+                htmlP += `
+                    <tr class="border-b border-slate-100">
+                        <td class="p-2">${p.fecha || '-'}</td>
+                        <td class="p-2 font-semibold text-emerald-600">$${parseFloat(p.monto || 0).toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+            document.getElementById('tabla-detalles-cobros').innerHTML = htmlP || '<tr><td colspan="2" class="p-2 text-center text-slate-400">Sin cobros / abonos</td></tr>';
+
+            document.getElementById('modal-detalle-cliente').classList.remove('hidden');
+        };
+
+        window.cerrarModalDetalle = () => {
+            document.getElementById('modal-detalle-cliente').classList.add('hidden');
+        };
+
+        // EXPORTADORES EXCEL / PDF
         window.exportarExcelVistaActual = () => {
             alert(`Exportando datos de la vista: ${vistaActualActiva}`);
         };
@@ -1815,9 +1815,10 @@
             alert(`Generando PDF de la vista: ${vistaActualActiva}`);
         };
 
-        window.onload = () => {
+        // Inicialización al cargar la página
+        window.addEventListener('DOMContentLoaded', () => {
             sincronizarDatos();
-        };
+        });
     </script>
 </body>
 </html>
