@@ -66,7 +66,7 @@
                 </div>
             </nav>
         </div>
-        <div class="p-4 border-t border-slate-800 text-xs text-slate-500">Comercial Ethan Cloud v4.1</div>
+        <div class="p-4 border-t border-slate-800 text-xs text-slate-500">Comercial Ethan Cloud v4.0</div>
     </aside>
 
     <!-- Contenido Principal -->
@@ -336,8 +336,8 @@
                                 <th class="p-3">Venta</th>
                                 <th class="p-3">Comisión</th>
                                 <th class="p-3">Estado</th>
-                                <th class="p-3">Fecha de Pago</th>
-                                <th class="p-3 text-center">Acción</th>
+                                <th class="p-3">Fecha Pago</th>
+                                <th class="p-3">Acción</th>
                             </tr>
                         </thead>
                         <tbody id="tabla-comisiones-cuerpo" class="divide-y divide-slate-100 text-xs sm:text-sm"></tbody>
@@ -774,7 +774,7 @@
         let listaMovimientos = [];
         let listaCaja = [];
         let vistaActualActiva = 'dashboard';
-        let semanasAbiertas = {}; 
+        let semanasAbiertas = {}; // Estado para recordar semanas abiertas/cerradas
 
         window.abrirModalCaja = () => {
             document.getElementById('caja-id').value = '';
@@ -1044,7 +1044,6 @@
                     const cantAlmohadas = parseInt(item.cantidad || 1);
                     const comisionTotalVenta = cantAlmohadas * 5;
                     const estadoComision = item.estadoComision || 'Pendiente';
-                    const fechaPagoVal = item.fechaPagoComision || hoyStr;
 
                     if(estadoComision === 'Pagada') {
                         totalPagadaComision += comisionTotalVenta;
@@ -1066,13 +1065,9 @@
                             <td class="p-3 text-slate-600">$${(parseFloat(item.total) || (cantAlmohadas * 40)).toFixed(2)}</td>
                             <td class="p-3 font-semibold text-slate-900">$${comisionTotalVenta.toFixed(2)}</td>
                             <td class="p-3 ${badgeColor}">${estadoComision}</td>
-                            <td class="p-3">
-                                <input type="date" id="fecha-pago-com-${item.id}" value="${fechaPagoVal}" class="bg-slate-50 border border-slate-200 rounded p-1 text-xs">
-                            </td>
+                            <td class="p-3 text-slate-600">${item.fechaPagoComision || '-'}</td>
                             <td class="p-3 text-center">
-                                <button onclick="actualizarEstadoComisionConFecha('${item.id}', '${estadoComision}')" class="bg-[#0B132B] hover:bg-indigo-900 text-white px-3 py-1 rounded-lg text-xs">
-                                    ${estadoComision === 'Pagada' ? 'Marcar Pendiente' : 'Marcar Pagada'}
-                                </button>
+                                <button onclick="toggleEstadoComision('${item.id}', '${estadoComision}', '${new Date().toISOString().split('T')[0]}')" class="bg-[#0B132B] hover:bg-indigo-900 text-white px-3 py-1 rounded-lg text-xs">Marcar</button>
                             </td>
                         </tr>
                     `;
@@ -1237,6 +1232,7 @@
                     </div>
                 `;
 
+                const hoy = new Date().toISOString().split('T')[0];
                 document.getElementById('pago-fecha').value = hoy;
                 document.getElementById('inv-fecha').value = hoy;
                 document.getElementById('comb-fecha').value = hoy;
@@ -1247,18 +1243,6 @@
                 dot.className = "w-3 h-3 rounded-full bg-rose-500";
             }
         }
-
-        window.actualizarEstadoComisionConFecha = async (idVenta, estadoActual) => {
-            const nuevoEstado = estadoActual === 'Pagada' ? 'Pendiente' : 'Pagada';
-            const inputFechaEl = document.getElementById(`fecha-pago-com-${idVenta}`);
-            const fechaSeleccionada = inputFechaEl ? inputFechaEl.value : new Date().toISOString().split('T')[0];
-
-            await updateDoc(doc(db, "ventas_ethan", idVenta), {
-                estadoComision: nuevoEstado,
-                fechaPagoComision: nuevoEstado === 'Pagada' ? fechaSeleccionada : ''
-            });
-            sincronizarDatos();
-        };
 
         window.guardarItemCaja = async (e) => {
             e.preventDefault();
@@ -1294,6 +1278,7 @@
             }
         };
 
+        // Semana empieza estrictamente en Lunes
         function obtenerLunesDeLaSemana(d) {
             const fecha = new Date(d + 'T00:00:00');
             const dia = fecha.getDay();
@@ -1345,6 +1330,7 @@
             };
         }
 
+        // Historial de Entradas y Salidas agrupado por Semanas con facilidad de abrir/cerrar
         window.toggleSemanaAccordion = (idSemana) => {
             semanasAbiertas[idSemana] = !semanasAbiertas[idSemana];
             renderizarMovimientosPorSemanas();
@@ -1359,6 +1345,7 @@
                 return;
             }
 
+            // Agrupar por semana (Lunes a Domingo)
             const semanasMap = {};
             listaMovimientos.forEach(m => {
                 if(!m.fecha) return;
@@ -1381,13 +1368,14 @@
                 }
             });
 
+            // Ordenar semanas de la más reciente a la más antigua
             const semanasKeys = Object.keys(semanasMap).sort().reverse();
             let html = '';
 
             semanasKeys.forEach(idSem => {
                 const sem = semanasMap[idSem];
                 const balanceSemanal = sem.totalEntradas - sem.totalSalidas;
-                const isOpen = semanasAbiertas[idSem] !== false;
+                const isOpen = semanasAbiertas[idSem] !== false; // por defecto abierto o según estado
 
                 html += `
                     <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden mb-4">
@@ -1579,6 +1567,16 @@
             }
         };
 
+        window.toggleEstadoComision = async (idVenta, estadoActual, fechaHoy) => {
+            const nuevoEstado = estadoActual === 'Pagada' ? 'Pendiente' : 'Pagada';
+            const fechaPago = nuevoEstado === 'Pagada' ? fechaHoy : '';
+            await updateDoc(doc(db, "ventas_ethan", idVenta), {
+                estadoComision: nuevoEstado,
+                fechaPagoComision: fechaPago
+            });
+            sincronizarDatos();
+        };
+
         window.abrirModalCliente = () => {
             document.getElementById('m-id').value = '';
             document.getElementById('form-cliente').reset();
@@ -1616,7 +1614,7 @@
             document.getElementById('m-telefono').value = item.telefono || '';
             document.getElementById('m-direccion').value = item.direccion || '';
             document.getElementById('modal-cliente-titulo').innerText = "Editar Cliente";
-            document.getElementById('modal-cliente').classList.add('hidden'); // Corregido modal
+            document.getElementById('modal-cliente').classList.remove('hidden');
         };
 
         window.eliminarCliente = async (id) => {
@@ -1626,7 +1624,304 @@
             }
         };
 
-        sincronizarDatos();
+        window.abrirModalVenta = () => {
+            document.getElementById('v-id').value = '';
+            let select = document.getElementById('v-cliente-select');
+            let html = '<option value="">Seleccione cliente...</option>';
+            listaClientes.forEach(c => {
+                html += `<option value="${c.id}">${c.nombre}</option>`;
+            });
+            select.innerHTML = html;
+            document.getElementById('v-fecha').value = new Date().toISOString().split('T')[0];
+            document.getElementById('v-telefono').value = '';
+            document.getElementById('v-direccion').value = '';
+            document.getElementById('v-cantidad').value = '1';
+            document.getElementById('v-precio').value = '40.00';
+            document.getElementById('v-total').value = '40.00';
+            document.getElementById('modal-venta-titulo').innerText = "Registrar Nueva Venta";
+            document.getElementById('modal-venta').classList.remove('hidden');
+        };
+
+        window.cerrarModalVenta = () => {
+            document.getElementById('modal-venta').classList.add('hidden');
+        };
+
+        window.autocompletarCliente = (select) => {
+            const clienteObj = listaClientes.find(c => c.id === select.value);
+            if(clienteObj) {
+                document.getElementById('v-telefono').value = clienteObj.telefono || '';
+                document.getElementById('v-direccion').value = clienteObj.direccion || '';
+            } else {
+                document.getElementById('v-telefono').value = '';
+                document.getElementById('v-direccion').value = '';
+            }
+        };
+
+        window.calcularTotalVenta = () => {
+            const cant = parseFloat(document.getElementById('v-cantidad').value) || 0;
+            const precio = parseFloat(document.getElementById('v-precio').value) || 0;
+            document.getElementById('v-total').value = (cant * precio).toFixed(2);
+        };
+
+        window.guardarVenta = async (e) => {
+            e.preventDefault();
+            const clienteId = document.getElementById('v-cliente-select').value;
+            const clienteObj = listaClientes.find(c => c.id === clienteId);
+            if(!clienteObj) return;
+
+            const id = document.getElementById('v-id').value;
+            const cantidad = parseInt(document.getElementById('v-cantidad').value) || 1;
+            const precio = parseFloat(document.getElementById('v-precio').value) || 40.00;
+            const total = cantidad * precio;
+
+            const data = {
+                fecha: document.getElementById('v-fecha').value,
+                clienteId: clienteObj.id,
+                nombre: clienteObj.nombre,
+                telefono: clienteObj.telefono || '',
+                direccion: clienteObj.direccion || '',
+                vendedor: document.getElementById('v-vendedor').value,
+                cantidad: cantidad,
+                precio: precio,
+                total: total,
+                tipo: document.getElementById('v-tipo').value,
+                formaPago: document.getElementById('v-forma-pago').value,
+                cuota: parseFloat(document.getElementById('v-cuota').value) || 10,
+                proximoPago: document.getElementById('v-proximo-pago').value,
+                observaciones: document.getElementById('v-obs').value
+            };
+
+            if(id) {
+                await updateDoc(doc(db, "ventas_ethan", id), data);
+            } else {
+                await addDoc(collection(db, "ventas_ethan"), data);
+            }
+            cerrarModalVenta();
+            sincronizarDatos();
+            alert("¡Venta guardada con éxito!");
+        };
+
+        window.editarVenta = async (id) => {
+            const item = listaVentas.find(x => x.id === id);
+            if(!item) return;
+            abrirModalVenta();
+            document.getElementById('v-id').value = item.id;
+            document.getElementById('v-fecha').value = item.fecha || '';
+            document.getElementById('v-cliente-select').value = item.clienteId || '';
+            autocompletarCliente(document.getElementById('v-cliente-select'));
+            document.getElementById('v-vendedor').value = item.vendedor || 'George';
+            document.getElementById('v-cantidad').value = item.cantidad || 1;
+            document.getElementById('v-precio').value = item.precio || 40.00;
+            calcularTotalVenta();
+            document.getElementById('v-tipo').value = item.tipo || 'Crédito';
+            document.getElementById('v-forma-pago').value = item.formaPago || 'Semanal';
+            document.getElementById('v-cuota').value = item.cuota || 10;
+            document.getElementById('v-proximo-pago').value = item.proximoPago || '';
+            document.getElementById('v-obs').value = item.observaciones || '';
+            document.getElementById('modal-venta-titulo').innerText = "Editar Venta";
+        };
+
+        window.eliminarVenta = async (id) => {
+            if(confirm("¿Está seguro de eliminar esta venta?")) {
+                await deleteDoc(doc(db, "ventas_ethan", id));
+                sincronizarDatos();
+            }
+        };
+
+        window.eliminarPago = async (id) => {
+            if(confirm("¿Está seguro de eliminar este cobro?")) {
+                await deleteDoc(doc(db, "cobros_ethan", id));
+                sincronizarDatos();
+            }
+        };
+
+        window.verDetalleCliente = (id) => {
+            const cliente = listaClientes.find(c => c.id === id);
+            if(!cliente) return;
+            document.getElementById('det-nombre-cliente').innerText = `Detalles de ${cliente.nombre}`;
+            document.getElementById('det-tel').innerText = cliente.telefono || '-';
+            document.getElementById('det-dir').innerText = cliente.direccion || '-';
+            document.getElementById('det-saldo').innerText = `$${(cliente.saldoActualCalculado || 0).toFixed(2)}`;
+
+            const vCliente = listaVentas.filter(v => v.clienteId === cliente.id || v.nombre === cliente.nombre);
+            let htmlV = '';
+            vCliente.forEach(v => {
+                htmlV += `
+                    <tr class="border-b border-slate-100">
+                        <td class="p-2">${v.fecha || '-'}</td>
+                        <td class="p-2">${v.cantidad || 1}</td>
+                        <td class="p-2">$${(parseFloat(v.total) || (v.cantidad * 40)).toFixed(2)}</td>
+                        <td class="p-2">${v.tipo || '-'}</td>
+                        <td class="p-2">${v.vendedor || '-'}</td>
+                        <td class="p-2">$${(parseFloat(v.cuota) || 10).toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+            document.getElementById('tabla-detalles-ventas').innerHTML = htmlVentraHTML(htmlV);
+
+            const pCliente = listaPagos.filter(p => p.clienteId === cliente.id || p.nombre === cliente.nombre);
+            let htmlP = '';
+            pCliente.forEach(p => {
+                htmlP += `
+                    <tr class="border-b border-slate-100">
+                        <td class="p-2">${p.fecha || '-'}</td>
+                        <td class="p-2 font-semibold text-emerald-600">$${(parseFloat(p.monto) || 0).toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+            document.getElementById('tabla-detalles-cobros').innerHTML = htmlP || '<tr><td colspan="2" class="p-2 text-center text-slate-400">Sin abonos registrados</td></tr>';
+
+            document.getElementById('modal-detalle-cliente').classList.remove('hidden');
+        };
+
+        function htmlVentraHTML(html) {
+            return html || '<tr><td colspan="6" class="p-2 text-center text-slate-400">Sin ventas registradas</td></tr>';
+        }
+
+        window.cerrarModalDetalle = () => {
+            document.getElementById('modal-detalle-cliente').classList.add('hidden');
+        };
+
+        window.guardarCombustibleRapido = async (e) => {
+            e.preventDefault();
+            const data = {
+                fecha: document.getElementById('comb-fecha').value,
+                tipo: 'Salida',
+                monto: parseFloat(document.getElementById('comb-monto').value) || 0,
+                categoria: 'Combustible',
+                descripcion: 'Carga rápida de combustible camioneta'
+            };
+            await addDoc(collection(db, "movimientos_personales_ethan"), data);
+            e.target.reset();
+            document.getElementById('comb-fecha').value = new Date().toISOString().split('T')[0];
+            sincronizarDatos();
+            alert("¡Carga de combustible guardada con éxito!");
+        };
+
+        function renderizarHistorialCombustible() {
+            const tabla = document.getElementById('tabla-combustible-cuerpo');
+            if(!tabla) return;
+            const combMovs = listaMovimientos.filter(m => m.categoria === 'Combustible');
+            let html = '';
+            combMovs.forEach(m => {
+                html += `
+                    <tr class="hover:bg-slate-50 border-b border-slate-100">
+                        <td class="p-3 text-slate-600">${m.fecha || '-'}</td>
+                        <td class="p-3 font-medium text-slate-800">${m.categoria || '-'}</td>
+                        <td class="p-3 font-semibold text-amber-600">$${(parseFloat(m.monto) || 0).toFixed(2)}</td>
+                        <td class="p-3 text-slate-600">${m.descripcion || '-'}</td>
+                        <td class="p-3 text-center space-x-2">
+                            <button onclick="editarMovimientoPersonal('${m.id}')" class="text-indigo-600 hover:text-indigo-800"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="eliminarMovimientoPersonal('${m.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+            tabla.innerHTML = html || '<tr><td colspan="5" class="p-4 text-center text-slate-400">Sin registros de combustible</td></tr>';
+
+            const { inicioSemanaActual, finSemanaActual, inicioSemanaAnterior, finSemanaAnterior } = obtenerRangosSemanales();
+            let totalSemAct = 0, totalSemAnt = 0;
+
+            combMovs.forEach(m => {
+                if(!m.fecha) return;
+                const f = new Date(m.fecha + 'T00:00:00');
+                const monto = parseFloat(m.monto || 0);
+                if(f >= inicioSemanaActual && f <= finSemanaActual) {
+                    totalSemAct += monto;
+                } else if(f >= inicioSemanaAnterior && f <= finSemanaAnterior) {
+                    totalSemAnt += monto;
+                }
+            });
+
+            const elAct = document.getElementById('comb-total-sem-actual');
+            const elAnt = document.getElementById('comb-total-sem-anterior');
+            if(elAct) elAct.innerText = `$${totalSemAct.toFixed(2)}`;
+            if(elAnt) elAnt.innerText = `$${totalSemAnt.toFixed(2)}`;
+        }
+
+        window.filtrarCombustiblePorMes = () => {
+            const mesVal = document.getElementById('filtro-mes-combustible').value;
+            if(!mesVal) return;
+            const tabla = document.getElementById('tabla-combustible-cuerpo');
+            const combMovs = listaMovimientos.filter(m => m.categoria === 'Combustible' && m.fecha && m.fecha.startsWith(mesVal));
+            let html = '';
+            combMovs.forEach(m => {
+                html += `
+                    <tr class="hover:bg-slate-50 border-b border-slate-100">
+                        <td class="p-3 text-slate-600">${m.fecha || '-'}</td>
+                        <td class="p-3 font-medium text-slate-800">${m.categoria || '-'}</td>
+                        <td class="p-3 font-semibold text-amber-600">$${(parseFloat(m.monto) || 0).toFixed(2)}</td>
+                        <td class="p-3 text-slate-600">${m.descripcion || '-'}</td>
+                        <td class="p-3 text-center space-x-2">
+                            <button onclick="editarMovimientoPersonal('${m.id}')" class="text-indigo-600 hover:text-indigo-800"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="eliminarMovimientoPersonal('${m.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+            tabla.innerHTML = html || '<tr><td colspan="5" class="p-4 text-center text-slate-400">Sin registros para este mes</td></tr>';
+            document.getElementById('info-filtro-combustible').innerText = `Filtrado por mes: ${mesVal}`;
+        };
+
+        window.limpiarFiltroCombustible = () => {
+            document.getElementById('filtro-mes-combustible').value = '';
+            document.getElementById('info-filtro-combustible').innerText = "Mostrando todos los registros";
+            renderizarHistorialCombustible();
+        };
+
+        window.descargarRespaldoJSON = () => {
+            const data = {
+                clientes: listaClientes,
+                ventas: listaVentas,
+                pagos: listaPagos,
+                inventario: listaInventario,
+                movimientos: listaMovimientos,
+                caja: listaCaja
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `respaldo_crm_ethan_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+        };
+
+        window.descargarCodigoHTML = () => {
+            const htmlContent = document.documentElement.outerHTML;
+            const blob = new Blob([htmlContent], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `crm_almohadas_comercial_ethan.html`;
+            a.click();
+        };
+
+        window.restaurarRespaldoJSON = (event) => {
+            const file = event.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                try {
+                    const contenido = JSON.parse(e.target.result);
+                    alert("Función de carga de JSON leída correctamente. Asegúrese de sincronizar de nuevo tras importar.");
+                } catch(err) {
+                    alert("Error al leer el archivo JSON.");
+                }
+            };
+            reader.readAsText(file);
+        };
+
+        window.exportarExcelVistaActual = () => {
+            alert("Exportando vista actual a Excel...");
+        };
+
+        window.exportarPdfVistaActual = () => {
+            alert("Exportando vista actual a PDF...");
+        };
+
+        window.onload = () => {
+            sincronizarDatos();
+        };
     </script>
 </body>
 </html>
