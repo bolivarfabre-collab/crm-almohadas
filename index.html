@@ -1057,47 +1057,47 @@
                     }
 
                     const badgeColor = estadoComision === 'Pagada' ? 'text-emerald-600 font-semibold' : 'text-rose-600 font-semibold';
+let htmlComisiones = '';
+listaComisiones.forEach(item => {
+    htmlComisiones += `
+        <tr class="hover:bg-slate-50 border-b border-slate-100">
+            <td class="p-3 text-slate-900 font-medium">${item.vendedor || 'George'}</td>
+            <td class="p-3 text-slate-700">${item.nombre || ''}</td>
+            <td class="p-3 text-slate-600">${(parseFloat(item.total) || (cantAlmohadas * 40)).toFixed(2)}</td>
+            <td class="p-3 font-semibold text-slate-900">${item.comisionTotalVenta.toFixed(2)}</td>
+            <td class="p-3 ${badgeColor}">${estadoComision}</td>
+            <td class="p-3 text-slate-600">${item.fechaPagoComision || '-'}</td>
+            <td class="p-3 text-center">
+                <button onclick="toggleEstadoComision('${item.id}', '${estadoComision}', '${new Date().toISOString().split('T')[0]}')" class="bg-[#0B132B] hover:bg-[#1C2541] text-white px-3 py-1 rounded text-xs font-medium transition-colors">Cambiar Estado</button>
+            </td>
+        </tr>
+    `;
+});
+document.getElementById('comision-pendiente').innerText = `$${totalPendienteComision.toFixed(2)}`;
+document.getElementById('comision-pagada').innerText = `$${totalPagadaComision.toFixed(2)}`;
+document.getElementById('dash-comisiones-pendientes').innerText = `$${totalPendienteComision.toFixed(2)}`;
+document.getElementById('tabla-comisiones-cuerpo').innerHTML = htmlComisiones || `<tr><td colspan="7" class="p-4 text-center text-slate-400">Sin comisiones</td></tr>`;
+let cobradoMenosComisionesMes = totalCobradoMes - totalComisionesPagadasMes;
+document.getElementById('dash-cobrado-menos-comisiones').innerText = `$${cobradoMenosComisionesMes.toFixed(2)}`;
 
-                    htmlComisiones += `
-                        <tr class="hover:bg-slate-50 border-b border-slate-100">
-                            <td class="p-3 text-slate-900 font-medium">${item.vendedor || 'George'}</td>
-                            <td class="p-3 text-slate-700">${item.nombre || ''}</td>
-                            <td class="p-3 text-slate-600">$${(parseFloat(item.total) || (cantAlmohadas * 40)).toFixed(2)}</td>
-                            <td class="p-3 font-semibold text-slate-900">$${comisionTotalVenta.toFixed(2)}</td>
-                            <td class="p-3 ${badgeColor}">${estadoComision}</td>
-                            <td class="p-3 text-slate-600">${item.fechaPagoComision || '-'}</td>
-                            <td class="p-3 text-center">
-                             <button onclick="toggleEstadoComision('${item.id}', '${estadoComision}', '${new Date().toISOString().split('T')[0]}')" class="bg-[#0B132B] hover:bg-indigo-900 text-white px-3 py-1 rounded-lg text-xs">Marcar</button>
-                            </td>
-                        </tr>
-                    `;
-                });
-
-                document.getElementById('comision-pendiente').innerText = `$${totalPendienteComision.toFixed(2)}`;
-                document.getElementById('comision-pagada').innerText = `$${totalPagadaComision.toFixed(2)}`;
-                document.getElementById('dash-comisiones-pendientes').innerText = `$${totalPendienteComision.toFixed(2)}`;
-                let cobradoMenosComisionesMes = totalCobradoMes - totalComisionesPagadasMes;
-                document.getElementById('dash-cobrado-menos-comisiones').innerText = `$${cobradoMenosComisionesMes.toFixed(2)}`;
-
-                let htmlCal = '';
-                listaVentas.forEach(v => {
-                    if(v.proximoPago) {
-                        const clienteObj = listaClientes.find(c => c.id === v.clienteId || c.nombre === v.nombre);
-                        const saldoCli = clienteObj ? (clienteObj.saldoActualCalculado || 0) : 0;
-                        htmlCal += `
-                            <tr class="hover:bg-slate-50 border-b border-slate-100">
-                                <td class="p-3 font-semibold text-indigo-600">${v.proximoPago}</td>
-                                <td class="p-3 font-medium text-slate-900">${v.nombre || ''}</td>
-                                <td class="p-3 text-slate-600">${v.telefono || '-'}</td>
-                                <td class="p-3 font-semibold text-emerald-600">$${(parseFloat(v.cuota) || 10).toFixed(2)}</td>
-                                <td class="p-3 font-semibold text-rose-600">$${saldoCli.toFixed(2)}</td>
-                                <td class="p-3 text-slate-500">${v.observaciones || '-'}</td>
-                            </tr>
-                        `;
-                    }
-                });
-                document.getElementById('tabla-calendario-cuerpo').innerHTML = htmlCal || '<tr><td colspan="6" class="p-4 text-center text-slate-400">Sin fechas de pago programadas</td></tr>';
-
+let htmlCal = '';
+listaVentas.forEach(v => {
+    if(v.proximoPago) {
+        const clienteObj = listaClientes.find(c => c.id === v.clienteId || c.nombre === v.nombre);
+        const saldoCli = clienteObj ? (clienteObj.saldoActualCalculado || 0) : 0;
+        htmlCal += `
+            <tr class="hover:bg-slate-50 border-b border-slate-100">
+                <td class="p-3 font-semibold text-indigo-600">${v.proximoPago}</td>
+                <td class="p-3 font-medium text-slate-900">${v.nombre || ''}</td>
+                <td class="p-3 text-slate-600">${v.telefono || '-'}</td>
+                <td class="p-3 font-semibold text-slate-900">$${(parseFloat(v.cuota) || 10).toFixed(2)}</td>
+                <td class="p-3 font-semibold text-rose-600">$${saldoCli.toFixed(2)}</td>
+                <td class="p-3 text-slate-500">${v.observaciones || '-'}</td>
+            </tr>
+        `;
+    }
+});
+document.getElementById('tabla-calendario-cuerpo').innerHTML = htmlCal || `<tr><td colspan="6" class="p-4 text-center text-slate-400">Sin fechas de pago programadas</td></tr>`;
                 const snapMov = await getDocs(collection(db, "movimientos_personales_ethan"));
                 listaMovimientos = [];
                 snapMov.forEach(d => listaMovimientos.push({ id: d.id, ...d.data() }));
