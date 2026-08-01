@@ -1372,8 +1372,8 @@
                 const isOpen = semanasAbiertas[idSem] !== false; // por defecto abierto o según estado
 
                html += `
-    <div class="bg-[#0B132B] text-white rounded-xl border border-slate-700 shadow-sm overflow-hidden mb-4">
-        <div onclick="toggleSemanaAccordion('${idSem}')" class="bg-[#0B132B] hover:bg-slate-800 p-4 cursor-pointer flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden mb-4">
+<div onclick="toggleSemanaAccordion('${idSem}')" class="bg-[#0B132B] hover:bg-slate-900 text-white p-4 cursor-pointer flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
             <div class="flex items-center gap-3">
                 <i class="fa-solid fa-chevron-${isOpen ? 'down' : 'right'} text-slate-400 text-xs"></i>
                 <h3 class="font-bold text-white text-sm">${sem.nombre}</h3>
