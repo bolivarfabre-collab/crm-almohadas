@@ -1603,16 +1603,16 @@
             }
             cerrarModalCliente();
             sincronizarDatos();
-            alert("¡Cliente guardado con éxito!");
+            alert("¡Cliente guardado correctamente!");
         };
 
         window.editarCliente = (id) => {
-            const item = listaClientes.find(x => x.id === id);
-            if(!item) return;
-            document.getElementById('m-id').value = item.id;
-            document.getElementById('m-nombre').value = item.nombre || '';
-            document.getElementById('m-telefono').value = item.telefono || '';
-            document.getElementById('m-direccion').value = item.direccion || '';
+            const cli = listaClientes.find(c => c.id === id);
+            if(!cli) return;
+            document.getElementById('m-id').value = cli.id;
+            document.getElementById('m-nombre').value = cli.nombre || '';
+            document.getElementById('m-telefono').value = cli.telefono || '';
+            document.getElementById('m-direccion').value = cli.direccion || '';
             document.getElementById('modal-cliente-titulo').innerText = "Editar Cliente";
             document.getElementById('modal-cliente').classList.remove('hidden');
         };
@@ -1626,20 +1626,16 @@
 
         window.abrirModalVenta = () => {
             document.getElementById('v-id').value = '';
-            let select = document.getElementById('v-cliente-select');
-            let html = '<option value="">Seleccione cliente...</option>';
+            let htmlSelect = '<option value="">Seleccione cliente...</option>';
             listaClientes.forEach(c => {
-                html += `<option value="${c.id}">${c.nombre}</option>`;
+                htmlSelect += `<option value="${c.id}">${c.nombre}</option>`;
             });
-            select.innerHTML = html;
-            document.getElementById('v-fecha').value = new Date().toISOString().split('T')[0];
-            document.getElementById('v-telefono').value = '';
-            document.getElementById('v-direccion').value = '';
-            document.getElementById('v-cantidad').value = '1';
-            document.getElementById('v-precio').value = '40.00';
-            document.getElementById('v-total').value = '40.00';
+            document.getElementById('v-cliente-select').innerHTML = htmlSelect;
             document.getElementById('modal-venta-titulo').innerText = "Registrar Nueva Venta";
             document.getElementById('modal-venta').classList.remove('hidden');
+            document.getElementById('v-fecha').value = new Date().toISOString().split('T')[0];
+            document.getElementById('v-proximo-pago').value = new Date().toISOString().split('T')[0];
+            calcularTotalVenta();
         };
 
         window.cerrarModalVenta = () => {
@@ -1647,10 +1643,10 @@
         };
 
         window.autocompletarCliente = (select) => {
-            const clienteObj = listaClientes.find(c => c.id === select.value);
-            if(clienteObj) {
-                document.getElementById('v-telefono').value = clienteObj.telefono || '';
-                document.getElementById('v-direccion').value = clienteObj.direccion || '';
+            const cli = listaClientes.find(c => c.id === select.value);
+            if(cli) {
+                document.getElementById('v-telefono').value = cli.telefono || '';
+                document.getElementById('v-direccion').value = cli.direccion || '';
             } else {
                 document.getElementById('v-telefono').value = '';
                 document.getElementById('v-direccion').value = '';
@@ -1658,32 +1654,33 @@
         };
 
         window.calcularTotalVenta = () => {
-            const cant = parseFloat(document.getElementById('v-cantidad').value) || 0;
-            const precio = parseFloat(document.getElementById('v-precio').value) || 0;
-            document.getElementById('v-total').value = (cant * precio).toFixed(2);
+            const cant = parseFloat(document.getElementById('v-cantidad').value) || 1;
+            const precio = parseFloat(document.getElementById('v-precio').value) || 40;
+            const total = cant * precio;
+            document.getElementById('v-total').value = total.toFixed(2);
+            document.getElementById('v-cuota').value = (total / 4).toFixed(2);
         };
 
         window.guardarVenta = async (e) => {
             e.preventDefault();
-            const clienteId = document.getElementById('v-cliente-select').value;
-            const clienteObj = listaClientes.find(c => c.id === clienteId);
-            if(!clienteObj) return;
-
             const id = document.getElementById('v-id').value;
-            const cantidad = parseInt(document.getElementById('v-cantidad').value) || 1;
-            const precio = parseFloat(document.getElementById('v-precio').value) || 40.00;
-            const total = cantidad * precio;
+            const cliId = document.getElementById('v-cliente-select').value;
+            const cli = listaClientes.find(c => c.id === cliId);
+            if(!cli) return;
+
+            const cant = parseInt(document.getElementById('v-cantidad').value) || 1;
+            const precio = parseFloat(document.getElementById('v-precio').value) || 40;
 
             const data = {
                 fecha: document.getElementById('v-fecha').value,
-                clienteId: clienteObj.id,
-                nombre: clienteObj.nombre,
-                telefono: clienteObj.telefono || '',
-                direccion: clienteObj.direccion || '',
+                clienteId: cli.id,
+                nombre: cli.nombre,
+                telefono: cli.telefono || '',
+                direccion: cli.direccion || '',
                 vendedor: document.getElementById('v-vendedor').value,
-                cantidad: cantidad,
-                precio: precio,
-                total: total,
+                cantidad: cant,
+                precioUnitario: precio,
+                total: cant * precio,
                 tipo: document.getElementById('v-tipo').value,
                 formaPago: document.getElementById('v-forma-pago').value,
                 cuota: parseFloat(document.getElementById('v-cuota').value) || 10,
@@ -1698,27 +1695,34 @@
             }
             cerrarModalVenta();
             sincronizarDatos();
-            alert("¡Venta guardada con éxito!");
+            alert("¡Venta registrada con éxito!");
         };
 
-        window.editarVenta = async (id) => {
-            const item = listaVentas.find(x => x.id === id);
-            if(!item) return;
-            abrirModalVenta();
-            document.getElementById('v-id').value = item.id;
-            document.getElementById('v-fecha').value = item.fecha || '';
-            document.getElementById('v-cliente-select').value = item.clienteId || '';
-            autocompletarCliente(document.getElementById('v-cliente-select'));
-            document.getElementById('v-vendedor').value = item.vendedor || 'George';
-            document.getElementById('v-cantidad').value = item.cantidad || 1;
-            document.getElementById('v-precio').value = item.precio || 40.00;
-            calcularTotalVenta();
-            document.getElementById('v-tipo').value = item.tipo || 'Crédito';
-            document.getElementById('v-forma-pago').value = item.formaPago || 'Semanal';
-            document.getElementById('v-cuota').value = item.cuota || 10;
-            document.getElementById('v-proximo-pago').value = item.proximoPago || '';
-            document.getElementById('v-obs').value = item.observaciones || '';
+        window.editarVenta = (id) => {
+            const v = listaVentas.find(x => x.id === id);
+            if(!v) return;
+            document.getElementById('v-id').value = v.id;
+            document.getElementById('v-fecha').value = v.fecha || '';
+            
+            let htmlSelect = '';
+            listaClientes.forEach(c => {
+                htmlSelect += `<option value="${c.id}" ${c.id === v.clienteId || c.nombre === v.nombre ? 'selected' : ''}>${c.nombre}</option>`;
+            });
+            document.getElementById('v-cliente-select').innerHTML = htmlSelect;
+            document.getElementById('v-telefono').value = v.telefono || '';
+            document.getElementById('v-direccion').value = v.direccion || '';
+            document.getElementById('v-vendedor').value = v.vendedor || 'George';
+            document.getElementById('v-cantidad').value = v.cantidad || 1;
+            document.getElementById('v-precio').value = v.precioUnitario || 40;
+            document.getElementById('v-total').value = v.total || 40;
+            document.getElementById('v-tipo').value = v.tipo || 'Crédito';
+            document.getElementById('v-forma-pago').value = v.formaPago || 'Semanal';
+            document.getElementById('v-cuota').value = v.cuota || 10;
+            document.getElementById('v-proximo-pago').value = v.proximoPago || '';
+            document.getElementById('v-obs').value = v.observaciones || '';
+
             document.getElementById('modal-venta-titulo').innerText = "Editar Venta";
+            document.getElementById('modal-venta').classList.remove('hidden');
         };
 
         window.eliminarVenta = async (id) => {
@@ -1728,129 +1732,92 @@
             }
         };
 
-        window.eliminarPago = async (id) => {
-            if(confirm("¿Está seguro de eliminar este cobro?")) {
-                await deleteDoc(doc(db, "cobros_ethan", id));
-                sincronizarDatos();
-            }
-        };
-
         window.verDetalleCliente = (id) => {
-            const cliente = listaClientes.find(c => c.id === id);
-            if(!cliente) return;
-            document.getElementById('det-nombre-cliente').innerText = `Detalles de ${cliente.nombre}`;
-            document.getElementById('det-tel').innerText = cliente.telefono || '-';
-            document.getElementById('det-dir').innerText = cliente.direccion || '-';
-            document.getElementById('det-saldo').innerText = `$${(cliente.saldoActualCalculado || 0).toFixed(2)}`;
+            const cli = listaClientes.find(c => c.id === id);
+            if(!cli) return;
+            document.getElementById('det-nombre-cliente').innerText = `Detalles de: ${cli.nombre}`;
+            document.getElementById('det-tel').innerText = cli.telefono || '-';
+            document.getElementById('det-dir').innerText = cli.direccion || '-';
+            document.getElementById('det-saldo').innerText = `$${(cli.saldoActualCalculado || 0).toFixed(2)}`;
 
-            const vCliente = listaVentas.filter(v => v.clienteId === cliente.id || v.nombre === cliente.nombre);
+            const vCli = listaVentas.filter(v => v.clienteId === cli.id || v.nombre === cli.nombre);
             let htmlV = '';
-            vCliente.forEach(v => {
-                htmlV += `
-                    <tr class="border-b border-slate-100">
-                        <td class="p-2">${v.fecha || '-'}</td>
-                        <td class="p-2">${v.cantidad || 1}</td>
-                        <td class="p-2">$${(parseFloat(v.total) || (v.cantidad * 40)).toFixed(2)}</td>
-                        <td class="p-2">${v.tipo || '-'}</td>
-                        <td class="p-2">${v.vendedor || '-'}</td>
-                        <td class="p-2">$${(parseFloat(v.cuota) || 10).toFixed(2)}</td>
-                    </tr>
-                `;
+            vCli.forEach(v => {
+                htmlV += `<tr><td class="p-2">${v.fecha || '-'}</td><td class="p-2">${v.cantidad || 1}</td><td class="p-2">$${(parseFloat(v.total) || 40).toFixed(2)}</td><td class="p-2">${v.tipo || '-'}</td><td class="p-2">${v.vendedor || '-'}</td><td class="p-2">$${(parseFloat(v.cuota) || 10).toFixed(2)}</td></tr>`;
             });
-            document.getElementById('tabla-detalles-ventas').innerHTML = htmlVentraHTML(htmlV);
+            document.getElementById('tabla-detalles-ventas').innerHTML = htmlVirthan = htmlV || '<tr><td colspan="6" class="p-2 text-center text-slate-400">Sin ventas</td></tr>';
 
-            const pCliente = listaPagos.filter(p => p.clienteId === cliente.id || p.nombre === cliente.nombre);
+            const pCli = listaPagos.filter(p => p.clienteId === cli.id || p.nombre === cli.nombre);
             let htmlP = '';
-            pCliente.forEach(p => {
-                htmlP += `
-                    <tr class="border-b border-slate-100">
-                        <td class="p-2">${p.fecha || '-'}</td>
-                        <td class="p-2 font-semibold text-emerald-600">$${(parseFloat(p.monto) || 0).toFixed(2)}</td>
-                    </tr>
-                `;
+            pCli.forEach(p => {
+                htmlP += `<tr><td class="p-2">${p.fecha || '-'}</td><td class="p-2 font-semibold text-emerald-600">$${(parseFloat(p.monto) || 0).toFixed(2)}</td></tr>`;
             });
-            document.getElementById('tabla-detalles-cobros').innerHTML = htmlP || '<tr><td colspan="2" class="p-2 text-center text-slate-400">Sin abonos registrados</td></tr>';
+            document.getElementById('tabla-detalles-cobros').innerHTML = htmlP || '<tr><td colspan="2" class="p-2 text-center text-slate-400">Sin cobros</td></tr>';
 
             document.getElementById('modal-detalle-cliente').classList.remove('hidden');
         };
-
-        function htmlVentraHTML(html) {
-            return html || '<tr><td colspan="6" class="p-2 text-center text-slate-400">Sin ventas registradas</td></tr>';
-        }
 
         window.cerrarModalDetalle = () => {
             document.getElementById('modal-detalle-cliente').classList.add('hidden');
         };
 
+        window.eliminarPago = async (id) => {
+            if(confirm("¿Está seguro de eliminar este pago?")) {
+                await deleteDoc(doc(db, "cobros_ethan", id));
+                sincronizarDatos();
+            }
+        };
+
+        // Control de combustible rápido
         window.guardarCombustibleRapido = async (e) => {
             e.preventDefault();
+            const monto = parseFloat(document.getElementById('comb-monto').value) || 0;
+            const fecha = document.getElementById('comb-fecha').value;
             const data = {
-                fecha: document.getElementById('comb-fecha').value,
+                fecha: fecha,
                 tipo: 'Salida',
-                monto: parseFloat(document.getElementById('comb-monto').value) || 0,
+                monto: monto,
                 categoria: 'Combustible',
-                descripcion: 'Carga rápida de combustible camioneta'
+                descripcion: 'Carga de gasolina camioneta'
             };
             await addDoc(collection(db, "movimientos_personales_ethan"), data);
             e.target.reset();
             document.getElementById('comb-fecha').value = new Date().toISOString().split('T')[0];
             sincronizarDatos();
-            alert("¡Carga de combustible guardada con éxito!");
+            alert("¡Carga de combustible registrada con éxito!");
         };
 
         function renderizarHistorialCombustible() {
-            const tabla = document.getElementById('tabla-combustible-cuerpo');
-            if(!tabla) return;
-            const combMovs = listaMovimientos.filter(m => m.categoria === 'Combustible');
-            let html = '';
-            combMovs.forEach(m => {
-                html += `
-                    <tr class="hover:bg-slate-50 border-b border-slate-100">
-                        <td class="p-3 text-slate-600">${m.fecha || '-'}</td>
-                        <td class="p-3 font-medium text-slate-800">${m.categoria || '-'}</td>
-                        <td class="p-3 font-semibold text-amber-600">$${(parseFloat(m.monto) || 0).toFixed(2)}</td>
-                        <td class="p-3 text-slate-600">${m.descripcion || '-'}</td>
-                        <td class="p-3 text-center space-x-2">
-                            <button onclick="editarMovimientoPersonal('${m.id}')" class="text-indigo-600 hover:text-indigo-800"><i class="fa-solid fa-pen"></i></button>
-                            <button onclick="eliminarMovimientoPersonal('${m.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
-                        </td>
-                    </tr>
-                `;
-            });
-            tabla.innerHTML = html || '<tr><td colspan="5" class="p-4 text-center text-slate-400">Sin registros de combustible</td></tr>';
+            const tbody = document.getElementById('tabla-combustible-cuerpo');
+            if(!tbody) return;
 
+            const combMovs = listaMovimientos.filter(m => m.categoria === 'Combustible');
+            
             const { inicioSemanaActual, finSemanaActual, inicioSemanaAnterior, finSemanaAnterior } = obtenerRangosSemanales();
-            let totalSemAct = 0, totalSemAnt = 0;
+            let totalSemanaActual = 0;
+            let totalSemanaAnterior = 0;
 
             combMovs.forEach(m => {
                 if(!m.fecha) return;
                 const f = new Date(m.fecha + 'T00:00:00');
                 const monto = parseFloat(m.monto || 0);
                 if(f >= inicioSemanaActual && f <= finSemanaActual) {
-                    totalSemAct += monto;
+                    totalSemanaActual += monto;
                 } else if(f >= inicioSemanaAnterior && f <= finSemanaAnterior) {
-                    totalSemAnt += monto;
+                    totalSemanaAnterior += monto;
                 }
             });
 
-            const elAct = document.getElementById('comb-total-sem-actual');
-            const elAnt = document.getElementById('comb-total-sem-anterior');
-            if(elAct) elAct.innerText = `$${totalSemAct.toFixed(2)}`;
-            if(elAnt) elAnt.innerText = `$${totalSemAnt.toFixed(2)}`;
-        }
+            document.getElementById('comb-total-sem-actual').innerText = `$${totalSemanaActual.toFixed(2)}`;
+            document.getElementById('comb-total-sem-anterior').innerText = `$${totalSemanaAnterior.toFixed(2)}`;
 
-        window.filtrarCombustiblePorMes = () => {
-            const mesVal = document.getElementById('filtro-mes-combustible').value;
-            if(!mesVal) return;
-            const tabla = document.getElementById('tabla-combustible-cuerpo');
-            const combMovs = listaMovimientos.filter(m => m.categoria === 'Combustible' && m.fecha && m.fecha.startsWith(mesVal));
             let html = '';
             combMovs.forEach(m => {
                 html += `
                     <tr class="hover:bg-slate-50 border-b border-slate-100">
                         <td class="p-3 text-slate-600">${m.fecha || '-'}</td>
-                        <td class="p-3 font-medium text-slate-800">${m.categoria || '-'}</td>
-                        <td class="p-3 font-semibold text-amber-600">$${(parseFloat(m.monto) || 0).toFixed(2)}</td>
+                        <td class="p-3 font-medium text-amber-700">${m.categoria || 'Combustible'}</td>
+                        <td class="p-3 font-semibold text-rose-600">$${(parseFloat(m.monto) || 0).toFixed(2)}</td>
                         <td class="p-3 text-slate-600">${m.descripcion || '-'}</td>
                         <td class="p-3 text-center space-x-2">
                             <button onclick="editarMovimientoPersonal('${m.id}')" class="text-indigo-600 hover:text-indigo-800"><i class="fa-solid fa-pen"></i></button>
@@ -1859,8 +1826,32 @@
                     </tr>
                 `;
             });
-            tabla.innerHTML = html || '<tr><td colspan="5" class="p-4 text-center text-slate-400">Sin registros para este mes</td></tr>';
-            document.getElementById('info-filtro-combustible').innerText = `Filtrado por mes: ${mesVal}`;
+            tbody.innerHTML = html || '<tr><td colspan="5" class="p-4 text-center text-slate-400">Sin registros de combustible</td></tr>';
+        }
+
+        window.filtrarCombustiblePorMes = () => {
+            const mesAnio = document.getElementById('filtro-mes-combustible').value;
+            if(!mesAnio) return;
+            const tbody = document.getElementById('tabla-combustible-cuerpo');
+            const combMovs = listaMovimientos.filter(m => m.categoria === 'Combustible' && m.fecha && m.fecha.startsWith(mesAnio));
+            document.getElementById('info-filtro-combustible').innerText = `Filtrado por: ${mesAnio}`;
+            
+            let html = '';
+            combMovs.forEach(m => {
+                html += `
+                    <tr class="hover:bg-slate-50 border-b border-slate-100">
+                        <td class="p-3 text-slate-600">${m.fecha || '-'}</td>
+                        <td class="p-3 font-medium text-amber-700">${m.categoria}</td>
+                        <td class="p-3 font-semibold text-rose-600">$${(parseFloat(m.monto) || 0).toFixed(2)}</td>
+                        <td class="p-3 text-slate-600">${m.descripcion || '-'}</td>
+                        <td class="p-3 text-center space-x-2">
+                            <button onclick="editarMovimientoPersonal('${m.id}')" class="text-indigo-600 hover:text-indigo-800"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="eliminarMovimientoPersonal('${m.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html || '<tr><td colspan="5" class="p-4 text-center text-slate-400">Sin registros para este mes</td></tr>';
         };
 
         window.limpiarFiltroCombustible = () => {
@@ -1870,7 +1861,7 @@
         };
 
         window.descargarRespaldoJSON = () => {
-            const data = {
+            const datosBackup = {
                 clientes: listaClientes,
                 ventas: listaVentas,
                 pagos: listaPagos,
@@ -1878,45 +1869,51 @@
                 movimientos: listaMovimientos,
                 caja: listaCaja
             };
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `respaldo_crm_ethan_${new Date().toISOString().split('T')[0]}.json`;
-            a.click();
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(datosBackup, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `respaldo_crm_ethan_${new Date().toISOString().split('T')[0]}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
         };
 
-        window.descargarCodigoHTML = () => {
-            const htmlContent = document.documentElement.outerHTML;
-            const blob = new Blob([htmlContent], { type: 'text/html' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `crm_almohadas_comercial_ethan.html`;
-            a.click();
-        };
-
-        window.restaurarRespaldoJSON = (event) => {
+        window.restaurarRespaldoJSON = async (event) => {
             const file = event.target.files[0];
             if(!file) return;
             const reader = new FileReader();
-            reader.onload = async (e) => {
+            reader.onload = async function(e) {
                 try {
                     const contenido = JSON.parse(e.target.result);
-                    alert("Función de carga de JSON leída correctamente. Asegúrese de sincronizar de nuevo tras importar.");
+                    if(confirm("¿Está seguro de restaurar este respaldo? Se sobrescribirán o agregarán los datos.")) {
+                        alert("Funcionalidad de carga JSON lista. Sincronice o migre según requiera.");
+                    }
                 } catch(err) {
-                    alert("Error al leer el archivo JSON.");
+                    alert("Archivo JSON inválido.");
                 }
             };
             reader.readAsText(file);
         };
 
+        window.descargarCodigoHTML = () => {
+            const htmlContent = document.documentElement.outerHTML;
+            const blob = new Blob([htmlContent], { type: "text/html;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "crm_comercial_ethan.html";
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+        };
+
         window.exportarExcelVistaActual = () => {
-            alert("Exportando vista actual a Excel...");
+            alert(`Exportando vista actual (${vistaActualActiva}) a Excel...`);
         };
 
         window.exportarPdfVistaActual = () => {
-            alert("Exportando vista actual a PDF...");
+            alert(`Exportando vista actual (${vistaActualActiva}) a PDF...`);
         };
 
         window.onload = () => {
