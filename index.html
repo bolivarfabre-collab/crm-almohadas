@@ -331,8 +331,14 @@
                     <table class="w-full text-left border-collapse text-sm">
                         <thead>
                             <tr class="bg-[#0B132B] text-white text-xs uppercase">
-                                <th class="p-3">Vendedor</th><th class="p-3">Cliente</th><th class="p-3">Venta</th><th class="p-3">Comisión</th><th class="p-3">Estado</th><th class="p-3 text-center">Acción</th>
-                            </tr>
+                 <th class="p-3">Vendedor</th>
+                 <th class="p-3">Cliente</th>
+                 <th class="p-3">Venta</th>
+                 <th class="p-3">Comisión</th>
+                 <th class="p-3">Estado</th>
+                 <th class="p-3">Fecha Pago</th>
+                 <th class="p-3">Acción</th>
+             </tr>
                         </thead>
                         <tbody id="tabla-comisiones-cuerpo" class="divide-y divide-slate-100 text-xs sm:text-sm"></tbody>
                     </table>
@@ -1059,8 +1065,9 @@
                             <td class="p-3 text-slate-600">$${(parseFloat(item.total) || (cantAlmohadas * 40)).toFixed(2)}</td>
                             <td class="p-3 font-semibold text-slate-900">$${comisionTotalVenta.toFixed(2)}</td>
                             <td class="p-3 ${badgeColor}">${estadoComision}</td>
+                            <td class="p-3 text-slate-600">${item.fechaPagoComision || '-'}</td>
                             <td class="p-3 text-center">
-                                <button onclick="toggleEstadoComision('${item.id}', '${estadoComision}')" class="bg-[#0B132B] hover:bg-indigo-900 text-white px-3 py-1 rounded-lg text-xs font-semibold shadow-sm transition">Marcar</button>
+                             <button onclick="toggleEstadoComision('${item.id}', '${estadoComision}', '${new Date().toISOString().split('T')[0]}')" class="bg-[#0B132B] hover:bg-indigo-900 text-white px-3 py-1 rounded-lg text-xs">Marcar</button>
                             </td>
                         </tr>
                     `;
@@ -1069,8 +1076,6 @@
                 document.getElementById('comision-pendiente').innerText = `$${totalPendienteComision.toFixed(2)}`;
                 document.getElementById('comision-pagada').innerText = `$${totalPagadaComision.toFixed(2)}`;
                 document.getElementById('dash-comisiones-pendientes').innerText = `$${totalPendienteComision.toFixed(2)}`;
-                document.getElementById('tabla-comisiones-cuerpo').innerHTML = htmlComisiones || '<tr><td colspan="6" class="p-4 text-center text-slate-400">Sin comisiones registradas</td></tr>';
-
                 let cobradoMenosComisionesMes = totalCobradoMes - totalComisionesPagadasMes;
                 document.getElementById('dash-cobrado-menos-comisiones').innerText = `$${cobradoMenosComisionesMes.toFixed(2)}`;
 
