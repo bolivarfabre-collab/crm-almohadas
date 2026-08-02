@@ -774,7 +774,7 @@
         let listaMovimientos = [];
         let listaCaja = [];
         let vistaActualActiva = 'dashboard';
-        let semanasAbiertas = {};
+        let semanasAbiertas = {}; // Estado para recordar semanas abiertas/cerradas
 
         window.abrirModalCaja = () => {
             document.getElementById('caja-id').value = '';
@@ -802,39 +802,6 @@
 
         window.cerrarModalMovimientoPersonal = () => {
             document.getElementById('modal-movimiento-personal').classList.add('hidden');
-        }
-
-        window.abrirModalCliente = () => {
-            document.getElementById('m-id').value = '';
-            document.getElementById('m-nombre').value = '';
-            document.getElementById('m-telefono').value = '';
-            document.getElementById('m-direccion').value = '';
-            document.getElementById('modal-cliente-titulo').innerText = "Registrar Cliente";
-            document.getElementById('modal-cliente').classList.remove('hidden');
-        }
-
-        window.cerrarModalCliente = () => {
-            document.getElementById('modal-cliente').classList.add('hidden');
-        }
-
-        window.abrirModalVenta = () => {
-            document.getElementById('v-id').value = '';
-            document.getElementById('v-cantidad').value = '1';
-            document.getElementById('v-precio').value = '40.00';
-            document.getElementById('v-total').value = '40.00';
-            document.getElementById('v-cuota').value = '10.00';
-            document.getElementById('v-obs').value = '';
-            document.getElementById('modal-venta-titulo').innerText = "Registrar Nueva Venta";
-            document.getElementById('modal-venta').classList.remove('hidden');
-            document.getElementById('v-fecha').value = new Date().toISOString().split('T')[0];
-        }
-
-        window.cerrarModalVenta = () => {
-            document.getElementById('modal-venta').classList.add('hidden');
-        }
-
-        window.cerrarModalDetalle = () => {
-            document.getElementById('modal-detalle-cliente').classList.add('hidden');
         }
 
         window.toggleSidebarMovil = () => {
@@ -1028,7 +995,6 @@
 
                 document.getElementById('tabla-clientes-cuerpo').innerHTML = htmlClientes || '<tr><td colspan="9" class="p-4 text-center text-slate-400">Sin clientes registrados</td></tr>';
                 document.getElementById('pago-cliente').innerHTML = htmlSelectCliente;
-                document.getElementById('v-cliente-select').innerHTML = '<option value="">Seleccione cliente...</option>' + listaClientes.map(c => `<option value="${c.id}">${c.nombre}</option>`).join('');
                 document.getElementById('dash-clientes').innerText = listaClientes.length;
                 document.getElementById('dash-deuda').innerText = `$${totalDeuda.toFixed(2)}`;
 
@@ -1312,284 +1278,7 @@
             }
         };
 
-        window.guardarCliente = async (e) => {
-            e.preventDefault();
-            const id = document.getElementById('m-id').value;
-            const data = {
-                nombre: document.getElementById('m-nombre').value,
-                telefono: document.getElementById('m-telefono').value,
-                direccion: document.getElementById('m-direccion').value
-            };
-            if(id) {
-                await updateDoc(doc(db, "clientes_ethan", id), data);
-            } else {
-                await addDoc(collection(db, "clientes_ethan"), data);
-            }
-            cerrarModalCliente();
-            sincronizarDatos();
-            alert("¡Cliente guardado correctamente!");
-        };
-
-        window.editarCliente = (id) => {
-            const cli = listaClientes.find(c => c.id === id);
-            if(!cli) return;
-            document.getElementById('m-id').value = cli.id;
-            document.getElementById('m-nombre').value = cli.nombre || '';
-            document.getElementById('m-telefono').value = cli.telefono || '';
-            document.getElementById('m-direccion').value = cli.direccion || '';
-            document.getElementById('modal-cliente-titulo').innerText = "Editar Cliente";
-            document.getElementById('modal-cliente').classList.remove('hidden');
-        };
-
-        window.eliminarCliente = async (id) => {
-            if(confirm("¿Seguro que deseas eliminar este cliente?")) {
-                await deleteDoc(doc(db, "clientes_ethan", id));
-                sincronizarDatos();
-            }
-        };
-
-        window.autocompletarCliente = (select) => {
-            const cliId = select.value;
-            const cli = listaClientes.find(c => c.id === cliId);
-            if(cli) {
-                document.getElementById('v-telefono').value = cli.telefono || '';
-                document.getElementById('v-direccion').value = cli.direccion || '';
-            } else {
-                document.getElementById('v-telefono').value = '';
-                document.getElementById('v-direccion').value = '';
-            }
-        };
-
-        window.calcularTotalVenta = () => {
-            const cant = parseFloat(document.getElementById('v-cantidad').value) || 1;
-            const precio = parseFloat(document.getElementById('v-precio').value) || 40;
-            document.getElementById('v-total').value = (cant * precio).toFixed(2);
-        };
-
-        window.guardarVenta = async (e) => {
-            e.preventDefault();
-            const id = document.getElementById('v-id').value;
-            const clienteId = document.getElementById('v-cliente-select').value;
-            const cliObj = listaClientes.find(c => c.id === clienteId);
-            const data = {
-                fecha: document.getElementById('v-fecha').value,
-                clienteId: clienteId,
-                nombre: cliObj ? cliObj.nombre : '',
-                telefono: document.getElementById('v-telefono').value,
-                direccion: document.getElementById('v-direccion').value,
-                vendedor: document.getElementById('v-vendedor').value,
-                cantidad: parseInt(document.getElementById('v-cantidad').value) || 1,
-                precioUnitario: parseFloat(document.getElementById('v-precio').value) || 40,
-                total: parseFloat(document.getElementById('v-total').value) || 40,
-                tipo: document.getElementById('v-tipo').value,
-                formaPago: document.getElementById('v-forma-pago').value,
-                cuota: parseFloat(document.getElementById('v-cuota').value) || 10,
-                proximoPago: document.getElementById('v-proximo-pago').value,
-                observaciones: document.getElementById('v-obs').value
-            };
-            if(id) {
-                await updateDoc(doc(db, "ventas_ethan", id), data);
-            } else {
-                await addDoc(collection(db, "ventas_ethan"), data);
-            }
-            cerrarModalVenta();
-            sincronizarDatos();
-            alert("¡Venta registrada con éxito!");
-        };
-
-        window.editarVenta = (id) => {
-            const v = listaVentas.find(x => x.id === id);
-            if(!v) return;
-            document.getElementById('v-id').value = v.id;
-            document.getElementById('v-fecha').value = v.fecha || '';
-            document.getElementById('v-cliente-select').value = v.clienteId || '';
-            document.getElementById('v-telefono').value = v.telefono || '';
-            document.getElementById('v-direccion').value = v.direccion || '';
-            document.getElementById('v-vendedor').value = v.vendedor || 'George';
-            document.getElementById('v-cantidad').value = v.cantidad || 1;
-            document.getElementById('v-precio').value = v.precioUnitario || 40;
-            document.getElementById('v-total').value = v.total || 40;
-            document.getElementById('v-tipo').value = v.tipo || 'Crédito';
-            document.getElementById('v-forma-pago').value = v.formaPago || 'Semanal';
-            document.getElementById('v-cuota').value = v.cuota || 10;
-            document.getElementById('v-proximo-pago').value = v.proximoPago || '';
-            document.getElementById('v-obs').value = v.observaciones || '';
-            document.getElementById('modal-venta-titulo').innerText = "Editar Venta";
-            document.getElementById('modal-venta').classList.remove('hidden');
-        };
-
-        window.eliminarVenta = async (id) => {
-            if(confirm("¿Estás seguro de eliminar esta venta?")) {
-                await deleteDoc(doc(db, "ventas_ethan", id));
-                sincronizarDatos();
-            }
-        };
-
-        window.actualizarSaldoActual = (select) => {
-            const cliId = select.value;
-            const cli = listaClientes.find(c => c.id === cliId);
-            if(cli) {
-                document.getElementById('pago-saldo-actual').value = (cli.saldoActualCalculado || 0).toFixed(2);
-            } else {
-                document.getElementById('pago-saldo-actual').value = '0.00';
-            }
-        };
-
-        window.registrarPago = async (e) => {
-            e.preventDefault();
-            const clienteId = document.getElementById('pago-cliente').value;
-            const cli = listaClientes.find(c => c.id === clienteId);
-            if(!cli) return alert("Seleccione un cliente válido");
-
-            const montoCobrado = parseFloat(document.getElementById('pago-monto').value) || 0;
-            const saldoAnt = cli.saldoActualCalculado || 0;
-            const saldoNuevo = Math.max(0, saldoAnt - montoCobrado);
-
-            const data = {
-                fecha: document.getElementById('pago-fecha').value,
-                clienteId: clienteId,
-                nombre: cli.nombre,
-                monto: montoCobrado,
-                saldoAnt: saldoAnt,
-                saldoNuevo: saldoNuevo,
-                observaciones: document.getElementById('pago-obs').value
-            };
-
-            await addDoc(collection(db, "cobros_ethan"), data);
-            sincronizarDatos();
-            document.getElementById('pago-monto').value = '';
-            document.getElementById('pago-obs').value = '';
-            alert("¡Pago registrado con éxito!");
-        };
-
-        window.eliminarPago = async (id) => {
-            if(confirm("¿Eliminar este cobro?")) {
-                await deleteDoc(doc(db, "cobros_ethan", id));
-                sincronizarDatos();
-            }
-        };
-
-        window.guardarCompraInventario = async (e) => {
-            e.preventDefault();
-            const id = document.getElementById('inv-id').value;
-            const data = {
-                fecha: document.getElementById('inv-fecha').value,
-                cantidad: parseInt(document.getElementById('inv-cantidad').value) || 1,
-                costoTotal: parseFloat(document.getElementById('inv-costo-total').value) || 0
-            };
-            if(id) {
-                await updateDoc(doc(db, "inventario_ethan", id), data);
-                document.getElementById('inv-id').value = '';
-                document.getElementById('inv-titulo-form').innerText = "Ingresar Mercadería";
-            } else {
-                await addDoc(collection(db, "inventario_ethan"), data);
-            }
-            sincronizarDatos();
-            e.target.reset();
-            document.getElementById('inv-fecha').value = new Date().toISOString().split('T')[0];
-            alert("¡Compra guardada!");
-        };
-
-        window.editarCompraInventario = (id) => {
-            const item = listaInventario.find(x => x.id === id);
-            if(!item) return;
-            document.getElementById('inv-id').value = item.id;
-            document.getElementById('inv-fecha').value = item.fecha || '';
-            document.getElementById('inv-cantidad').value = item.cantidad || 1;
-            document.getElementById('inv-costo-total').value = item.costoTotal || 0;
-            document.getElementById('inv-titulo-form').innerText = "Editar Compra de Mercadería";
-        };
-
-        window.eliminarCompraInventario = async (id) => {
-            if(confirm("¿Eliminar esta compra de inventario?")) {
-                await deleteDoc(doc(db, "inventario_ethan", id));
-                sincronizarDatos();
-            }
-        };
-
-        window.toggleEstadoComision = async (id, estadoActual, fechaHoy) => {
-            const nuevoEstado = estadoActual === 'Pagada' ? 'Pendiente' : 'Pagada';
-            const data = {
-                estadoComision: nuevoEstado,
-                fechaPagoComision: nuevoEstado === 'Pagada' ? fechaHoy : ''
-            };
-            await updateDoc(doc(db, "ventas_ethan", id), data);
-            sincronizarDatos();
-        };
-
-        window.verDetalleCliente = (id) => {
-            const cli = listaClientes.find(c => c.id === id);
-            if(!cli) return;
-            document.getElementById('det-nombre-cliente').innerText = cli.nombre;
-            document.getElementById('det-tel').innerText = cli.telefono || '-';
-            document.getElementById('det-dir').innerText = cli.direccion || '-';
-            document.getElementById('det-saldo').innerText = `$${(cli.saldoActualCalculado || 0).toFixed(2)}`;
-
-            const vCli = listaVentas.filter(v => v.clienteId === cli.id || v.nombre === cli.nombre);
-            let htmlV = '';
-            vCli.forEach(v => {
-                htmlV += `<tr class="border-b border-slate-100"><td class="p-2">${v.fecha || '-'}</td><td class="p-2">${v.cantidad || 1}</td><td class="p-2">$${parseFloat(v.total || 0).toFixed(2)}</td><td class="p-2">${v.tipo || '-'}</td><td class="p-2">${v.vendedor || '-'}</td><td class="p-2">$${parseFloat(v.cuota || 0).toFixed(2)}</td></tr>`;
-            });
-            document.getElementById('tabla-detalles-ventas').innerHTML = htmlV.length ? htmlV : '<tr><td colspan="6" class="p-2 text-center text-slate-400">Sin ventas</td></tr>';
-
-            const pCli = listaPagos.filter(p => p.clienteId === cli.id || p.nombre === cli.nombre);
-            let htmlP = '';
-            pCli.forEach(p => {
-                htmlP += `<tr class="border-b border-slate-100"><td class="p-2">${p.fecha || '-'}</td><td class="p-2 font-semibold text-emerald-600">$${parseFloat(p.monto || 0).toFixed(2)}</td></tr>`;
-            });
-            document.getElementById('tabla-detalles-cobros').innerHTML = htmlP.length ? htmlP : '<tr><td colspan="2" class="p-2 text-center text-slate-400">Sin cobros</td></tr>';
-
-            document.getElementById('modal-detalle-cliente').classList.remove('hidden');
-        };
-
-        window.guardarCombustibleRapido = async (e) => {
-            e.preventDefault();
-            const data = {
-                fecha: document.getElementById('comb-fecha').value,
-                tipo: 'Salida',
-                categoria: 'Combustible',
-                monto: parseFloat(document.getElementById('comb-monto').value) || 0,
-                descripcion: 'Carga de Combustible Camioneta'
-            };
-            await addDoc(collection(db, "movimientos_personales_ethan"), data);
-            sincronizarDatos();
-            e.target.reset();
-            document.getElementById('comb-fecha').value = new Date().toISOString().split('T')[0];
-            alert("¡Carga de combustible guardada!");
-        };
-
-        window.guardarMovimientoPersonal = async (e) => {
-            e.preventDefault();
-            const id = document.getElementById('mov-id').value;
-            const catSelect = document.getElementById('mov-cat').value;
-            const catManual = document.getElementById('mov-cat-manual').value;
-            const categoriaFinal = (catSelect === 'Agregar Manual') ? catManual : catSelect;
-
-            const data = {
-                fecha: document.getElementById('mov-fecha').value,
-                tipo: document.getElementById('mov-tipo').value,
-                monto: parseFloat(document.getElementById('mov-monto').value) || 0,
-                categoria: categoriaFinal,
-                descripcion: document.getElementById('mov-obs').value
-            };
-
-            if(id) {
-                await updateDoc(doc(db, "movimientos_personales_ethan", id), data);
-            } else {
-                await addDoc(collection(db, "movimientos_personales_ethan"), data);
-            }
-            cerrarModalMovimientoPersonal();
-            sincronizarDatos();
-            alert("¡Movimiento personal guardado con éxito!");
-        };
-
-        window.eliminarMovimientoPersonal = async (id) => {
-            if(confirm("¿Estás seguro de eliminar este movimiento?")) {
-                await deleteDoc(doc(db, "movimientos_personales_ethan", id));
-                sincronizarDatos();
-            }
-        };
-
+        // Semana empieza estrictamente en Lunes
         function obtenerLunesDeLaSemana(d) {
             const fecha = new Date(d + 'T00:00:00');
             const dia = fecha.getDay();
@@ -1641,6 +1330,7 @@
             };
         }
 
+        // Historial de Entradas y Salidas agrupado por Semanas con facilidad de abrir/cerrar
         window.toggleSemanaAccordion = (idSemana) => {
             semanasAbiertas[idSemana] = !semanasAbiertas[idSemana];
             renderizarMovimientosPorSemanas();
@@ -1655,6 +1345,7 @@
                 return;
             }
 
+            // Agrupar por semana (Lunes a Domingo)
             const semanasMap = {};
             listaMovimientos.forEach(m => {
                 if(!m.fecha) return;
@@ -1677,13 +1368,14 @@
                 }
             });
 
+            // Ordenar semanas de la más reciente a la más antigua
             const semanasKeys = Object.keys(semanasMap).sort().reverse();
             let html = '';
 
             semanasKeys.forEach(idSem => {
                 const sem = semanasMap[idSem];
                 const balanceSemanal = sem.totalEntradas - sem.totalSalidas;
-                const isOpen = semanasAbiertas[idSem] !== false;
+                const isOpen = semanasAbiertas[idSem] !== false; // por defecto abierto o según estado
 
                 html += `
                     <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden mb-4">
@@ -1770,107 +1462,9 @@
             document.getElementById('modal-movimiento-personal').classList.remove('hidden');
         };
 
-        function renderizarHistorialCombustible() {
-            const tabla = document.getElementById('tabla-combustible-cuerpo');
-            if(!tabla) return;
-            const combMovs = listaMovimientos.filter(m => m.categoria === 'Combustible');
-            
-            let html = '';
-            let totalSemActual = 0;
-            let totalSemAnterior = 0;
-            const { inicioSemanaActual, finSemanaActual, inicioSemanaAnterior, finSemanaAnterior } = obtenerRangosSemanales();
+        // --- INICIO CÓDIGO AÑADIDO PARA EXPORTAR EXCEL Y PDF ---
 
-            combMovs.forEach(m => {
-                const monto = parseFloat(m.monto || 0);
-                const fechaMov = m.fecha ? new Date(m.fecha + 'T00:00:00') : null;
-
-                if(fechaMov && fechaMov >= inicioSemanaActual && fechaMov <= finSemanaActual) {
-                    totalSemActual += monto;
-                }
-                if(fechaMov && fechaMov >= inicioSemanaAnterior && fechaMov <= finSemanaAnterior) {
-                    totalSemAnterior += monto;
-                }
-
-                html += `
-                    <tr class="hover:bg-slate-50 border-b border-slate-100">
-                        <td class="p-3 text-slate-600">${m.fecha || '-'}</td>
-                        <td class="p-3 font-medium text-slate-800">${m.categoria || '-'}</td>
-                        <td class="p-3 font-semibold text-amber-600">$${monto.toFixed(2)}</td>
-                        <td class="p-3 text-slate-600">${m.descripcion || '-'}</td>
-                        <td class="p-3 text-center space-x-2">
-                            <button onclick="editarMovimientoPersonal('${m.id}')" class="text-indigo-600 hover:text-indigo-800"><i class="fa-solid fa-pen"></i></button>
-                            <button onclick="eliminarMovimientoPersonal('${m.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
-                        </td>
-                    </tr>
-                `;
-            });
-
-            tabla.innerHTML = html || '<tr><td colspan="5" class="p-4 text-center text-slate-400">Sin registros de combustible</td></tr>';
-            document.getElementById('comb-total-sem-actual').innerText = `$${totalSemActual.toFixed(2)}`;
-            document.getElementById('comb-total-sem-anterior').innerText = `$${totalSemAnterior.toFixed(2)}`;
-        }
-
-        window.filtrarCombustiblePorMes = () => {
-            const val = document.getElementById('filtro-mes-combustible').value;
-            if(!val) return;
-            const combMovs = listaMovimientos.filter(m => m.categoria === 'Combustible' && m.fecha && m.fecha.startsWith(val));
-            let html = '';
-            combMovs.forEach(m => {
-                html += `
-                    <tr class="hover:bg-slate-50 border-b border-slate-100">
-                        <td class="p-3 text-slate-600">${m.fecha || '-'}</td>
-                        <td class="p-3 font-medium text-slate-800">${m.categoria || '-'}</td>
-                        <td class="p-3 font-semibold text-amber-600">$${parseFloat(m.monto || 0).toFixed(2)}</td>
-                        <td class="p-3 text-slate-600">${m.descripcion || '-'}</td>
-                        <td class="p-3 text-center space-x-2">
-                            <button onclick="editarMovimientoPersonal('${m.id}')" class="text-indigo-600 hover:text-indigo-800"><i class="fa-solid fa-pen"></i></button>
-                            <button onclick="eliminarMovimientoPersonal('${m.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
-                        </td>
-                    </tr>
-                `;
-            });
-            document.getElementById('tabla-combustible-cuerpo').innerHTML = html || '<tr><td colspan="5" class="p-4 text-center text-slate-400">Sin registros para este mes</td></tr>';
-            document.getElementById('info-filtro-combustible').innerText = `Filtrado por mes: ${val}`;
-        };
-
-        window.limpiarFiltroCombustible = () => {
-            document.getElementById('filtro-mes-combustible').value = '';
-            document.getElementById('info-filtro-combustible').innerText = 'Mostrando todos los registros';
-            renderizarHistorialCombustible();
-        };
-
-        // Funciones de Respaldo JSON y Código
-        window.descargarRespaldoJSON = () => {
-            const dataBackup = {
-                clientes: listaClientes,
-                ventas: listaVentas,
-                pagos: listaPagos,
-                inventario: listaInventario,
-                movimientos: listaMovimientos,
-                caja: listaCaja,
-                fechaRespaldo: new Date().toISOString()
-            };
-            const blob = new Blob([JSON.stringify(dataBackup, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `Respaldo_CRM_ComercialEthan_${new Date().toISOString().split('T')[0]}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
-        };
-
-        window.descargarCodigoHTML = () => {
-            const htmlContent = document.documentElement.outerHTML;
-            const blob = new Blob([htmlContent], { type: 'text/html' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `CRM_ComercialEthan_${new Date().toISOString().split('T')[0]}.html`;
-            a.click();
-            URL.revokeObjectURL(url);
-        };
-
-        // Funciones de exportación corregidas y completas
+        // Función para exportar la vista actual a Excel
         window.exportarExcelVistaActual = () => {
             if(vistaActualActiva === 'dashboard' || vistaActualActiva === 'finanzas') {
                 alert("Por favor, dirígete a una vista que contenga tablas (como Clientes, Ventas, Inventario) para poder exportar.");
@@ -1887,7 +1481,9 @@
             
             tablas.forEach((tabla, index) => {
                 const ws = XLSX.utils.table_to_sheet(tabla);
+                // Si hay múltiples tablas en la vista (por ejemplo, en historial de semanas), las separamos por hojas
                 let nombreHoja = tablas.length > 1 ? `Semana_${index + 1}` : `Reporte_${vistaActualActiva}`;
+                // Excel limita el nombre de la hoja a 31 caracteres
                 XLSX.utils.book_append_sheet(wb, ws, nombreHoja.substring(0, 31));
             });
             
@@ -1895,41 +1491,66 @@
             XLSX.writeFile(wb, `Reporte_${vistaActualActiva}_${fechaActual}.xlsx`);
         };
 
+        // Función para exportar la vista actual a PDF
         window.exportarPdfVistaActual = () => {
             if(vistaActualActiva === 'dashboard' || vistaActualActiva === 'finanzas') {
-                alert("Por favor, dirígete a una vista que contenga tablas para poder exportar.");
+                alert("Por favor, dirígete a una vista que contenga tablas (como Clientes, Ventas, Inventario) para poder exportar.");
                 return;
             }
 
             const vista = document.getElementById(`vista-${vistaActualActiva}`);
             if (!vista) return alert("No se ha encontrado la vista actual.");
-
+            
             const tablas = vista.querySelectorAll("table");
-            if (tablas.length === 0) return alert("No hay tablas para exportar en esta vista.");
-
+            if (tablas.length === 0) return alert("No hay datos en formato de tabla para exportar en esta vista.");
+            
             const { jsPDF } = window.jspdf;
-            const docPdf = new jsPDF();
+            const doc = new jsPDF('l', 'pt', 'a4'); // 'l' = apaisado (landscape) para que las columnas entren bien
             
-            docPdf.setFontSize(14);
-            docPdf.text(`Reporte de ${vistaActualActiva.toUpperCase()} - Comercial Ethan`, 14, 20);
+            doc.setFontSize(14);
+            const tituloSeccion = vistaActualActiva.charAt(0).toUpperCase() + vistaActualActiva.slice(1);
+            doc.text(`Reporte de ${tituloSeccion} - Comercial Ethan`, 40, 40);
             
-            let yOffset = 30;
+            let startY = 60;
+            
             tablas.forEach((tabla, index) => {
-                if(index > 0) {
-                    docPdf.addPage();
-                    yOffset = 20;
+                if (index > 0) {
+                    startY = doc.lastAutoTable.finalY + 20;
+                    // Añadir nueva página si estamos cerca del final
+                    if (startY > doc.internal.pageSize.getHeight() - 40) {
+                        doc.addPage();
+                        startY = 40;
+                    }
                 }
-                docPdf.autoTable({ html: tabla, startY: yOffset });
+                
+                // Si es la vista de movimientos (tiene múltiples tablas con títulos de semanas)
+                let tituloTablaSecundaria = "";
+                if(tablas.length > 1) {
+                    const contenedorHeader = tabla.closest('.bg-white').querySelector('h3');
+                    if(contenedorHeader) tituloTablaSecundaria = contenedorHeader.innerText;
+                }
+
+                if(tituloTablaSecundaria) {
+                    doc.setFontSize(10);
+                    doc.text(tituloTablaSecundaria, 40, startY - 5);
+                }
+
+                doc.autoTable({
+                    html: tabla,
+                    startY: startY,
+                    theme: 'grid',
+                    styles: { fontSize: 8 },
+                    headStyles: { fillColor: [11, 19, 43] }, // Color del header #0B132B
+                    // Evitamos procesar estilos complejos si existen columnas de acción, las renderiza igual.
+                });
             });
-
+            
             const fechaActual = new Date().toISOString().split('T')[0];
-            docPdf.save(`Reporte_${vistaActualActiva}_${fechaActual}.pdf`);
+            doc.save(`Reporte_${vistaActualActiva}_${fechaActual}.pdf`);
         };
 
-        // Inicialización automática al cargar
-        window.onload = () => {
-            sincronizarDatos();
-        };
+        // --- FIN CÓDIGO AÑADIDO PARA EXPORTAR EXCEL Y PDF ---
+
     </script>
 </body>
 </html>
