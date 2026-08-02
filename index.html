@@ -6,19 +6,19 @@
     <title>CRM Almohadillas - Comercial Ethan</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <!-- Librerías para Exportar a Excel y PDF -->
+    <!-- LibrerÃ­as para Exportar a Excel y PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col md:flex-row relative">
 
-    <!-- BOTÓN FLOTANTE MÓVIL (MENÚ HAMBURGUESA) -->
+    <!-- BOTÃ“N FLOTANTE MÃ“VIL (MENÃš HAMBURGUESA) -->
     <button onclick="toggleSidebarMovil()" class="md:hidden fixed top-3 left-3 z-50 bg-[#0B132B] text-white p-2.5 rounded-xl shadow-lg border border-slate-700 focus:outline-none flex items-center justify-center">
         <i class="fa-solid fa-bars text-base"></i>
     </button>
 
-    <!-- OVERLAY PARA CERRAR EL MENÚ EN MÓVIL AL HACER CLIC FUERA -->
+    <!-- OVERLAY PARA CERRAR EL MENÃš EN MÃ“VIL AL HACER CLIC FUERA -->
     <div id="sidebar-overlay" onclick="toggleSidebarMovil()" class="fixed inset-0 bg-black/50 z-30 hidden md:hidden"></div>
 
     <!-- Barra Lateral (Sidebar) -->
@@ -60,7 +60,7 @@
                             <input type="file" id="input-cargar-json" accept=".json" onchange="restaurarRespaldoJSON(event)" class="hidden">
                         </label>
                         <a href="#" onclick="descargarCodigoHTML()" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-800/80 transition text-indigo-300 text-xs">
-                            <i class="fa-solid fa-file-code w-4"></i> Descargar Código HTML
+                            <i class="fa-solid fa-file-code w-4"></i> Descargar CÃ³digo HTML
                         </a>
                     </div>
                 </div>
@@ -126,23 +126,23 @@
                     </div>
                     <div onclick="cambiarVista('pagos')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-emerald-500 transition relative overflow-hidden border-l-4 border-l-emerald-600">
                         <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Utilidad Actual Almohadas</span>
+                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Cobrado Neto del Mes</span>
                             <i class="fa-solid fa-wallet text-emerald-600"></i>
                         </div>
                         <h3 id="dash-cobrado-menos-comisiones" class="text-3xl font-bold mt-1 text-emerald-600">$0.00</h3>
-                        <span class="text-[10px] text-slate-400 block mt-1">Total Utilidad Actual Almohadas</span>
+                        <span class="text-[10px] text-slate-400 block mt-1">Cobros del mes menos comisiones pagadas</span>
                     </div>
                     <div onclick="cambiarVista('ventas')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden border-l-4 border-l-indigo-600">
                         <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Utilidad Neta Almohadas (Mes)*</span>
+                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Utilidad Estimada Almohadas (Mes)*</span>
                             <i class="fa-solid fa-chart-line text-indigo-600"></i>
                         </div>
                         <h3 id="dash-utilidad-neta" class="text-3xl font-bold mt-1 text-indigo-600">$0.00</h3>
-                        <span class="text-[10px] text-slate-400 block mt-1">*Ventas menos costo de mercadería</span>
+                        <span class="text-[10px] text-slate-400 block mt-1">*Ventas menos costo estimado de mercaderÃ­a</span>
                     </div>
                     <div onclick="cambiarVista('ventas')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-emerald-500 transition relative overflow-hidden border-l-4 border-l-emerald-600">
                         <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Utilidad Histórica Almohadas</span>
+                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Utilidad HistÃ³rica Almohadas</span>
                             <i class="fa-solid fa-piggy-bank text-emerald-600"></i>
                         </div>
                         <h3 id="dash-utilidad-historica" class="text-3xl font-bold mt-1 text-emerald-600">$0.00</h3>
@@ -150,7 +150,7 @@
                     </div>
                     <div onclick="cambiarVista('inventario')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-cyan-500 transition relative overflow-hidden border-l-4 border-l-cyan-600">
                         <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Inversión Total (Mes)</span>
+                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">InversiÃ³n Total (Mes)</span>
                             <i class="fa-solid fa-money-bill-trend-up text-cyan-600"></i>
                         </div>
                         <h3 id="dash-inversion-mes" class="text-3xl font-bold mt-1 text-cyan-600">$0.00</h3>
@@ -158,11 +158,11 @@
                     </div>
                     <div onclick="cambiarVista('inventario')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-teal-500 transition relative overflow-hidden border-l-4 border-l-teal-600">
                         <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Inversión Total Histórica</span>
+                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">InversiÃ³n Total HistÃ³rica</span>
                             <i class="fa-solid fa-vault text-teal-600"></i>
                         </div>
                         <h3 id="dash-inversion-historica" class="text-3xl font-bold mt-1 text-teal-600">$0.00</h3>
-                        <span class="text-[10px] text-slate-400 block mt-1">Acumulado histórico en mercadería</span>
+                        <span class="text-[10px] text-slate-400 block mt-1">Acumulado histÃ³rico en mercaderÃ­a</span>
                     </div>
                     <div onclick="cambiarVista('pagos')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden">
                         <div class="flex items-center justify-between mb-2">
@@ -198,7 +198,7 @@
                     <table class="w-full text-left border-collapse text-sm">
                         <thead>
                             <tr class="bg-[#0B132B] text-white text-xs uppercase">
-                                <th class="p-3">Nombre</th><th class="p-3">Dirección</th><th class="p-3">Teléfono</th><th class="p-3">Artículos</th><th class="p-3">Total</th><th class="p-3">Abonado</th><th class="p-3">Saldo</th><th class="p-3">F. Último Pago</th><th class="p-3 text-center">Acciones</th>
+                                <th class="p-3">Nombre</th><th class="p-3">DirecciÃ³n</th><th class="p-3">TelÃ©fono</th><th class="p-3">ArtÃ­culos</th><th class="p-3">Total</th><th class="p-3">Abonado</th><th class="p-3">Saldo</th><th class="p-3">F. Ãšltimo Pago</th><th class="p-3 text-center">Acciones</th>
                             </tr>
                         </thead>
                         <tbody id="tabla-clientes-cuerpo" class="divide-y divide-slate-100 text-xs sm:text-sm"></tbody>
@@ -274,7 +274,7 @@
             <!-- INVENTARIO -->
             <div id="vista-inventario" class="space-y-6 hidden">
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
-                    <h2 id="inv-titulo-form" class="font-bold text-slate-800 text-base">Ingresar Mercadería</h2>
+                    <h2 id="inv-titulo-form" class="font-bold text-slate-800 text-base">Ingresar MercaderÃ­a</h2>
                     <form onsubmit="guardarCompraInventario(event)" class="grid grid-cols-1 sm:grid-cols-4 gap-4 text-sm">
                         <input type="hidden" id="inv-id">
                         <div>
@@ -316,7 +316,7 @@
 
             <!-- COMISIONES -->
             <div id="vista-comisiones" class="space-y-6 hidden">
-                <h2 class="font-bold text-slate-800 text-lg">Gestión de Comisiones</h2>
+                <h2 class="font-bold text-slate-800 text-lg">GestiÃ³n de Comisiones</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-1">
                         <p class="text-slate-400 text-xs font-semibold uppercase">Pendientes de Pago</p>
@@ -334,10 +334,10 @@
                                 <th class="p-3">Vendedor</th>
                                 <th class="p-3">Cliente</th>
                                 <th class="p-3">Venta</th>
-                                <th class="p-3">Comisión</th>
+                                <th class="p-3">ComisiÃ³n</th>
                                 <th class="p-3">Estado</th>
                                 <th class="p-3">Fecha Pago</th>
-                                <th class="p-3">Acción</th>
+                                <th class="p-3">AcciÃ³n</th>
                             </tr>
                         </thead>
                         <tbody id="tabla-comisiones-cuerpo" class="divide-y divide-slate-100 text-xs sm:text-sm"></tbody>
@@ -349,12 +349,12 @@
             <div id="vista-calendario" class="space-y-6 hidden">
                 <h2 class="font-bold text-slate-800 text-lg">Calendario y Recordatorios de Cobros</h2>
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
-                    <p class="text-sm text-slate-600">Revisa las fechas programadas para los próximos pagos y cuotas de tus clientes.</p>
+                    <p class="text-sm text-slate-600">Revisa las fechas programadas para los prÃ³ximos pagos y cuotas de tus clientes.</p>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse text-sm">
                             <thead>
                                 <tr class="bg-[#0B132B] text-white text-xs uppercase">
-                                    <th class="p-3">Próximo Pago</th><th class="p-3">Cliente</th><th class="p-3">Teléfono</th><th class="p-3">Valor Cuota</th><th class="p-3">Saldo Deuda</th><th class="p-3">Observación</th>
+                                    <th class="p-3">PrÃ³ximo Pago</th><th class="p-3">Cliente</th><th class="p-3">TelÃ©fono</th><th class="p-3">Valor Cuota</th><th class="p-3">Saldo Deuda</th><th class="p-3">ObservaciÃ³n</th>
                                 </tr>
                             </thead>
                             <tbody id="tabla-calendario-cuerpo" class="divide-y divide-slate-100"></tbody>
@@ -428,7 +428,7 @@
                     </div>
                 </div>
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
-                    <h3 class="font-bold text-slate-800 text-base">Gráfico de Ingresos vs Egresos Personales (Este Mes)</h3>
+                    <h3 class="font-bold text-slate-800 text-base">GrÃ¡fico de Ingresos vs Egresos Personales (Este Mes)</h3>
                     <div class="h-48 flex items-end justify-around gap-2 pt-6 border-b border-slate-200 px-4" id="contenedor-grafico-finanzas"></div>
                     <div class="flex justify-center gap-6 text-xs font-semibold text-slate-600">
                         <span class="flex items-center gap-2"><span class="w-3 h-3 bg-emerald-500 rounded-sm"></span> Ingresos</span>
@@ -440,7 +440,7 @@
             <!-- ENTRADAS / SALIDAS PERSONALES -->
             <div id="vista-movimientos" class="space-y-6 hidden">
                 <div class="flex justify-between items-center bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                    <h2 class="font-bold text-slate-800 text-base">Gestión de Movimientos Personales</h2>
+                    <h2 class="font-bold text-slate-800 text-base">GestiÃ³n de Movimientos Personales</h2>
                     <button onclick="abrirModalMovimientoPersonal()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition">
                         <i class="fa-solid fa-plus"></i> Registrar Movimiento Personal
                     </button>
@@ -457,7 +457,7 @@
             <!-- CONTROL COMBUSTIBLE -->
             <div id="vista-combustible" class="space-y-6 hidden">
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
-                    <h2 class="font-bold text-slate-800 text-base">Registro Rápido de Combustible (Camioneta)</h2>
+                    <h2 class="font-bold text-slate-800 text-base">Registro RÃ¡pido de Combustible (Camioneta)</h2>
                     <form onsubmit="guardarCombustibleRapido(event)" class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
                         <div>
                             <label class="block text-xs font-semibold text-slate-600 mb-1">Fecha</label>
@@ -491,7 +491,7 @@
                         </div>
                         <div class="flex items-center gap-2">
                             <label for="filtro-mes-combustible" class="text-xs font-semibold text-slate-600 flex items-center gap-1.5 cursor-pointer bg-slate-100 hover:bg-slate-200 px-3 py-2 rounded-lg transition">
-                                <i class="fa-solid fa-calendar-days text-amber-600"></i> Filtrar por Mes/Año:
+                                <i class="fa-solid fa-calendar-days text-amber-600"></i> Filtrar por Mes/AÃ±o:
                             </label>
                             <input type="month" id="filtro-mes-combustible" onchange="filtrarCombustiblePorMes()" class="bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs font-medium focus:outline-none focus:border-amber-500">
                             <button onclick="limpiarFiltroCombustible()" class="text-xs text-rose-600 hover:text-rose-800 font-semibold px-2 py-1" title="Ver todo">Ver Todos</button>
@@ -501,7 +501,7 @@
                         <table class="w-full text-left border-collapse text-sm">
                             <thead>
                                 <tr class="bg-[#0B132B] text-white text-xs uppercase">
-                                    <th class="p-3">Fecha</th><th class="p-3">Categoría</th><th class="p-3">Monto</th><th class="p-3">Descripción</th><th class="p-3 text-center">Acciones</th>
+                                    <th class="p-3">Fecha</th><th class="p-3">CategorÃ­a</th><th class="p-3">Monto</th><th class="p-3">DescripciÃ³n</th><th class="p-3 text-center">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody id="tabla-combustible-cuerpo" class="divide-y divide-slate-100 text-xs sm:text-sm"></tbody>
@@ -537,7 +537,7 @@
                 </div>
 
                 <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex justify-between items-center">
-                    <span class="font-bold text-slate-800 text-sm">Gestión de Fondos Actuales</span>
+                    <span class="font-bold text-slate-800 text-sm">GestiÃ³n de Fondos Actuales</span>
                     <button onclick="abrirModalCaja()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition">
                         <i class="fa-solid fa-plus"></i> Registrar / Agregar Dinero a Caja
                     </button>
@@ -549,7 +549,7 @@
                         <table class="w-full text-left border-collapse text-sm">
                             <thead>
                                 <tr class="bg-[#0B132B] text-white text-xs uppercase">
-                                    <th class="p-3">Descripción / Concepto</th>
+                                    <th class="p-3">DescripciÃ³n / Concepto</th>
                                     <th class="p-3">Monto</th>
                                     <th class="p-3 text-center">Acciones</th>
                                 </tr>
@@ -588,24 +588,24 @@
                     <input type="number" step="0.01" min="0" id="mov-monto" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2" placeholder="0.00">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Categoría</label>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">CategorÃ­a</label>
                     <select id="mov-cat" onchange="verificarCategoriaPersonal(this)" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2">
                         <option value="Combustible">Combustible</option>
                         <option value="Gastos Personales">Gastos Personales</option>
                         <option value="Deudas">Deudas</option>
                         <option value="Mantenimiento vehiculo">Mantenimiento vehiculo</option>
                         <option value="Indriver">Indriver</option>
-                        <option value="Crédito Colchón C. Ethan">Crédito Colchón C. Ethan</option>
+                        <option value="CrÃ©dito ColchÃ³n C. Ethan">CrÃ©dito ColchÃ³n C. Ethan</option>
                         <option value="Agregar Manual">Agregar manualmente...</option>
                     </select>
                 </div>
                 <div id="contenedor-cat-manual" class="sm:col-span-2 hidden">
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Especifique nueva categoría</label>
-                    <input type="text" id="mov-cat-manual" placeholder="Escriba la nueva categoría..." class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2">
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Especifique nueva categorÃ­a</label>
+                    <input type="text" id="mov-cat-manual" placeholder="Escriba la nueva categorÃ­a..." class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2">
                 </div>
                 <div class="sm:col-span-2">
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Descripción / Observación</label>
-                    <input type="text" id="mov-obs" placeholder="Ej: Abono, compra de víveres..." class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2">
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">DescripciÃ³n / ObservaciÃ³n</label>
+                    <input type="text" id="mov-obs" placeholder="Ej: Abono, compra de vÃ­veres..." class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2">
                 </div>
                 <div class="sm:col-span-2 flex justify-end gap-2 pt-3 border-t border-slate-100">
                     <button type="button" onclick="cerrarModalMovimientoPersonal()" class="px-4 py-2 rounded-lg border border-slate-200 text-slate-600">Cancelar</button>
@@ -625,9 +625,9 @@
             <form onsubmit="guardarItemCaja(event)" class="grid grid-cols-1 gap-4 text-sm">
                 <input type="hidden" id="caja-id">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Descripción / Concepto</label>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">DescripciÃ³n / Concepto</label>
                     <select id="caja-descripcion" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 focus:outline-none">
-                        <option value="">Seleccione opción...</option>
+                        <option value="">Seleccione opciÃ³n...</option>
                         <option value="Efectivo Billetes, Monedas">Efectivo Billetes, Monedas</option>
                         <option value="Banco Guayaquil Corriente">Banco Guayaquil Corriente</option>
                         <option value="B. Guayaquil Ahorro">B. Guayaquil Ahorro</option>
@@ -662,8 +662,8 @@
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Nombre Completo</label>
                     <input type="text" id="m-nombre" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2">
                 </div>
-                <div><label class="block text-xs font-semibold text-slate-600 mb-1">Teléfono</label><input type="text" id="m-telefono" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"></div>
-                <div><label class="block text-xs font-semibold text-slate-600 mb-1">Dirección</label><input type="text" id="m-direccion" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"></div>
+                <div><label class="block text-xs font-semibold text-slate-600 mb-1">TelÃ©fono</label><input type="text" id="m-telefono" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"></div>
+                <div><label class="block text-xs font-semibold text-slate-600 mb-1">DirecciÃ³n</label><input type="text" id="m-direccion" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"></div>
                 <div class="sm:col-span-2 flex justify-end gap-2 pt-3 border-t border-slate-100">
                     <button type="button" onclick="cerrarModalCliente()" class="px-4 py-2 rounded-lg border border-slate-200 text-slate-600">Cancelar</button>
                     <button type="submit" class="px-4 py-2 rounded-lg bg-emerald-600 text-white font-medium">Guardar</button>
@@ -686,26 +686,26 @@
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Cliente</label>
                     <select id="v-cliente-select" required onchange="autocompletarCliente(this)" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"><option value="">Seleccione cliente...</option></select>
                 </div>
-                <div><label class="block text-xs font-semibold text-slate-600 mb-1">Teléfono</label><input type="text" id="v-telefono" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2" readonly></div>
-                <div><label class="block text-xs font-semibold text-slate-600 mb-1">Dirección</label><input type="text" id="v-direccion" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2" readonly></div>
+                <div><label class="block text-xs font-semibold text-slate-600 mb-1">TelÃ©fono</label><input type="text" id="v-telefono" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2" readonly></div>
+                <div><label class="block text-xs font-semibold text-slate-600 mb-1">DirecciÃ³n</label><input type="text" id="v-direccion" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2" readonly></div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Vendedor</label>
-                    <select id="v-vendedor" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"><option value="George">George</option><option value="Bolívar">Bolívar</option></select>
+                    <select id="v-vendedor" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"><option value="George">George</option><option value="BolÃ­var">BolÃ­var</option></select>
                 </div>
                 <div><label class="block text-xs font-semibold text-slate-600 mb-1">Cantidad Almohadas</label><input type="number" id="v-cantidad" value="1" min="1" oninput="calcularTotalVenta()" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"></div>
                 <div><label class="block text-xs font-semibold text-slate-600 mb-1">Precio Unitario ($)</label><input type="number" step="0.01" id="v-precio" value="40.00" oninput="calcularTotalVenta()" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"></div>
                 <div><label class="block text-xs font-semibold text-slate-600 mb-1">Valor Total ($)</label><input type="text" id="v-total" value="40.00" class="w-full bg-slate-100 border border-slate-200 rounded-lg p-2 font-bold text-emerald-600" readonly></div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Tipo de Venta</label>
-                    <select id="v-tipo" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"><option value="Crédito">Crédito</option><option value="Contado">Contado</option></select>
+                    <select id="v-tipo" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"><option value="CrÃ©dito">CrÃ©dito</option><option value="Contado">Contado</option></select>
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Forma de Pago</label>
                     <select id="v-forma-pago" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"><option value="Semanal">Semanal</option><option value="Quincenal">Quincenal</option><option value="Mensual">Mensual</option></select>
                 </div>
                 <div><label class="block text-xs font-semibold text-slate-600 mb-1">Valor Cuota ($)</label><input type="number" step="0.01" id="v-cuota" value="10.00" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"></div>
-                <div><label class="block text-xs font-semibold text-slate-600 mb-1">Próximo Pago (Fecha)</label><input type="date" id="v-proximo-pago" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"></div>
-                <div class="sm:col-span-2"><label class="block text-xs font-semibold text-slate-600 mb-1">Observaciones</label><input type="text" id="v-obs" placeholder="Ej: Paga los días lunes..." class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"></div>
+                <div><label class="block text-xs font-semibold text-slate-600 mb-1">PrÃ³ximo Pago (Fecha)</label><input type="date" id="v-proximo-pago" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"></div>
+                <div class="sm:col-span-2"><label class="block text-xs font-semibold text-slate-600 mb-1">Observaciones</label><input type="text" id="v-obs" placeholder="Ej: Paga los dÃ­as lunes..." class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"></div>
                 <div class="sm:col-span-2 flex justify-end gap-2 pt-3 border-t border-slate-100">
                     <button type="button" onclick="cerrarModalVenta()" class="px-4 py-2 rounded-lg border border-slate-200 text-slate-600">Cancelar</button>
                     <button type="submit" class="px-4 py-2 rounded-lg bg-emerald-600 text-white font-medium">Guardar Venta</button>
@@ -722,8 +722,8 @@
                 <button onclick="cerrarModalDetalle()" class="text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="grid grid-cols-3 gap-4 text-sm bg-slate-50 p-4 rounded-xl border border-slate-100">
-                <div><p class="text-xs text-slate-400 font-semibold uppercase">Teléfono</p><p id="det-tel" class="font-medium text-slate-800">-</p></div>
-                <div><p class="text-xs text-slate-400 font-semibold uppercase">Dirección</p><p id="det-dir" class="font-medium text-slate-800">-</p></div>
+                <div><p class="text-xs text-slate-400 font-semibold uppercase">TelÃ©fono</p><p id="det-tel" class="font-medium text-slate-800">-</p></div>
+                <div><p class="text-xs text-slate-400 font-semibold uppercase">DirecciÃ³n</p><p id="det-dir" class="font-medium text-slate-800">-</p></div>
                 <div><p class="text-xs text-slate-400 font-semibold uppercase">Saldo / Deuda Total</p><p id="det-saldo" class="font-bold text-rose-600">$0.00</p></div>
             </div>
             <div>
@@ -750,10 +750,10 @@
         </div>
     </div>
 
-    <!-- SCRIPT FIREBASE Y LÓGICA -->
+    <!-- SCRIPT FIREBASE Y LÃ“GICA -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDwgvrnx4iXLl4l7g6vBmMPrVUAojrBiA",
@@ -945,8 +945,8 @@
                     const item = { id: d.id, ...d.data() };
                     listaClientes.push(item);
 
-                    const vCliente = listaVentas.filter(v => v.clienteId === item.id || v.nombre === item.nombre);
-                    const pCliente = listaPagos.filter(p => p.clienteId === item.id || p.nombre === item.nombre);
+                    const vCliente = listaVentas.filter(v => v.clienteId === item.id || (!v.clienteId && v.nombre === item.nombre));
+                    const pCliente = listaPagos.filter(p => p.clienteId === item.id || (!p.clienteId && p.nombre === item.nombre));
 
                     let artTotales = 0;
                     let totalVentaCliente = 0;
@@ -1024,7 +1024,7 @@
                             <td class="p-3 font-medium text-slate-900">${item.nombre || ''}</td>
                             <td class="p-3 text-slate-600">${cant}</td>
                             <td class="p-3 text-slate-600">$${total.toFixed(2)}</td>
-                            <td class="p-3"><span class="px-2 py-1 text-xs rounded-full ${item.tipo === 'Contado' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">${item.tipo || 'Crédito'}</span></td>
+                            <td class="p-3"><span class="px-2 py-1 text-xs rounded-full ${item.tipo === 'Contado' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">${item.tipo || 'CrÃ©dito'}</span></td>
                             <td class="p-3 text-slate-600">${item.vendedor || '-'}</td>
                             <td class="p-3 text-center space-x-2">
                                 <button onclick="editarVenta('${item.id}')" class="text-indigo-600 hover:text-indigo-800"><i class="fa-solid fa-pen"></i></button>
@@ -1065,9 +1065,11 @@
                             <td class="p-3 text-slate-600">$${(parseFloat(item.total) || (cantAlmohadas * 40)).toFixed(2)}</td>
                             <td class="p-3 font-semibold text-slate-900">$${comisionTotalVenta.toFixed(2)}</td>
                             <td class="p-3 ${badgeColor}">${estadoComision}</td>
-                            <td class="p-3 text-slate-600">${item.fechaPagoComision || '-'}</td>
+                            <td class="p-3 text-slate-600">
+                                <input id="fecha-comision-${item.id}" type="date" value="${item.fechaPagoComision || ''}" onchange="actualizarFechaComision('${item.id}', '${estadoComision}', this.value)" class="border border-slate-200 rounded-md px-2 py-1 text-xs">
+                            </td>
                             <td class="p-3 text-center">
-                                <button onclick="toggleEstadoComision('${item.id}', '${estadoComision}', '${new Date().toISOString().split('T')[0]}')" class="bg-[#0B132B] hover:bg-indigo-900 text-white px-3 py-1 rounded-lg text-xs">Marcar</button>
+                                <button onclick="toggleEstadoComision('${item.id}', '${estadoComision}')" class="bg-[#0B132B] hover:bg-indigo-900 text-white px-3 py-1 rounded-lg text-xs">${estadoComision === 'Pagada' ? 'Reabrir' : 'Marcar pagada'}</button>
                             </td>
                         </tr>
                     `;
@@ -1108,6 +1110,7 @@
                 let ingHoy = 0, ingSem = 0, ingMes = 0;
                 let gasHoy = 0, gasSem = 0, gasMes = 0;
                 let combustibleTotal = 0;
+                let combustibleMes = 0;
 
                 const { inicioSemanaActual, finSemanaActual } = obtenerRangosSemanales();
 
@@ -1120,6 +1123,7 @@
 
                     if(m.categoria === 'Combustible') {
                         combustibleTotal += montoNum;
+                        if(esEsteMes) combustibleMes += montoNum;
                     }
 
                     if(m.tipo === 'Entrada') {
@@ -1189,7 +1193,7 @@
                 document.getElementById('fin-bal-mes').innerText = `$${balMes.toFixed(2)}`;
 
                 document.getElementById('fin-comb-total').innerText = `$${combustibleTotal.toFixed(2)}`;
-                document.getElementById('dash-gasto-combustible').innerText = `$${combustibleTotal.toFixed(2)}`;
+                document.getElementById('dash-gasto-combustible').innerText = `$${combustibleMes.toFixed(2)}`;
                 
                 let ventasMesTotal = 0;
                 let costoMercaderiaMes = 0;
@@ -1198,7 +1202,7 @@
                     if(v.fecha && v.fecha.startsWith(mesActualStr)) {
                         ventasMesTotal += parseFloat(v.total || (v.cantidad * 40));
                         const cantV = parseInt(v.cantidad || 1);
-                        costoMercaderiaMes += cantV * costoPromedio;
+                        costoMercaderiaMes += cantV * (parseFloat(v.costoUnitario) || costoPromedio);
                     }
                 });
 
@@ -1211,13 +1215,13 @@
                 listaVentas.forEach(v => {
                     ventasTotalGlobal += parseFloat(v.total || (v.cantidad * 40));
                     const cantV = parseInt(v.cantidad || 1);
-                    costoMercaderiaGlobal += cantV * costoPromedio;
+                    costoMercaderiaGlobal += cantV * (parseFloat(v.costoUnitario) || costoPromedio);
                 });
 
                 let utilidadHistoricaGlobal = ventasTotalGlobal - costoMercaderiaGlobal;
                 document.getElementById('dash-utilidad-historica').innerText = `$${utilidadHistoricaGlobal.toFixed(2)}`;
 
-                const porcGastoComb = gasMes > 0 ? ((combustibleTotal / gasMes) * 100).toFixed(1) : '0';
+                const porcGastoComb = gasMes > 0 ? ((combustibleMes / gasMes) * 100).toFixed(1) : '0';
                 document.getElementById('fin-porc-comb').innerText = `${porcGastoComb}%`;
 
                 const contenedorGrafico = document.getElementById('contenedor-grafico-finanzas');
@@ -1258,7 +1262,7 @@
             }
             cerrarModalCaja();
             sincronizarDatos();
-            alert("¡Operación en Caja guardada con éxito!");
+            alert("Â¡OperaciÃ³n en Caja guardada con Ã©xito!");
         };
 
         window.editarItemCaja = (id) => {
@@ -1272,7 +1276,7 @@
         };
 
         window.eliminarItemCaja = async (id) => {
-            if(confirm("¿Está seguro de eliminar este registro de caja?")) {
+            if(confirm("Â¿EstÃ¡ seguro de eliminar este registro de caja?")) {
                 await deleteDoc(doc(db, "caja_ethan", id));
                 sincronizarDatos();
             }
@@ -1368,14 +1372,14 @@
                 }
             });
 
-            // Ordenar semanas de la más reciente a la más antigua
+            // Ordenar semanas de la mÃ¡s reciente a la mÃ¡s antigua
             const semanasKeys = Object.keys(semanasMap).sort().reverse();
             let html = '';
 
             semanasKeys.forEach(idSem => {
                 const sem = semanasMap[idSem];
                 const balanceSemanal = sem.totalEntradas - sem.totalSalidas;
-                const isOpen = semanasAbiertas[idSem] !== false; // por defecto abierto o según estado
+                const isOpen = semanasAbiertas[idSem] !== false; // por defecto abierto o segÃºn estado
 
                 html += `
                     <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden mb-4">
@@ -1396,9 +1400,9 @@
                                     <tr class="bg-slate-900 text-white text-xs uppercase">
                                         <th class="p-3">Fecha</th>
                                         <th class="p-3">Tipo</th>
-                                        <th class="p-3">Categoría</th>
+                                        <th class="p-3">CategorÃ­a</th>
                                         <th class="p-3">Monto</th>
-                                        <th class="p-3">Descripción</th>
+                                        <th class="p-3">DescripciÃ³n</th>
                                         <th class="p-3 text-center">Acciones</th>
                                     </tr>
                                 </thead>
@@ -1464,7 +1468,7 @@
         };
 
         window.eliminarMovimientoPersonal = async (id) => {
-            if(confirm("¿Está seguro de eliminar este movimiento personal?")) {
+            if(confirm("Â¿EstÃ¡ seguro de eliminar este movimiento personal?")) {
                 await deleteDoc(doc(db, "movimientos_personales_ethan", id));
                 sincronizarDatos();
             }
@@ -1492,7 +1496,7 @@
             }
             cerrarModalMovimientoPersonal();
             sincronizarDatos();
-            alert("¡Movimiento personal guardado con éxito!");
+            alert("Â¡Movimiento personal guardado con Ã©xito!");
         };
 
         window.registrarPago = async (e) => {
@@ -1519,7 +1523,7 @@
             document.getElementById('pago-monto').value = '';
             document.getElementById('pago-obs').value = '';
             sincronizarDatos();
-            alert("¡Cobro registrado con éxito en el negocio de almohadas!");
+            alert("Â¡Cobro registrado con Ã©xito en el negocio de almohadas!");
         };
 
         window.actualizarSaldoActual = (select) => {
@@ -1540,13 +1544,13 @@
             if(id) {
                 await updateDoc(doc(db, "inventario_ethan", id), data);
                 document.getElementById('inv-id').value = '';
-                document.getElementById('inv-titulo-form').innerText = "Ingresar Mercadería";
+                document.getElementById('inv-titulo-form').innerText = "Ingresar MercaderÃ­a";
             } else {
                 await addDoc(collection(db, "inventario_ethan"), data);
             }
             e.target.reset();
             sincronizarDatos();
-            alert("¡Compra de inventario guardada con éxito!");
+            alert("Â¡Compra de inventario guardada con Ã©xito!");
         };
 
         window.editarCompraInventario = (id) => {
@@ -1556,20 +1560,30 @@
             document.getElementById('inv-fecha').value = item.fecha || '';
             document.getElementById('inv-cantidad').value = item.cantidad || '';
             document.getElementById('inv-costo-total').value = item.costoTotal || '';
-            document.getElementById('inv-titulo-form').innerText = "Editar Compra de Mercadería";
+            document.getElementById('inv-titulo-form').innerText = "Editar Compra de MercaderÃ­a";
             window.scrollTo({ top: 0, behavior: 'smooth' });
         };
 
         window.eliminarCompraInventario = async (id) => {
-            if(confirm("¿Está seguro de eliminar esta compra de inventario?")) {
+            if(confirm("Â¿EstÃ¡ seguro de eliminar esta compra de inventario?")) {
                 await deleteDoc(doc(db, "inventario_ethan", id));
                 sincronizarDatos();
             }
         };
 
-        window.toggleEstadoComision = async (idVenta, estadoActual, fechaHoy) => {
+        window.actualizarFechaComision = async (idVenta, estadoActual, fechaPago) => {
+            if(estadoActual !== 'Pagada' || !fechaPago) return;
+            await updateDoc(doc(db, "ventas_ethan", idVenta), { fechaPagoComision: fechaPago });
+            sincronizarDatos();
+        };
+        window.toggleEstadoComision = async (idVenta, estadoActual) => {
             const nuevoEstado = estadoActual === 'Pagada' ? 'Pendiente' : 'Pagada';
-            const fechaPago = nuevoEstado === 'Pagada' ? fechaHoy : '';
+            const campoFecha = document.getElementById(`fecha-comision-${idVenta}`);
+            const fechaPago = nuevoEstado === 'Pagada' ? campoFecha.value : '';
+            if(nuevoEstado === 'Pagada' && !fechaPago) {
+                alert("Selecciona la fecha real de pago de la comisión antes de marcarla como pagada.");
+                return;
+            }
             await updateDoc(doc(db, "ventas_ethan", idVenta), {
                 estadoComision: nuevoEstado,
                 fechaPagoComision: fechaPago
@@ -1603,7 +1617,7 @@
             }
             cerrarModalCliente();
             sincronizarDatos();
-            alert("¡Cliente guardado con éxito!");
+            alert("Â¡Cliente guardado con Ã©xito!");
         };
 
         window.editarCliente = (id) => {
@@ -1618,6 +1632,12 @@
         };
 
         window.eliminarCliente = async (id) => {
+            const tieneVentas = listaVentas.some(v => v.clienteId === id);
+            const tienePagos = listaPagos.some(p => p.clienteId === id);
+            if(tieneVentas || tienePagos) {
+                alert("No se puede eliminar este cliente porque tiene ventas o cobros asociados. Conserva el historial financiero.");
+                return;
+            }
             if(confirm("¿Está seguro de eliminar este cliente?")) {
                 await deleteDoc(doc(db, "clientes_ethan", id));
                 sincronizarDatos();
@@ -1673,6 +1693,9 @@
             const cantidad = parseInt(document.getElementById('v-cantidad').value) || 1;
             const precio = parseFloat(document.getElementById('v-precio').value) || 40.00;
             const total = cantidad * precio;
+            const unidadesCompradas = listaInventario.reduce((s, item) => s + (parseInt(item.cantidad) || 0), 0);
+            const costoComprado = listaInventario.reduce((s, item) => s + (parseFloat(item.costoTotal) || 0), 0);
+            const costoUnitario = unidadesCompradas > 0 ? costoComprado / unidadesCompradas : 0;
 
             const data = {
                 fecha: document.getElementById('v-fecha').value,
@@ -1688,7 +1711,8 @@
                 formaPago: document.getElementById('v-forma-pago').value,
                 cuota: parseFloat(document.getElementById('v-cuota').value) || 10,
                 proximoPago: document.getElementById('v-proximo-pago').value,
-                observaciones: document.getElementById('v-obs').value
+                observaciones: document.getElementById('v-obs').value,
+                costoUnitario: costoUnitario
             };
 
             if(id) {
@@ -1698,7 +1722,7 @@
             }
             cerrarModalVenta();
             sincronizarDatos();
-            alert("¡Venta guardada con éxito!");
+            alert("Â¡Venta guardada con Ã©xito!");
         };
 
         window.editarVenta = async (id) => {
@@ -1713,7 +1737,7 @@
             document.getElementById('v-cantidad').value = item.cantidad || 1;
             document.getElementById('v-precio').value = item.precio || 40.00;
             calcularTotalVenta();
-            document.getElementById('v-tipo').value = item.tipo || 'Crédito';
+            document.getElementById('v-tipo').value = item.tipo || 'CrÃ©dito';
             document.getElementById('v-forma-pago').value = item.formaPago || 'Semanal';
             document.getElementById('v-cuota').value = item.cuota || 10;
             document.getElementById('v-proximo-pago').value = item.proximoPago || '';
@@ -1722,14 +1746,14 @@
         };
 
         window.eliminarVenta = async (id) => {
-            if(confirm("¿Está seguro de eliminar esta venta?")) {
+            if(confirm("Â¿EstÃ¡ seguro de eliminar esta venta?")) {
                 await deleteDoc(doc(db, "ventas_ethan", id));
                 sincronizarDatos();
             }
         };
 
         window.eliminarPago = async (id) => {
-            if(confirm("¿Está seguro de eliminar este cobro?")) {
+            if(confirm("Â¿EstÃ¡ seguro de eliminar este cobro?")) {
                 await deleteDoc(doc(db, "cobros_ethan", id));
                 sincronizarDatos();
             }
@@ -1743,7 +1767,7 @@
             document.getElementById('det-dir').innerText = cliente.direccion || '-';
             document.getElementById('det-saldo').innerText = `$${(cliente.saldoActualCalculado || 0).toFixed(2)}`;
 
-            const vCliente = listaVentas.filter(v => v.clienteId === cliente.id || v.nombre === cliente.nombre);
+            const vCliente = listaVentas.filter(v => v.clienteId === cliente.id || (!v.clienteId && v.nombre === cliente.nombre));
             let htmlV = '';
             vCliente.forEach(v => {
                 htmlV += `
@@ -1759,7 +1783,7 @@
             });
             document.getElementById('tabla-detalles-ventas').innerHTML = htmlVentraHTML(htmlV);
 
-            const pCliente = listaPagos.filter(p => p.clienteId === cliente.id || p.nombre === cliente.nombre);
+            const pCliente = listaPagos.filter(p => p.clienteId === cliente.id || (!p.clienteId && p.nombre === cliente.nombre));
             let htmlP = '';
             pCliente.forEach(p => {
                 htmlP += `
@@ -1789,13 +1813,13 @@
                 tipo: 'Salida',
                 monto: parseFloat(document.getElementById('comb-monto').value) || 0,
                 categoria: 'Combustible',
-                descripcion: 'Carga rápida de combustible camioneta'
+                descripcion: 'Carga rÃ¡pida de combustible camioneta'
             };
             await addDoc(collection(db, "movimientos_personales_ethan"), data);
             e.target.reset();
             document.getElementById('comb-fecha').value = new Date().toISOString().split('T')[0];
             sincronizarDatos();
-            alert("¡Carga de combustible guardada con éxito!");
+            alert("Â¡Carga de combustible guardada con Ã©xito!");
         };
 
         function renderizarHistorialCombustible() {
@@ -1903,20 +1927,65 @@
             reader.onload = async (e) => {
                 try {
                     const contenido = JSON.parse(e.target.result);
-                    alert("Función de carga de JSON leída correctamente. Asegúrese de sincronizar de nuevo tras importar.");
+                    const colecciones = {
+                        clientes: "clientes_ethan", ventas: "ventas_ethan", pagos: "cobros_ethan",
+                        inventario: "inventario_ethan", movimientos: "movimientos_personales_ethan", caja: "caja_ethan"
+                    };
+                    if(!confirm("Se importarán los registros del respaldo y se actualizarán los que tengan el mismo ID. Los registros actuales que no estén en el respaldo se conservarán. ¿Desea continuar?")) return;
+                    for(const [clave, coleccionDestino] of Object.entries(colecciones)) {
+                        const registros = Array.isArray(contenido[clave]) ? contenido[clave] : [];
+                        for(const registro of registros) {
+                            if(!registro.id) continue;
+                            const { id, saldoActualCalculado, ...datos } = registro;
+                            await setDoc(doc(db, coleccionDestino, id), datos, { merge: true });
+                        }
+                    }
+                    await sincronizarDatos();
+                    alert("Respaldo importado correctamente.");
                 } catch(err) {
-                    alert("Error al leer el archivo JSON.");
+                    console.error(err);
+                    alert("No se pudo importar el archivo JSON. Verifica que sea un respaldo válido.");
+                } finally {
+                    event.target.value = '';
                 }
             };
             reader.readAsText(file);
         };
 
+        function obtenerTablaExportable() {
+            const vistas = {
+                clientes: 'vista-clientes', ventas: 'vista-ventas', pagos: 'vista-pagos',
+                comisiones: 'vista-comisiones', inventario: 'vista-inventario', calendario: 'vista-calendario',
+                movimientos: 'vista-movimientos', combustible: 'vista-combustible', caja: 'vista-caja'
+            };
+            const vista = document.getElementById(vistas[vistaActualActiva]);
+            return vista ? vista.querySelector('table') : null;
+        }
+
         window.exportarExcelVistaActual = () => {
-            alert("Exportando vista actual a Excel...");
+            const tabla = obtenerTablaExportable();
+            if(!tabla) {
+                alert("Selecciona una sección con tabla para exportar.");
+                return;
+            }
+            const libro = XLSX.utils.table_to_book(tabla, { sheet: 'Reporte' });
+            XLSX.writeFile(libro, `Reporte_${vistaActualActiva}_${new Date().toISOString().split('T')[0]}.xlsx`);
         };
 
         window.exportarPdfVistaActual = () => {
-            alert("Exportando vista actual a PDF...");
+            const tabla = obtenerTablaExportable();
+            if(!tabla) {
+                alert("Selecciona una sección con tabla para exportar.");
+                return;
+            }
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('l', 'pt', 'a4');
+            pdf.setFontSize(16);
+            pdf.text(`Reporte de ${vistaActualActiva}`, 40, 40);
+            pdf.setFontSize(9);
+            pdf.text(`Generado el ${new Date().toLocaleString()}`, 40, 56);
+            pdf.autoTable({ html: tabla, startY: 70, theme: 'grid', headStyles: { fillColor: [11, 19, 43] }, styles: { fontSize: 8, cellPadding: 4 } });
+            pdf.save(`Reporte_${vistaActualActiva}_${new Date().toISOString().split('T')[0]}.pdf`);
         };
 
         window.onload = () => {
@@ -1925,3 +1994,9 @@
     </script>
 </body>
 </html>
+
+
+
+
+
+
