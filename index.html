@@ -138,11 +138,11 @@
                             <i class="fa-solid fa-chart-line text-indigo-600"></i>
                         </div>
                         <h3 id="dash-utilidad-neta" class="text-3xl font-bold mt-1 text-indigo-600">$0.00</h3>
-                        <span class="text-[10px] text-slate-400 block mt-1">*Ventas menos costo estimado de mercaderÃ­a</span>
+                        <span class="text-[10px] text-slate-400 block mt-1">*Ventas menos costo estimado de mercaderia</span>
                     </div>
                     <div onclick="cambiarVista('ventas')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-emerald-500 transition relative overflow-hidden border-l-4 border-l-emerald-600">
                         <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Utilidad HistÃ³rica Almohadas</span>
+                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Utilidad Histórica Almohadas</span>
                             <i class="fa-solid fa-piggy-bank text-emerald-600"></i>
                         </div>
                         <h3 id="dash-utilidad-historica" class="text-3xl font-bold mt-1 text-emerald-600">$0.00</h3>
@@ -150,7 +150,7 @@
                     </div>
                     <div onclick="cambiarVista('inventario')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-cyan-500 transition relative overflow-hidden border-l-4 border-l-cyan-600">
                         <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">InversiÃ³n Total (Mes)</span>
+                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Inversión Total (Mes)</span>
                             <i class="fa-solid fa-money-bill-trend-up text-cyan-600"></i>
                         </div>
                         <h3 id="dash-inversion-mes" class="text-3xl font-bold mt-1 text-cyan-600">$0.00</h3>
@@ -158,11 +158,11 @@
                     </div>
                     <div onclick="cambiarVista('inventario')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-teal-500 transition relative overflow-hidden border-l-4 border-l-teal-600">
                         <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">InversiÃ³n Total HistÃ³rica</span>
+                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Inversión Total Histórica</span>
                             <i class="fa-solid fa-vault text-teal-600"></i>
                         </div>
                         <h3 id="dash-inversion-historica" class="text-3xl font-bold mt-1 text-teal-600">$0.00</h3>
-                        <span class="text-[10px] text-slate-400 block mt-1">Acumulado histÃ³rico en mercaderÃ­a</span>
+                        <span class="text-[10px] text-slate-400 block mt-1">Acumulado histÃ³rico en mercaderia</span>
                     </div>
                     <div onclick="cambiarVista('pagos')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden">
                         <div class="flex items-center justify-between mb-2">
@@ -198,7 +198,7 @@
                     <table class="w-full text-left border-collapse text-sm">
                         <thead>
                             <tr class="bg-[#0B132B] text-white text-xs uppercase">
-                                <th class="p-3">Nombre</th><th class="p-3">DirecciÃ³n</th><th class="p-3">TelÃ©fono</th><th class="p-3">ArtÃ­culos</th><th class="p-3">Total</th><th class="p-3">Abonado</th><th class="p-3">Saldo</th><th class="p-3">F. Ãšltimo Pago</th><th class="p-3 text-center">Acciones</th>
+                                <th class="p-3">Nombre</th><th class="p-3">Dirección</th><th class="p-3">Teléfono</th><th class="p-3">Artículos</th><th class="p-3">Total</th><th class="p-3">Abonado</th><th class="p-3">Saldo</th><th class="p-3">F. Último Pago</th><th class="p-3 text-center">Acciones</th>
                             </tr>
                         </thead>
                         <tbody id="tabla-clientes-cuerpo" class="divide-y divide-slate-100 text-xs sm:text-sm"></tbody>
@@ -274,7 +274,7 @@
             <!-- INVENTARIO -->
             <div id="vista-inventario" class="space-y-6 hidden">
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
-                    <h2 id="inv-titulo-form" class="font-bold text-slate-800 text-base">Ingresar MercaderÃ­a</h2>
+                    <h2 id="inv-titulo-form" class="font-bold text-slate-800 text-base">Ingresar Mercaderi­a</h2>
                     <form onsubmit="guardarCompraInventario(event)" class="grid grid-cols-1 sm:grid-cols-4 gap-4 text-sm">
                         <input type="hidden" id="inv-id">
                         <div>
@@ -316,7 +316,7 @@
 
             <!-- COMISIONES -->
             <div id="vista-comisiones" class="space-y-6 hidden">
-                <h2 class="font-bold text-slate-800 text-lg">GestiÃ³n de Comisiones</h2>
+                <h2 class="font-bold text-slate-800 text-lg">Gestiónde Comisiones</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-1">
                         <p class="text-slate-400 text-xs font-semibold uppercase">Pendientes de Pago</p>
@@ -334,10 +334,10 @@
                                 <th class="p-3">Vendedor</th>
                                 <th class="p-3">Cliente</th>
                                 <th class="p-3">Venta</th>
-                                <th class="p-3">ComisiÃ³n</th>
+                                <th class="p-3">Comisión</th>
                                 <th class="p-3">Estado</th>
                                 <th class="p-3">Fecha Pago</th>
-                                <th class="p-3">AcciÃ³n</th>
+                                <th class="p-3">Acción</th>
                             </tr>
                         </thead>
                         <tbody id="tabla-comisiones-cuerpo" class="divide-y divide-slate-100 text-xs sm:text-sm"></tbody>
@@ -349,12 +349,12 @@
             <div id="vista-calendario" class="space-y-6 hidden">
                 <h2 class="font-bold text-slate-800 text-lg">Calendario y Recordatorios de Cobros</h2>
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
-                    <p class="text-sm text-slate-600">Revisa las fechas programadas para los prÃ³ximos pagos y cuotas de tus clientes.</p>
+                    <p class="text-sm text-slate-600">Revisa las fechas programadas para los Próximos pagos y cuotas de tus clientes.</p>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse text-sm">
                             <thead>
                                 <tr class="bg-[#0B132B] text-white text-xs uppercase">
-                                    <th class="p-3">PrÃ³ximo Pago</th><th class="p-3">Cliente</th><th class="p-3">TelÃ©fono</th><th class="p-3">Valor Cuota</th><th class="p-3">Saldo Deuda</th><th class="p-3">ObservaciÃ³n</th>
+                                    <th class="p-3">Próximo Pago</th><th class="p-3">Cliente</th><th class="p-3">Teléfono</th><th class="p-3">Valor Cuota</th><th class="p-3">Saldo Deuda</th><th class="p-3">Observación</th>
                                 </tr>
                             </thead>
                             <tbody id="tabla-calendario-cuerpo" class="divide-y divide-slate-100"></tbody>
@@ -428,7 +428,7 @@
                     </div>
                 </div>
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
-                    <h3 class="font-bold text-slate-800 text-base">GrÃ¡fico de Ingresos vs Egresos Personales (Este Mes)</h3>
+                    <h3 class="font-bold text-slate-800 text-base">Gráfico de Ingresos vs Egresos Personales (Este Mes)</h3>
                     <div class="h-48 flex items-end justify-around gap-2 pt-6 border-b border-slate-200 px-4" id="contenedor-grafico-finanzas"></div>
                     <div class="flex justify-center gap-6 text-xs font-semibold text-slate-600">
                         <span class="flex items-center gap-2"><span class="w-3 h-3 bg-emerald-500 rounded-sm"></span> Ingresos</span>
@@ -440,7 +440,7 @@
             <!-- ENTRADAS / SALIDAS PERSONALES -->
             <div id="vista-movimientos" class="space-y-6 hidden">
                 <div class="flex justify-between items-center bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                    <h2 class="font-bold text-slate-800 text-base">GestiÃ³n de Movimientos Personales</h2>
+                    <h2 class="font-bold text-slate-800 text-base">Gestiónde Movimientos Personales</h2>
                     <button onclick="abrirModalMovimientoPersonal()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition">
                         <i class="fa-solid fa-plus"></i> Registrar Movimiento Personal
                     </button>
@@ -457,7 +457,7 @@
             <!-- CONTROL COMBUSTIBLE -->
             <div id="vista-combustible" class="space-y-6 hidden">
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
-                    <h2 class="font-bold text-slate-800 text-base">Registro RÃ¡pido de Combustible (Camioneta)</h2>
+                    <h2 class="font-bold text-slate-800 text-base">Registro Rápidode Combustible (Camioneta)</h2>
                     <form onsubmit="guardarCombustibleRapido(event)" class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
                         <div>
                             <label class="block text-xs font-semibold text-slate-600 mb-1">Fecha</label>
@@ -491,7 +491,7 @@
                         </div>
                         <div class="flex items-center gap-2">
                             <label for="filtro-mes-combustible" class="text-xs font-semibold text-slate-600 flex items-center gap-1.5 cursor-pointer bg-slate-100 hover:bg-slate-200 px-3 py-2 rounded-lg transition">
-                                <i class="fa-solid fa-calendar-days text-amber-600"></i> Filtrar por Mes/AÃ±o:
+                                <i class="fa-solid fa-calendar-days text-amber-600"></i> Filtrar por Mes/Año:
                             </label>
                             <input type="month" id="filtro-mes-combustible" onchange="filtrarCombustiblePorMes()" class="bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs font-medium focus:outline-none focus:border-amber-500">
                             <button onclick="limpiarFiltroCombustible()" class="text-xs text-rose-600 hover:text-rose-800 font-semibold px-2 py-1" title="Ver todo">Ver Todos</button>
@@ -501,7 +501,7 @@
                         <table class="w-full text-left border-collapse text-sm">
                             <thead>
                                 <tr class="bg-[#0B132B] text-white text-xs uppercase">
-                                    <th class="p-3">Fecha</th><th class="p-3">CategorÃ­a</th><th class="p-3">Monto</th><th class="p-3">DescripciÃ³n</th><th class="p-3 text-center">Acciones</th>
+                                    <th class="p-3">Fecha</th><th class="p-3">Categoría</th><th class="p-3">Monto</th><th class="p-3">Descripción</th><th class="p-3 text-center">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody id="tabla-combustible-cuerpo" class="divide-y divide-slate-100 text-xs sm:text-sm"></tbody>
@@ -537,7 +537,7 @@
                 </div>
 
                 <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex justify-between items-center">
-                    <span class="font-bold text-slate-800 text-sm">GestiÃ³n de Fondos Actuales</span>
+                    <span class="font-bold text-slate-800 text-sm">Gestiónde Fondos Actuales</span>
                     <button onclick="abrirModalCaja()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition">
                         <i class="fa-solid fa-plus"></i> Registrar / Agregar Dinero a Caja
                     </button>
@@ -549,7 +549,7 @@
                         <table class="w-full text-left border-collapse text-sm">
                             <thead>
                                 <tr class="bg-[#0B132B] text-white text-xs uppercase">
-                                    <th class="p-3">DescripciÃ³n / Concepto</th>
+                                    <th class="p-3">Descripción / Concepto</th>
                                     <th class="p-3">Monto</th>
                                     <th class="p-3 text-center">Acciones</th>
                                 </tr>
@@ -588,7 +588,7 @@
                     <input type="number" step="0.01" min="0" id="mov-monto" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2" placeholder="0.00">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">CategorÃ­a</label>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Categoría</label>
                     <select id="mov-cat" onchange="verificarCategoriaPersonal(this)" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2">
                         <option value="Combustible">Combustible</option>
                         <option value="Gastos Personales">Gastos Personales</option>
@@ -600,11 +600,11 @@
                     </select>
                 </div>
                 <div id="contenedor-cat-manual" class="sm:col-span-2 hidden">
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Especifique nueva categorÃ­a</label>
-                    <input type="text" id="mov-cat-manual" placeholder="Escriba la nueva categorÃ­a..." class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2">
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Especifique nueva Categoría</label>
+                    <input type="text" id="mov-cat-manual" placeholder="Escriba la nueva Categoría..." class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2">
                 </div>
                 <div class="sm:col-span-2">
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">DescripciÃ³n / ObservaciÃ³n</label>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Descripción / Observación</label>
                     <input type="text" id="mov-obs" placeholder="Ej: Abono, compra de vÃ­veres..." class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2">
                 </div>
                 <div class="sm:col-span-2 flex justify-end gap-2 pt-3 border-t border-slate-100">
@@ -625,7 +625,7 @@
             <form onsubmit="guardarItemCaja(event)" class="grid grid-cols-1 gap-4 text-sm">
                 <input type="hidden" id="caja-id">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">DescripciÃ³n / Concepto</label>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Descripción / Concepto</label>
                     <select id="caja-descripcion" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 focus:outline-none">
                         <option value="">Seleccione opciÃ³n...</option>
                         <option value="Efectivo Billetes, Monedas">Efectivo Billetes, Monedas</option>
@@ -662,8 +662,8 @@
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Nombre Completo</label>
                     <input type="text" id="m-nombre" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2">
                 </div>
-                <div><label class="block text-xs font-semibold text-slate-600 mb-1">TelÃ©fono</label><input type="text" id="m-telefono" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"></div>
-                <div><label class="block text-xs font-semibold text-slate-600 mb-1">DirecciÃ³n</label><input type="text" id="m-direccion" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"></div>
+                <div><label class="block text-xs font-semibold text-slate-600 mb-1">Teléfono</label><input type="text" id="m-telefono" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"></div>
+                <div><label class="block text-xs font-semibold text-slate-600 mb-1">Dirección</label><input type="text" id="m-direccion" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"></div>
                 <div class="sm:col-span-2 flex justify-end gap-2 pt-3 border-t border-slate-100">
                     <button type="button" onclick="cerrarModalCliente()" class="px-4 py-2 rounded-lg border border-slate-200 text-slate-600">Cancelar</button>
                     <button type="submit" class="px-4 py-2 rounded-lg bg-emerald-600 text-white font-medium">Guardar</button>
@@ -686,8 +686,8 @@
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Cliente</label>
                     <select id="v-cliente-select" required onchange="autocompletarCliente(this)" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"><option value="">Seleccione cliente...</option></select>
                 </div>
-                <div><label class="block text-xs font-semibold text-slate-600 mb-1">TelÃ©fono</label><input type="text" id="v-telefono" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2" readonly></div>
-                <div><label class="block text-xs font-semibold text-slate-600 mb-1">DirecciÃ³n</label><input type="text" id="v-direccion" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2" readonly></div>
+                <div><label class="block text-xs font-semibold text-slate-600 mb-1">Teléfono</label><input type="text" id="v-telefono" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2" readonly></div>
+                <div><label class="block text-xs font-semibold text-slate-600 mb-1">Dirección</label><input type="text" id="v-direccion" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2" readonly></div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Vendedor</label>
                     <select id="v-vendedor" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"><option value="George">George</option><option value="BolÃ­var">BolÃ­var</option></select>
@@ -704,7 +704,7 @@
                     <select id="v-forma-pago" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"><option value="Semanal">Semanal</option><option value="Quincenal">Quincenal</option><option value="Mensual">Mensual</option></select>
                 </div>
                 <div><label class="block text-xs font-semibold text-slate-600 mb-1">Valor Cuota ($)</label><input type="number" step="0.01" id="v-cuota" value="10.00" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"></div>
-                <div><label class="block text-xs font-semibold text-slate-600 mb-1">PrÃ³ximo Pago (Fecha)</label><input type="date" id="v-proximo-pago" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"></div>
+                <div><label class="block text-xs font-semibold text-slate-600 mb-1">Próximo Pago (Fecha)</label><input type="date" id="v-proximo-pago" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"></div>
                 <div class="sm:col-span-2"><label class="block text-xs font-semibold text-slate-600 mb-1">Observaciones</label><input type="text" id="v-obs" placeholder="Ej: Paga los dÃ­as lunes..." class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2"></div>
                 <div class="sm:col-span-2 flex justify-end gap-2 pt-3 border-t border-slate-100">
                     <button type="button" onclick="cerrarModalVenta()" class="px-4 py-2 rounded-lg border border-slate-200 text-slate-600">Cancelar</button>
@@ -722,8 +722,8 @@
                 <button onclick="cerrarModalDetalle()" class="text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="grid grid-cols-3 gap-4 text-sm bg-slate-50 p-4 rounded-xl border border-slate-100">
-                <div><p class="text-xs text-slate-400 font-semibold uppercase">TelÃ©fono</p><p id="det-tel" class="font-medium text-slate-800">-</p></div>
-                <div><p class="text-xs text-slate-400 font-semibold uppercase">DirecciÃ³n</p><p id="det-dir" class="font-medium text-slate-800">-</p></div>
+                <div><p class="text-xs text-slate-400 font-semibold uppercase">Teléfono</p><p id="det-tel" class="font-medium text-slate-800">-</p></div>
+                <div><p class="text-xs text-slate-400 font-semibold uppercase">Dirección</p><p id="det-dir" class="font-medium text-slate-800">-</p></div>
                 <div><p class="text-xs text-slate-400 font-semibold uppercase">Saldo / Deuda Total</p><p id="det-saldo" class="font-bold text-rose-600">$0.00</p></div>
             </div>
             <div>
@@ -1400,9 +1400,9 @@
                                     <tr class="bg-slate-900 text-white text-xs uppercase">
                                         <th class="p-3">Fecha</th>
                                         <th class="p-3">Tipo</th>
-                                        <th class="p-3">CategorÃ­a</th>
+                                        <th class="p-3">Categoría</th>
                                         <th class="p-3">Monto</th>
-                                        <th class="p-3">DescripciÃ³n</th>
+                                        <th class="p-3">Descripción</th>
                                         <th class="p-3 text-center">Acciones</th>
                                     </tr>
                                 </thead>
@@ -1544,7 +1544,7 @@
             if(id) {
                 await updateDoc(doc(db, "inventario_ethan", id), data);
                 document.getElementById('inv-id').value = '';
-                document.getElementById('inv-titulo-form').innerText = "Ingresar MercaderÃ­a";
+                document.getElementById('inv-titulo-form').innerText = "Ingresar Mercadei­a";
             } else {
                 await addDoc(collection(db, "inventario_ethan"), data);
             }
@@ -1560,7 +1560,7 @@
             document.getElementById('inv-fecha').value = item.fecha || '';
             document.getElementById('inv-cantidad').value = item.cantidad || '';
             document.getElementById('inv-costo-total').value = item.costoTotal || '';
-            document.getElementById('inv-titulo-form').innerText = "Editar Compra de MercaderÃ­a";
+            document.getElementById('inv-titulo-form').innerText = "Editar Compra de Mercadei­a";
             window.scrollTo({ top: 0, behavior: 'smooth' });
         };
 
