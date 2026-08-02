@@ -316,7 +316,7 @@
 
             <!-- COMISIONES -->
             <div id="vista-comisiones" class="space-y-6 hidden">
-                <h2 class="font-bold text-slate-800 text-lg">Gestiónde Comisiones</h2>
+                <h2 class="font-bold text-slate-800 text-lg">Gestión de Comisiones</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-1">
                         <p class="text-slate-400 text-xs font-semibold uppercase">Pendientes de Pago</p>
@@ -440,7 +440,7 @@
             <!-- ENTRADAS / SALIDAS PERSONALES -->
             <div id="vista-movimientos" class="space-y-6 hidden">
                 <div class="flex justify-between items-center bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                    <h2 class="font-bold text-slate-800 text-base">Gestiónde Movimientos Personales</h2>
+                    <h2 class="font-bold text-slate-800 text-base">Gestión de Movimientos Personales</h2>
                     <button onclick="abrirModalMovimientoPersonal()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition">
                         <i class="fa-solid fa-plus"></i> Registrar Movimiento Personal
                     </button>
@@ -537,7 +537,7 @@
                 </div>
 
                 <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex justify-between items-center">
-                    <span class="font-bold text-slate-800 text-sm">Gestiónde Fondos Actuales</span>
+                    <span class="font-bold text-slate-800 text-sm">Gestión de Fondos Actuales</span>
                     <button onclick="abrirModalCaja()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition">
                         <i class="fa-solid fa-plus"></i> Registrar / Agregar Dinero a Caja
                     </button>
@@ -1069,7 +1069,7 @@
                                 <input id="fecha-comision-${item.id}" type="date" value="${item.fechaPagoComision || ''}" onchange="actualizarFechaComision('${item.id}', '${estadoComision}', this.value)" class="border border-slate-200 rounded-md px-2 py-1 text-xs">
                             </td>
                             <td class="p-3 text-center">
-                                <button onclick="toggleEstadoComision('${item.id}', '${estadoComision}')" class="bg-[#0B132B] hover:bg-indigo-900 text-white px-3 py-1 rounded-lg text-xs">${estadoComision === 'Pagada' ? 'Reabrir' : 'Marcar pagada'}</button>
+                                <button onclick="toggleEstadoComision('${item.id}', '${estadoComision}')" class="bg-[#0B132B] hover:bg-indigo-900 text-white px-3 py-1 rounded-lg text-xs">${estadoComision === 'Pagada' ? 'Reabrir' : 'Pagar'}</button>
                             </td>
                         </tr>
                     `;
