@@ -60,7 +60,7 @@
                             <input type="file" id="input-cargar-json" accept=".json" onchange="restaurarRespaldoJSON(event)" class="hidden">
                         </label>
                         <a href="#" onclick="descargarCodigoHTML()" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-800/80 transition text-indigo-300 text-xs">
-                            <i class="fa-solid fa-file-code w-4"></i> Descargar CÃ³digo HTML
+                            <i class="fa-solid fa-file-code w-4"></i> Descargar Código HTML
                         </a>
                     </div>
                 </div>
@@ -162,7 +162,7 @@
                             <i class="fa-solid fa-vault text-teal-600"></i>
                         </div>
                         <h3 id="dash-inversion-historica" class="text-3xl font-bold mt-1 text-teal-600">$0.00</h3>
-                        <span class="text-[10px] text-slate-400 block mt-1">Acumulado histÃ³rico en mercaderia</span>
+                        <span class="text-[10px] text-slate-400 block mt-1">Acumulado histórico en mercaderia</span>
                     </div>
                     <div onclick="cambiarVista('pagos')" class="bg-white text-slate-800 p-5 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-indigo-500 transition relative overflow-hidden">
                         <div class="flex items-center justify-between mb-2">
@@ -1408,7 +1408,7 @@
             }
             cerrarModalCaja();
             sincronizarDatos();
-            alert("Â¡OperaciÃ³n en Caja guardada con Éxito!");
+            alert("Â¡Operación en Caja guardada con Éxito!");
         };
 
         window.editarItemCaja = (id) => {
@@ -1422,7 +1422,7 @@
         };
 
         window.eliminarItemCaja = async (id) => {
-            if(confirm("Â¿EstÃ¡ seguro de eliminar este registro de caja?")) {
+            if(confirm("Â¿Estás seguro de eliminar este registro de caja?")) {
                 await deleteDoc(doc(db, "caja_ethan", id));
                 sincronizarDatos();
             }
@@ -1518,14 +1518,14 @@
                 }
             });
 
-            // Ordenar semanas de la mÃ¡s reciente a la mÃ¡s antigua
+            // Ordenar semanas de la más reciente a la más antigua
             const semanasKeys = Object.keys(semanasMap).sort().reverse();
             let html = '';
 
             semanasKeys.forEach(idSem => {
                 const sem = semanasMap[idSem];
                 const balanceSemanal = sem.totalEntradas - sem.totalSalidas;
-                const isOpen = semanasAbiertas[idSem] !== false; // por defecto abierto o segÃºn estado
+                const isOpen = semanasAbiertas[idSem] !== false; // por defecto abierto o según estado
 
                 html += `
                     <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden mb-4">
@@ -1614,7 +1614,7 @@
         };
 
         window.eliminarMovimientoPersonal = async (id) => {
-            if(confirm("Â¿EstÃ¡ seguro de eliminar este movimiento personal?")) {
+            if(confirm("Â¿Está seguro de eliminar este movimiento personal?")) {
                 await deleteDoc(doc(db, "movimientos_personales_ethan", id));
                 sincronizarDatos();
             }
@@ -1784,7 +1784,7 @@
         };
 
         window.eliminarCompraInventario = async (id) => {
-            if(confirm("Â¿EstÃ¡ seguro de eliminar esta compra de inventario?")) {
+            if(confirm("Â¿Está seguro de eliminar esta compra de inventario?")) {
                 await deleteDoc(doc(db, "inventario_ethan", id));
                 sincronizarDatos();
             }
@@ -1965,7 +1965,7 @@
         };
 
         window.eliminarVenta = async (id) => {
-            if(confirm("Â¿EstÃ¡ seguro de eliminar esta venta?")) {
+            if(confirm("Â¿Está seguro de eliminar esta venta?")) {
                 await deleteDoc(doc(db, "ventas_ethan", id));
                 sincronizarDatos();
             }
