@@ -349,11 +349,12 @@
             <div id="vista-calendario" class="space-y-6 hidden">
                 <h2 class="font-bold text-slate-800 text-lg">Calendario y Recordatorios de Cobros</h2>
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
-                    <p class="text-sm text-slate-600">Recordatorio semanal: los clientes liquidados se ocultan automáticamente. Usa la fecha editable para decidir manualmente cuándo será el próximo cobro.</p>
+                    <p class="text-sm text-slate-600">Recordatorio semanal: los clientes liquidados se ocultan automáticamente. Las fechas de esta semana aparecen como pendientes. Haz clic sobre el estado para marcar manualmente al cliente como al día.</p>
                     <div class="flex flex-wrap gap-2 text-xs">
-                        <span class="px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 font-semibold"><i class="fa-solid fa-circle-check"></i> Al día / ya pagó</span>
-                        <span class="px-2 py-1 rounded-full bg-amber-100 text-amber-700 font-semibold"><i class="fa-solid fa-clock"></i> Pendiente</span>
+                        <span class="px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 font-semibold"><i class="fa-solid fa-circle-check"></i> Al día</span>
+                        <span class="px-2 py-1 rounded-full bg-amber-100 text-amber-700 font-semibold"><i class="fa-solid fa-clock"></i> Pendiente esta semana</span>
                         <span class="px-2 py-1 rounded-full bg-rose-100 text-rose-700 font-semibold"><i class="fa-solid fa-triangle-exclamation"></i> Atrasado</span>
+                        <span class="px-2 py-1 rounded-full bg-indigo-100 text-indigo-700 font-semibold"><i class="fa-solid fa-calendar-day"></i> Programado después</span>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse text-sm">
@@ -811,6 +812,7 @@
         let listaCaja = [];
         let vistaActualActiva = 'dashboard';
         let semanasAbiertas = {}; // Estado para recordar semanas abiertas/cerradas
+        let mesesCobrosAbiertos = {}; // Estado visual de los meses desplegados en Historial de Cobros
 
         function obtenerFechaLocalISO() {
             const ahora = new Date();
@@ -828,26 +830,40 @@
                 .replace(/^./, letra => letra.toUpperCase());
         }
 
-        function obtenerEstadoCalendario(venta, cliente) {
-            const pagosCliente = listaPagos.filter(p =>
-                p.clienteId === cliente.id || (!p.clienteId && p.nombre === cliente.nombre)
-            );
-            const cuota = parseFloat(venta.cuota) || 10;
-            const pagadoDesdeLaFechaProgramada = pagosCliente
-                .filter(p => p.fecha && p.fecha >= venta.proximoPago)
-                .reduce((suma, pago) => suma + (parseFloat(pago.monto) || 0), 0);
-            const hoy = obtenerFechaLocalISO();
+        function convertirFechaALocalISO(fecha) {
+            const anio = fecha.getFullYear();
+            const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+            const dia = String(fecha.getDate()).padStart(2, '0');
+            return `${anio}-${mes}-${dia}`;
+        }
 
-            if(pagadoDesdeLaFechaProgramada + 0.001 >= cuota) {
-                return { texto: 'Al día · ya pagó', clase: 'bg-emerald-100 text-emerald-700', icono: 'fa-circle-check' };
+        function obtenerRangoSemanaCalendario() {
+            const hoy = new Date();
+            hoy.setHours(0, 0, 0, 0);
+            const diaSemana = hoy.getDay();
+            const ajusteLunes = diaSemana === 0 ? -6 : 1 - diaSemana;
+            const lunes = new Date(hoy);
+            lunes.setDate(hoy.getDate() + ajusteLunes);
+            const domingo = new Date(lunes);
+            domingo.setDate(lunes.getDate() + 6);
+            return { inicio: convertirFechaALocalISO(lunes), fin: convertirFechaALocalISO(domingo) };
+        }
+
+        function obtenerEstadoCalendario(venta) {
+            const hoy = obtenerFechaLocalISO();
+            const semana = obtenerRangoSemanaCalendario();
+
+            // La marca verde se guarda para la fecha programada y se reinicia al cambiarla.
+            if(venta.estadoCalendarioAlDiaFecha === venta.proximoPago) {
+                return { texto: 'Al día', clase: 'bg-emerald-100 text-emerald-700', icono: 'fa-circle-check', titulo: 'Clic para quitar la marca de al día' };
             }
             if(venta.proximoPago < hoy) {
-                return { texto: 'Atrasado', clase: 'bg-rose-100 text-rose-700', icono: 'fa-triangle-exclamation' };
+                return { texto: 'Atrasado', clase: 'bg-rose-100 text-rose-700', icono: 'fa-triangle-exclamation', titulo: 'Clic para marcar como al día' };
             }
-            if(venta.proximoPago > hoy) {
-                return { texto: 'Al día', clase: 'bg-emerald-100 text-emerald-700', icono: 'fa-circle-check' };
+            if(venta.proximoPago >= semana.inicio && venta.proximoPago <= semana.fin) {
+                return { texto: 'Pendiente', clase: 'bg-amber-100 text-amber-700', icono: 'fa-clock', titulo: 'Clic para marcar como al día' };
             }
-            return { texto: 'Pendiente hoy', clase: 'bg-amber-100 text-amber-700', icono: 'fa-clock' };
+            return { texto: 'Programado', clase: 'bg-indigo-100 text-indigo-700', icono: 'fa-calendar-day', titulo: 'Clic para marcar como al día' };
         }
 
         async function recalcularSaldosCobrosCliente(clienteId, nombreCliente) {
@@ -1095,20 +1111,27 @@
                     const mesPago = (p.fecha || '').substring(0, 7) || 'sin-fecha';
                     if(mesPago !== mesEnCurso) {
                         mesEnCurso = mesPago;
+                        if(!(mesPago in mesesCobrosAbiertos)) {
+                            mesesCobrosAbiertos[mesPago] = mesPago === mesActualStr;
+                        }
+                        const abierto = mesesCobrosAbiertos[mesPago];
                         const totalMes = pagosOrdenados
                             .filter(cobro => ((cobro.fecha || '').substring(0, 7) || 'sin-fecha') === mesPago)
                             .reduce((suma, cobro) => suma + (parseFloat(cobro.monto) || 0), 0);
                         htmlPagos += `
                             <tr class="bg-indigo-50 border-y border-indigo-100">
-                                <td colspan="7" class="p-3 font-bold text-indigo-800">
-                                    ${formatearMesDeCobro(p.fecha)}
-                                    <span class="ml-2 text-emerald-700">Total cobrado: $${totalMes.toFixed(2)}</span>
+                                <td colspan="7" class="p-0">
+                                    <button onclick="toggleMesCobros('${mesPago}')" class="w-full p-3 text-left font-bold text-indigo-800 flex items-center justify-between hover:bg-indigo-100 transition" title="Clic para desplegar o encoger este mes">
+                                        <span>${formatearMesDeCobro(p.fecha)} <span class="ml-2 text-emerald-700">Total cobrado: $${totalMes.toFixed(2)}</span></span>
+                                        <i id="icono-mes-cobros-${mesPago}" class="fa-solid ${abierto ? 'fa-chevron-up' : 'fa-chevron-down'}"></i>
+                                    </button>
                                 </td>
                             </tr>
                         `;
                     }
+                    const abierto = mesesCobrosAbiertos[mesPago];
                     htmlPagos += `
-                        <tr class="hover:bg-slate-50 border-b border-slate-100">
+                        <tr data-mes-cobro="${mesPago}" class="hover:bg-slate-50 border-b border-slate-100 ${abierto ? '' : 'hidden'}">
                             <td class="p-3 text-slate-600">${p.fecha || '-'}</td>
                             <td class="p-3 font-medium text-slate-900">${p.nombre || ''}</td>
                             <td class="p-3 font-semibold text-emerald-600">$${(parseFloat(p.monto) || 0).toFixed(2)}</td>
@@ -1201,12 +1224,16 @@
                     const saldoCli = clienteObj ? (clienteObj.saldoActualCalculado || 0) : 0;
                     if(!clienteObj || saldoCli <= 0) return;
 
-                    const estado = obtenerEstadoCalendario(v, clienteObj);
+                    const estado = obtenerEstadoCalendario(v);
                     htmlCal += `
                         <tr class="hover:bg-slate-50 border-b border-slate-100">
                             <td class="p-3 font-semibold text-indigo-600">${v.proximoPago}</td>
-                            <td class="p-3"><span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold ${estado.clase}"><i class="fa-solid ${estado.icono}"></i>${estado.texto}</span></td>
-                            <td class="p-3 font-medium text-slate-900">${v.nombre || ''}</td>
+                            <td class="p-3">
+                                <button onclick="toggleEstadoCalendario('${v.id}')" class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold ${estado.clase} hover:ring-2 hover:ring-offset-1 hover:ring-indigo-300 transition" title="${estado.titulo}">
+                                    <i class="fa-solid ${estado.icono}"></i>${estado.texto}
+                                </button>
+                            </td>
+                            <td class="p-3 font-medium text-indigo-600 cursor-pointer hover:underline" onclick="verDetalleCliente('${clienteObj.id}')" title="Ver detalle del cliente">${v.nombre || ''}</td>
                             <td class="p-3 text-slate-600">${v.telefono || '-'}</td>
                             <td class="p-3 font-semibold text-emerald-600">$${(parseFloat(v.cuota) || 10).toFixed(2)}</td>
                             <td class="p-3 font-semibold text-rose-600">$${saldoCli.toFixed(2)}</td>
@@ -1619,14 +1646,35 @@
             alert("Â¡Movimiento personal guardado con Éxito!");
         };
 
+        window.toggleMesCobros = (mesClave) => {
+            const abierto = !mesesCobrosAbiertos[mesClave];
+            mesesCobrosAbiertos[mesClave] = abierto;
+            document.querySelectorAll(`[data-mes-cobro="${mesClave}"]`).forEach(fila => fila.classList.toggle('hidden', !abierto));
+            const icono = document.getElementById(`icono-mes-cobros-${mesClave}`);
+            if(icono) icono.className = `fa-solid ${abierto ? 'fa-chevron-up' : 'fa-chevron-down'}`;
+        };
+
+        window.toggleEstadoCalendario = async (idVenta) => {
+            const venta = listaVentas.find(v => v.id === idVenta);
+            if(!venta || !venta.proximoPago) return;
+            const yaMarcado = venta.estadoCalendarioAlDiaFecha === venta.proximoPago;
+            await updateDoc(doc(db, 'ventas_ethan', idVenta), {
+                estadoCalendarioAlDiaFecha: yaMarcado ? '' : venta.proximoPago
+            });
+            await sincronizarDatos();
+        };
+
         window.actualizarProximoPagoCalendario = async (idVenta) => {
             const campo = document.getElementById(`proximo-pago-${idVenta}`);
             if(!campo || !campo.value) {
                 alert('Selecciona la fecha del próximo cobro antes de guardar.');
                 return;
             }
-            await updateDoc(doc(db, 'ventas_ethan', idVenta), { proximoPago: campo.value });
-            sincronizarDatos();
+            await updateDoc(doc(db, 'ventas_ethan', idVenta), {
+                proximoPago: campo.value,
+                estadoCalendarioAlDiaFecha: ''
+            });
+            await sincronizarDatos();
         };
 
         window.editarPago = (id) => {
