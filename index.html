@@ -2035,7 +2035,7 @@
                 tipo: 'Salida',
                 monto: parseFloat(document.getElementById('comb-monto').value) || 0,
                 categoria: 'Combustible',
-                descripcion: 'Carga rÃ¡pida de combustible camioneta'
+                descripcion: 'Carga de gasolina camioneta'
             };
             await addDoc(collection(db, "movimientos_personales_ethan"), data);
             e.target.reset();
