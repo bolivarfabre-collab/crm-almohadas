@@ -1013,7 +1013,8 @@
                     totalAlmohadasVendidas += parseInt(v.cantidad || 1);
                     totalVentasValGral += parseFloat(v.total || (v.cantidad * 40));
                 });
-
+                listaVentas.sort((a, b) => String(b.fecha || '').localeCompare(String(a.fecha || '')));
+    
                 const stockDisponible = Math.max(0, totalComprado - totalAlmohadasVendidas);
                 const costoPromedio = totalComprado > 0 ? (costoTotalGasto / totalComprado) : 0;
                 const valorTotalInventario = stockDisponible * costoPromedio;
