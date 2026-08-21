@@ -1101,7 +1101,9 @@
 
                 document.getElementById('tabla-clientes-cuerpo').innerHTML = htmlClientes || '<tr><td colspan="9" class="p-4 text-center text-slate-400">Sin clientes registrados</td></tr>';
                 document.getElementById('pago-cliente').innerHTML = htmlSelectCliente;
-                document.getElementById('dash-clientes').innerText = listaClientes.length;
+                // Contar únicamente clientes con saldo mayor a 0
+                const clientesConSaldo = listaClientes.filter(c => (c.saldoActualCalculado || 0) > 0).length;
+                document.getElementById('dash-clientes').innerText = clientesConSaldo;
                 document.getElementById('dash-deuda').innerText = `$${totalDeuda.toFixed(2)}`;
 
                 const pagosOrdenados = [...listaPagos].sort((a, b) => String(b.fecha || '').localeCompare(String(a.fecha || '')));
