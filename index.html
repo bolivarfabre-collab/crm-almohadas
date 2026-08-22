@@ -964,7 +964,7 @@
                 const snapInv = await getDocs(collection(db, "inventario_ethan"));
                 listaInventario = [];
                 snapInv.forEach(d => listaInventario.push({ id: d.id, ...d.data() }));
-
+                listaInventario.sort((a, b) => String(b.fecha || '').localeCompare(String(a.fecha || '')));
                 let totalComprado = 0;
                 let costoTotalGasto = 0;
                 let inversionMesTotal = 0;
