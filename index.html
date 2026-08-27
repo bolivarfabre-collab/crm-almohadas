@@ -75,9 +75,8 @@
             <div class="flex items-center gap-4 w-full md:w-96 pl-12 md:pl-0">
                 <div class="relative w-full">
                     <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-sm"></i>
-                    <input type="text" id="buscador-global" placeholder="Buscar cliente globalmente..." class="w-full bg-slate-50 border border-slate-200 rounded-lg pl-9 pr-4 py-2 text-sm focus:outline-none focus:border-indigo-500">
-                </div>
-            </div>
+               <input type="text" id="busqueda-global" oninput="filtrarBusquedaGlobal(event)" placeholder="Buscar cliente globalmente..." class="w-full bg-slate-50 border border-slate-200 rounded-lg pl-9 pr-4 py-2 text-sm focus:outline-none focus:border-indigo-500">
+                </div>            </div>
             <div class="hidden sm:flex items-center gap-3">
                 <button onclick="exportarExcelVistaActual()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition"><i class="fa-solid fa-file-excel"></i> Exportar Excel</button>
                 <button onclick="exportarPdfVistaActual()" class="bg-slate-900 hover:bg-slate-800 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition"><i class="fa-solid fa-file-pdf"></i> Exportar PDF</button>
@@ -190,11 +189,15 @@
 
             <!-- CLIENTES -->
             <div id="vista-clientes" class="space-y-4 hidden">
-                <div class="flex justify-between items-center bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                    <h2 class="font-bold text-slate-800 text-base">Directorio de Clientes</h2>
-                    <button onclick="abrirModalCliente()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition"><i class="fa-solid fa-user-plus"></i> Registrar Cliente</button>
-                </div>
-                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
+<div class="flex justify-between items-center bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+    <h2 class="font-bold text-slate-800 text-base">Directorio de Clientes</h2>
+    <div class="flex items-center gap-2">
+        <button onclick="filtrarClientesActivos()" class="bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold px-3 py-2 rounded-lg transition-colors flex items-center gap-1.5 shadow-sm">
+            <i class="fa-solid fa-user-check"></i> Solo Activos
+        </button>
+        <button onclick="abrirModalCliente()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition"><i class="fa-solid fa-user-plus"></i> Registrar Cliente</button>
+    </div>
+</div>                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
                     <table class="w-full text-left border-collapse text-sm">
                         <thead>
                             <tr class="bg-[#0B132B] text-white text-xs uppercase">
@@ -2006,7 +2009,7 @@
                     </tr>
                 `;
             });
-            document.getElementById('tabla-detalles-ventas').innerHTML = htmlventaHTML(htmlV);
+            document.getElementById('tabla-detalles-ventas').innerHTML = htmlVentaHTML(htmlV);
 
             const pCliente = listaPagos.filter(p => p.clienteId === cliente.id || (!p.clienteId && p.nombre === cliente.nombre));
             let htmlP = '';
@@ -2023,7 +2026,7 @@
             document.getElementById('modal-detalle-cliente').classList.remove('hidden');
         };
 
-        function htmlventaHTML(html) {
+        function htmlVentaHTML(html) {
             return html || '<tr><td colspan="6" class="p-2 text-center text-slate-400">Sin ventas registradas</td></tr>';
         }
 
@@ -2213,13 +2216,65 @@
             pdf.save(`Reporte_${vistaActualActiva}_${new Date().toISOString().split('T')[0]}.pdf`);
         };
 
-        window.onload = () => {
-            sincronizarDatos();
-        };
-    </script>
-</body>
-</html>
+           window.filtrarBusquedaGlobal = (e) => {
+              const termino = e.target.value.toLowerCase().trim();
+              
+              // Obtener la tabla de la sección visible actual
+              const tabla = obtenerTablaExportable() || document.querySelector('main table') || document.querySelector('table');
+              if (!tabla) return;
 
+              // Obtener todas las filas de la tabla (excluyendo el encabezado thead)
+              const filas = tabla.querySelectorAll('tbody tr');
+              
+              filas.forEach(fila => {
+                  const textoFila = fila.innerText.toLowerCase();
+                  if (textoFila.includes(termino)) {
+                      fila.style.display = ''; // Mostrar fila
+                  } else {
+                      fila.style.display = 'none'; // Ocultar fila
+                  }
+              });
+          };
+            window.mostrandoSoloActivos = false;
+
+            window.filtrarClientesActivos = () => {
+                const tabla = document.querySelector('#vista-clientes table') || obtenerTablaExportable();
+                if (!tabla) return;
+
+                window.mostrandoSoloActivos = !window.mostrandoSoloActivos;
+                
+                const filas = tabla.querySelectorAll('tbody tr');
+                filas.forEach(fila => {
+                    if (!window.mostrandoSoloActivos) {
+                        fila.style.display = '';
+                        return;
+                    }
+
+                    const celdas = fila.querySelectorAll('td');
+                    if (celdas.length >= 7) {
+                        // Columna Saldo (7ma columna / índice 6)
+                        const textoSaldo = celdas[6].innerText.replace(/[^0-9.]/g, '');
+                        const saldo = parseFloat(textoSaldo) || 0;
+
+                        if (saldo > 0) {
+                            fila.style.display = '';
+                        } else {
+                            fila.style.display = 'none';
+                        }
+                    }
+});
+            };
+
+            window.onload = () => {
+                sincronizarDatos();
+                const inputBusqueda = document.getElementById('busqueda-global');
+                if (inputBusqueda) {
+                    inputBusqueda.addEventListener('input', window.filtrarBusquedaGlobal);
+                }
+            };
+        </script>
+    </body>
+    </html>
 
 
 
