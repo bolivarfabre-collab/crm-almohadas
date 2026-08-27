@@ -2006,7 +2006,7 @@
                     </tr>
                 `;
             });
-            document.getElementById('tabla-detalles-ventas').innerHTML = htmlVentraHTML(htmlV);
+            document.getElementById('tabla-detalles-ventas').innerHTML = htmlventaHTML(htmlV);
 
             const pCliente = listaPagos.filter(p => p.clienteId === cliente.id || (!p.clienteId && p.nombre === cliente.nombre));
             let htmlP = '';
@@ -2023,7 +2023,7 @@
             document.getElementById('modal-detalle-cliente').classList.remove('hidden');
         };
 
-        function htmlVentraHTML(html) {
+        function htmlventaHTML(html) {
             return html || '<tr><td colspan="6" class="p-2 text-center text-slate-400">Sin ventas registradas</td></tr>';
         }
 
