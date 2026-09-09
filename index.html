@@ -1038,16 +1038,17 @@ window.sincronizarDatos = async () => {
             snapInv.forEach(d => listaInventario.push({ id: d.id, ...d.data() }));
             listaInventario.sort((a, b) => String(b.fecha || '').localeCompare(String(a.fecha || '')));
             // 2. LECTURA AISLADA DE MOVIMIENTOS DE COMBUSTIBLE
-  const refMovCombustible = await getDocs(collection(db, "movimientos_personales_ethan"));
-  let arrMovCombustible = [];
-  refMovCombustible.forEach(docItem => {
-      arrMovCombustible.push({ id: docItem.id, ...docItem.data() });
-  });
-  
-  // Asignamos a tu variable global y renderizamos directamente
-  listaMovimientos = arrMovCombustible;
-  renderizarHistorialCombustible();
-
+    const refMovCombustible = await getDocs(collection(db, "movimientos_personales_ethan"));
+    let arrMovCombustible = [];
+    refMovCombustible.forEach(docItem => {
+        const data = docItem.data();
+       if (data.categoria && data.categoria.trim().toLowerCase() === "combustible") {
+            arrMovCombustible.push({ id: docItem.id, ...data });
+        }
+    });
+             arrMovCombustible.sort((a, b) => String(b.fecha || '').localeCompare(String(a.fecha || '')));
+            listaMovimientos = arrMovCombustible;
+            renderizarHistorialCombustible();
             let totalComprado = 0;
             let inversionMesTotal = 0;
             let inversionHistoricaTotal = 0;
