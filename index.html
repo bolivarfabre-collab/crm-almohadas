@@ -975,20 +975,121 @@
         document.getElementById('mov-recibo').value = '';
     }
 };
-        window.sincronizarDatos = async () => {
-            const dot = document.getElementById('status-dot');
-            dot.className = "w-3 h-3 rounded-full bg-amber-500 animate-pulse";
-            try {
-                const snapInv = await getDocs(collection(db, "inventario_ethan"));
-                listaInventario = [];
-                snapInv.forEach(d => listaInventario.push({ id: d.id, ...d.data() }));
-                listaInventario.sort((a, b) => String(b.fecha || '').localeCompare(String(a.fecha || '')));
-                let totalComprado = 0;
-                let costoTotalGasto = 0;
-                let inversionMesTotal = 0;
-                let inversionHistoricaTotal = 0;
-                const hoyStr = new Date().toISOString().split('T')[0];
-                const mesActualStr = hoyStr.substring(0, 7);
+
+      // --- INICIO CÓDIGO NUEVO (Doble cabecera combustible) ---
+      function obtenerRangoSemanaCombustible(fechaStr) {
+        const f = new Date(fechaStr + "T12:00:00");
+        const dia = f.getDay();
+        const diffLunes = dia === 0 ? -6 : 1 - dia;
+        
+        const lunes = new Date(f);
+        lunes.setDate(f.getDate() + diffLunes);
+        
+        const domingo = new Date(lunes);
+        domingo.setDate(lunes.getDate() + 6);
+
+        const opcionesFecha = { day: 'numeric', month: 'short' };
+        const formatInicio = lunes.toLocaleDateString('es-ES', opcionesFecha);
+        const formatFin = domingo.toLocaleDateString('es-ES', opcionesFecha);
+        const anio = lunes.getFullYear();
+
+        return {
+          clave: `${lunes.toISOString().split('T')[0]}`,
+          textoCabecera: `Semana del ${formatInicio} al ${formatFin} del ${anio}`
+        };
+      }
+
+      function renderizarHistorialCombustible(registrosCombustible) {
+        const contenedor = document.getElementById('tabla-combustible-cuerpo');
+        if (!contenedor) return;
+
+        if (!registrosCombustible || registrosCombustible.length === 0) {
+          contenedor.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-400">Sin registros de combustible</td></tr>';
+          return;
+        }
+
+        const semanas = {};
+        registrosCombustible.forEach(item => {
+          const rango = obtenerRangoSemanaCombustible(item.fecha);
+          if (!semanas[rango.clave]) {
+            semanas[rango.clave] = {
+              textoCabecera: rango.textoCabecera,
+              registros: [],
+              totalGasto: 0,
+              totalKm: 0
+            };
+          }
+          semanas[rango.clave].registros.push(item);
+          semanas[rango.clave].totalGasto += parseFloat(item.monto || 0);
+          semanas[rango.clave].totalKm += parseFloat(item.km || 0);
+        });
+
+        const clavesSemanas = Object.keys(semanas).sort((a, b) => b.localeCompare(a));
+        let htmlTabla = '';
+
+        clavesSemanas.forEach(claveLunes => {
+          const sem = semanas[claveLunes];
+
+          htmlTabla += `
+            <tr class="bg-[#0B132B] text-white">
+              <td colspan="3" class="p-3 text-xs sm:text-sm font-bold">📅 ${sem.textoCabecera}</td>
+              <td class="p-3 text-xs sm:text-sm font-bold text-amber-400">Gasto: $${sem.totalGasto.toFixed(2)}</td>
+              <td class="p-3 text-xs sm:text-sm font-bold text-emerald-400 text-right">Km Recorridos: ${sem.totalKm.toFixed(1)} KM</td>
+            </tr>
+            <tr class="bg-slate-200 text-slate-700 text-xs uppercase font-semibold">
+              <th class="p-2.5 pl-4">Fecha</th>
+              <th class="p-2.5">Categoría</th>
+              <th class="p-2.5">Monto</th>
+              <th class="p-2.5">Descripción</th>
+              <th class="p-2.5 text-center">Acciones</th>
+            </tr>
+          `;
+
+          sem.registros.forEach(r => {
+            htmlTabla += `
+              <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs sm:text-sm">
+                <td class="p-3 pl-4 text-slate-600">${r.fecha || '-'}</td>
+                <td class="p-3 text-slate-600">${r.categoria || 'Combustible'}</td>
+                <td class="p-3 font-semibold text-amber-600">$${parseFloat(r.monto || 0).toFixed(2)}</td>
+                <td class="p-3 text-slate-600">${r.descripcion || '-'}</td>
+                <td class="p-3 text-center space-x-2">
+                  <button onclick="editarCombustible('${r.id}')" class="text-indigo-600 hover:text-indigo-800"><i class="fa-solid fa-pen"></i></button>
+                  <button onclick="eliminarCombustible('${r.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
+                </td>
+              </tr>
+            `;
+          });
+        });
+
+        contenedor.innerHTML = htmlTabla;
+      }
+      // --- FIN CÓDIGO NUEVO ---
+window.sincronizarDatos = async () => {
+        const dot = document.getElementById('status-dot');
+        dot.className = "w-3 h-3 rounded-full bg-amber-500 animate-pulse";
+        try {
+            // 1. Aquí traes tu inventario (que ya lo tenías)
+            const snapInv = await getDocs(collection(db, "inventario_ethan"));
+            listaInventario = [];
+            snapInv.forEach(d => listaInventario.push({ id: d.id, ...d.data() }));
+            listaInventario.sort((a, b) => String(b.fecha || '').localeCompare(String(a.fecha || '')));
+
+// 2. LECTURA DESDE LA COLECCIÓN REAL DE MOVIMIENTOS PERSONALES:
+  const snapCombustible = await getDocs(collection(db, "movimientos_personales_ethan"));
+  let listaCombustible = [];
+  snapCombustible.forEach(d => {
+      const data = d.data();
+      if (data.categoria && data.categoria.trim().toLowerCase() === 'combustible') {
+          listaCombustible.push({ id: d.id, ...data });
+      }
+  });
+  renderizarHistorialCombustible(listaCombustible);
+            let totalComprado = 0;
+            let inversionMesTotal = 0;
+            let inversionHistoricaTotal = 0;
+            let costoTotalGasto = 0; 
+            const hoyStr = new Date().toISOString().split('T')[0];
+            const mesActualStr = hoyStr.substring(0, 7);
 
                 let htmlInv = '';
                 listaInventario.forEach(item => {
@@ -2106,71 +2207,31 @@
             alert("Carga de combustible guardada con Éxito!");
         };
 
-        function renderizarHistorialCombustible() {
-            const tabla = document.getElementById('tabla-combustible-cuerpo');
-            if(!tabla) return;
-            const combMovs = listaMovimientos.filter(m => m.categoria === 'Combustible');
-            let html = '';
-            combMovs.forEach(m => {
-                html += `
-                    <tr class="hover:bg-slate-50 border-b border-slate-100">
-                        <td class="p-3 text-slate-600">${m.fecha || '-'}</td>
-                        <td class="p-3 font-medium text-slate-800">${m.categoria || '-'}</td>
-                        <td class="p-3 font-semibold text-amber-600">$${(parseFloat(m.monto) || 0).toFixed(2)}</td>
-                        <td class="p-3 text-slate-600">${m.descripcion || '-'}</td>
-                        <td class="p-3 text-center space-x-2">
-                            <button onclick="editarMovimientoPersonal('${m.id}')" class="text-indigo-600 hover:text-indigo-800"><i class="fa-solid fa-pen"></i></button>
-                            <button onclick="eliminarMovimientoPersonal('${m.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
-                        </td>
-                    </tr>
-                `;
-            });
-            tabla.innerHTML = html || '<tr><td colspan="5" class="p-4 text-center text-slate-400">Sin registros de combustible</td></tr>';
-
-            const { inicioSemanaActual, finSemanaActual, inicioSemanaAnterior, finSemanaAnterior } = obtenerRangosSemanales();
-            let totalSemAct = 0, totalSemAnt = 0;
-
-            combMovs.forEach(m => {
-                if(!m.fecha) return;
-                const f = new Date(m.fecha + 'T00:00:00');
-                const monto = parseFloat(m.monto || 0);
-                if(f >= inicioSemanaActual && f <= finSemanaActual) {
-                    totalSemAct += monto;
-                } else if(f >= inicioSemanaAnterior && f <= finSemanaAnterior) {
-                    totalSemAnt += monto;
-                }
-            });
-
-            const elAct = document.getElementById('comb-total-sem-actual');
-            const elAnt = document.getElementById('comb-total-sem-anterior');
-            if(elAct) elAct.innerText = `$${totalSemAct.toFixed(2)}`;
-            if(elAnt) elAnt.innerText = `$${totalSemAnt.toFixed(2)}`;
-        }
 
         window.filtrarCombustiblePorMes = () => {
-            const mesVal = document.getElementById('filtro-mes-combustible').value;
-            if(!mesVal) return;
-            const tabla = document.getElementById('tabla-combustible-cuerpo');
-            const combMovs = listaMovimientos.filter(m => m.categoria === 'Combustible' && m.fecha && m.fecha.startsWith(mesVal));
-            let html = '';
-            combMovs.forEach(m => {
-                html += `
-                    <tr class="hover:bg-slate-50 border-b border-slate-100">
-                        <td class="p-3 text-slate-600">${m.fecha || '-'}</td>
-                        <td class="p-3 font-medium text-slate-800">${m.categoria || '-'}</td>
-                        <td class="p-3 font-semibold text-amber-600">$${(parseFloat(m.monto) || 0).toFixed(2)}</td>
-                        <td class="p-3 text-slate-600">${m.descripcion || '-'}</td>
-                        <td class="p-3 text-center space-x-2">
-                            <button onclick="editarMovimientoPersonal('${m.id}')" class="text-indigo-600 hover:text-indigo-800"><i class="fa-solid fa-pen"></i></button>
-                            <button onclick="eliminarMovimientoPersonal('${m.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
-                        </td>
-                    </tr>
-                `;
-            });
-            tabla.innerHTML = html || '<tr><td colspan="5" class="p-4 text-center text-slate-400">Sin registros para este mes</td></tr>';
-            document.getElementById('info-filtro-combustible').innerText = `Filtrado por mes: ${mesVal}`;
-        };
-
+              const mesVal = document.getElementById('filtro-mes-combustible').value;
+              if(!mesVal) return;
+              const tabla = document.getElementById('tabla-combustible-cuerpo');
+              const combMovs = listaMovimientos.filter(m => m.categoria === 'Combustible' && m.fecha && m.fecha.startsWith(mesVal));
+              let html = '';
+              combMovs.forEach(m => {
+                  html += `
+                      <tr class="hover:bg-slate-50 border-b border-slate-100">
+                          <td class="p-3 text-slate-600">${m.fecha || '-'}</td>
+                          <td class="p-3 font-medium text-slate-600">${m.categoria || '-'}</td>
+                          <td class="p-3 font-semibold text-amber-600">$${(parseFloat(m.monto) || 0).toFixed(2)}</td>
+                          <td class="p-3 text-slate-600">${m.descripcion || '-'}</td>
+                          <td class="p-3 text-center space-x-2">
+                              <button onclick="editarMovimientoPersonal('${m.id}')" class="text-indigo-600 hover:text-indigo-800"><i class="fa-solid fa-pen"></i></button>
+                              <button onclick="eliminarMovimientoPersonal('${m.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
+                          </td>
+                      </tr>
+                  `;
+              });
+              if(tabla) tabla.innerHTML = html || '<tr><td colspan="5" class="p-4 text-center text-slate-400">Sin registros para este mes</td></tr>';
+              const infoFiltro = document.getElementById('info-filtro-combustible');
+              if(infoFiltro) infoFiltro.innerText = `Filtrado por mes: ${mesVal}`;
+          };
         window.limpiarFiltroCombustible = () => {
             document.getElementById('filtro-mes-combustible').value = '';
             document.getElementById('info-filtro-combustible').innerText = "Mostrando todos los registros";
