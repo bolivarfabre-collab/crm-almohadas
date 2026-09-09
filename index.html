@@ -1388,8 +1388,7 @@ window.sincronizarDatos = async () => {
                     const esEsteMes = m.fecha && m.fecha.startsWith(mesActualStr);
                     const fechaMov = m.fecha ? new Date(m.fecha + 'T00:00:00') : null;
                     const esEstaSemana = fechaMov && (fechaMov >= inicioSemanaActual && fechaMov <= finSemanaActual);
-
-                    if(m.categoria === 'Combustible') {
+if(m.categoria && (m.categoria.toLowerCase().includes('combustible') || m.categoria.toLowerCase().includes('gasolina'))) {
                         combustibleTotal += montoNum;
                         if(esEsteMes) combustibleMes += montoNum;
                     }
@@ -1404,10 +1403,8 @@ window.sincronizarDatos = async () => {
                         if(esEstaSemana) gasSem += montoNum;
                     }
                 });
-
-                renderizarMovimientosPorSemanas();
-                renderizarHistorialCombustible();
-
+                    renderizarMovimientosPorSemanas();
+                    renderizarHistorialCombustible();
                 const snapCaja = await getDocs(collection(db, "caja_ethan"));
                 listaCaja = [];
                 snapCaja.forEach(d => listaCaja.push({ id: d.id, ...d.data() }));
