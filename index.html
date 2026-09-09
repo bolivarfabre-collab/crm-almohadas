@@ -999,26 +999,27 @@
         };
       }
 
-      function renderizarHistorialCombustible(registrosCombustible) {
-        const contenedor = document.getElementById('tabla-combustible-cuerpo');
-        if (!contenedor) return;
+      window.renderizarHistorialCombustible = function(registrosCombustible) {
+    const datosARenderizar = registrosCombustible || window.listaMovimientos || [];
+    const contenedor = document.getElementById('tabla-combustible-cuerpo');
+    if (!contenedor) return;
 
-        if (!registrosCombustible || registrosCombustible.length === 0) {
-          contenedor.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-400">Sin registros de combustible</td></tr>';
-          return;
-        }
+    if (!datosARenderizar || datosARenderizar.length === 0) {
+        contenedor.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-400">Sin registros de combustible</td></tr>';
+        return;
+    }
 
-        const semanas = {};
-        registrosCombustible.forEach(item => {
-          const rango = obtenerRangoSemanaCombustible(item.fecha);
-          if (!semanas[rango.clave]) {
+    const semanas = {};
+    datosARenderizar.forEach(item => {
+        const rango = obtenerRangoSemanaCombustible(item.fecha);
+        if (!semanas[rango.clave]) {
             semanas[rango.clave] = {
-              textoCabecera: rango.textoCabecera,
-              registros: [],
-              totalGasto: 0,
-              totalKm: 0
+                textoCabecera: rango.textoCabecera,
+                registros: [],
+                totalGasto: 0,
+                totalKm: 0
             };
-          }
+        }
           semanas[rango.clave].registros.push(item);
           semanas[rango.clave].totalGasto += parseFloat(item.monto || 0);
           semanas[rango.clave].totalKm += parseFloat(item.km || 0);
