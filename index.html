@@ -1073,15 +1073,16 @@ window.sincronizarDatos = async () => {
             listaInventario = [];
             snapInv.forEach(d => listaInventario.push({ id: d.id, ...d.data() }));
             listaInventario.sort((a, b) => String(b.fecha || '').localeCompare(String(a.fecha || '')));
-// 2. LECTURA GENERAL DE MOVIMIENTOS PERSONALES
-const snapMov = await getDocs(collection(db, "movimientos_personales_ethan"));
-listaMovimientos = [];
-snapMov.forEach(d => {
-    listaMovimientos.push({ id: d.id, ...d.data() });
-});
-
-// Renderizamos el historial usando el arreglo global unificado
-renderizarHistorialCombustible();
+            // 2. LECTURA AISLADA DE MOVIMIENTOS DE COMBUSTIBLE
+  const refMovCombustible = await getDocs(collection(db, "movimientos_personales_ethan"));
+  let arrMovCombustible = [];
+  refMovCombustible.forEach(docItem => {
+      arrMovCombustible.push({ id: docItem.id, ...docItem.data() });
+  });
+  
+  // Asignamos a tu variable global y renderizamos directamente
+  listaMovimientos = arrMovCombustible;
+  renderizarHistorialCombustible();
 
             let totalComprado = 0;
             let inversionMesTotal = 0;
