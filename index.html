@@ -1073,17 +1073,16 @@ window.sincronizarDatos = async () => {
             listaInventario = [];
             snapInv.forEach(d => listaInventario.push({ id: d.id, ...d.data() }));
             listaInventario.sort((a, b) => String(b.fecha || '').localeCompare(String(a.fecha || '')));
+// 2. LECTURA GENERAL DE MOVIMIENTOS PERSONALES
+const snapMov = await getDocs(collection(db, "movimientos_personales_ethan"));
+listaMovimientos = [];
+snapMov.forEach(d => {
+    listaMovimientos.push({ id: d.id, ...d.data() });
+});
 
-// 2. LECTURA DESDE LA COLECCIÓN REAL DE MOVIMIENTOS PERSONALES:
-  const snapCombustible = await getDocs(collection(db, "movimientos_personales_ethan"));
-  let listaCombustible = [];
-  snapCombustible.forEach(d => {
-      const data = d.data();
-      if (data.categoria && data.categoria.trim().toLowerCase() === 'combustible') {
-          listaCombustible.push({ id: d.id, ...data });
-      }
-  });
-  renderizarHistorialCombustible(listaCombustible);
+// Renderizamos el historial usando el arreglo global unificado
+renderizarHistorialCombustible();
+
             let totalComprado = 0;
             let inversionMesTotal = 0;
             let inversionHistoricaTotal = 0;
