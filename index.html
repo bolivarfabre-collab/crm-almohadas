@@ -1459,7 +1459,7 @@ if(m.categoria && (m.categoria.toLowerCase().includes('combustible') || m.catego
 
                 document.getElementById('fin-comb-total').innerText = `$${combustibleTotal.toFixed(2)}`;
                 document.getElementById('dash-gasto-combustible').innerText = `$${combustibleMes.toFixed(2)}`;
-                
+                renderizarHistorialCombustible();
                 let ventasMesTotal = 0;
                 let costoMercaderiaMes = 0;
 
