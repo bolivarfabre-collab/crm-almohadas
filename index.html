@@ -610,10 +610,6 @@
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Especifique nueva Categoría</label>
                     <input type="text" id="mov-cat-manual" placeholder="Escriba la nueva Categoría..." class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2">
                 </div>
-                <div id="contenedor-recibo" class="sm:col-span-2 hidden">
-                      <label class="block text-xs font-semibold text-slate-600 mb-1">Recibo #</label>
-                      <input type="text" id="mov-recibo" placeholder="Ej: 00123" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2">
-                  </div>
                 <div class="sm:col-span-2">
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Descripción / Observación</label>
                     <input type="text" id="mov-obs" placeholder="Ej: Abono, compra de víveres..." class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2">
@@ -953,106 +949,31 @@
             flecha.classList.toggle('rotate-180');
         }
 
-       window.verificarCategoriaPersonal = (select) => {
-    const contManual = document.getElementById('contenedor-cat-manual');
-    const contRecibo = document.getElementById('contenedor-recibo');
+        window.verificarCategoriaPersonal = (select) => {
+            const contManual = document.getElementById('contenedor-cat-manual');
+            if(select.value === 'Agregar Manual') {
+                contManual.classList.remove('hidden');
+                document.getElementById('mov-cat-manual').required = true;
+            } else {
+                contManual.classList.add('hidden');
+                document.getElementById('mov-cat-manual').required = false;
+            }
+        }
 
-    // Manejo de Categoría Manual
-    if (select.value === 'Agregar Manual') {
-        contManual.classList.remove('hidden');
-        document.getElementById('mov-cat-manual').required = true;
-    } else {
-        contManual.classList.add('hidden');
-        document.getElementById('mov-cat-manual').required = false;
-        document.getElementById('mov-cat-manual').value = '';
-    }
-
-    // Manejo de Recibo #
-    if (select.value === 'Crédito Colchón C. Ethan') {
-        contRecibo.classList.remove('hidden');
-    } else {
-        contRecibo.classList.add('hidden');
-        document.getElementById('mov-recibo').value = '';
-    }
-};
-
-      // --- INICIO CÓDIGO NUEVO (Doble cabecera combustible) ---
-      function obtenerRangoSemanaCombustible(fechaStr) {
-        const f = new Date(fechaStr + "T12:00:00");
-        const dia = f.getDay();
-        const diffLunes = dia === 0 ? -6 : 1 - dia;
-        
-        const lunes = new Date(f);
-        lunes.setDate(f.getDate() + diffLunes);
-        
-        const domingo = new Date(lunes);
-        domingo.setDate(lunes.getDate() + 6);
-
-        const opcionesFecha = { day: 'numeric', month: 'short' };
-        const formatInicio = lunes.toLocaleDateString('es-ES', opcionesFecha);
-        const formatFin = domingo.toLocaleDateString('es-ES', opcionesFecha);
-        const anio = lunes.getFullYear();
-
-        return {
-          clave: `${lunes.toISOString().split('T')[0]}`,
-          textoCabecera: `Semana del ${formatInicio} al ${formatFin} del ${anio}`
-        };
-      }
-
-window.renderizarHistorialCombustible = function(registrosCombustible) {
-    const datosARenderizar = registrosCombustible || window.listaMovimientos || [];
-    const contenedor = document.getElementById('tabla-combustible-cuerpo');
-    if (!contenedor) return;
-
-    if (!datosARenderizar || datosARenderizar.length === 0) {
-        contenedor.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-400">Sin registros de combustible</td></tr>';
-        return;
-    }
-
-    let html = '';
-    datosARenderizar.forEach(item => {
-        html += `
-            <tr class="hover:bg-slate-50 border-b border-slate-100 text-xs sm:text-sm">
-                <td class="p-3 pl-4 text-slate-600">${item.fecha || '-'}</td>
-                <td class="p-3 text-slate-600">${item.categoria || 'Combustible'}</td>
-                <td class="p-3 font-semibold text-amber-600">$${parseFloat(item.monto || 0).toFixed(2)}</td>
-                <td class="p-3 text-slate-600">${item.descripcion || '-'}</td>
-                <td class="p-3 text-center space-x-2">
-                    <button onclick="editarCombustible('${item.id}')" class="text-indigo-600 hover:text-indigo-800"><i class="fa-solid fa-pen"></i></button>
-                    <button onclick="eliminarCombustible('${item.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
-                </td>
-            </tr>
-        `;
-    });
-
-    contenedor.innerHTML = html;
-};
-      // --- FIN CÓDIGO NUEVO ---
-window.sincronizarDatos = async () => {
-        const dot = document.getElementById('status-dot');
-        dot.className = "w-3 h-3 rounded-full bg-amber-500 animate-pulse";
-        try {
-            // 1. Aquí traes tu inventario (que ya lo tenías)
-            const snapInv = await getDocs(collection(db, "inventario_ethan"));
-            listaInventario = [];
-            snapInv.forEach(d => listaInventario.push({ id: d.id, ...d.data() }));
-            listaInventario.sort((a, b) => String(b.fecha || '').localeCompare(String(a.fecha || '')));
-            // 2. LECTURA AISLADA DE MOVIMIENTOS DE COMBUSTIBLE
-            const refMovCombustible = await getDocs(collection(db, "movimientos_personales_ethan"));
-            let arrMovCombustible = [];
-            refMovCombustible.forEach(docItem => {
-            arrMovCombustible.push({ id: docItem.id, ...docItem.data() });
-    });
-
-            arrMovCombustible.sort((a, b) => String(b.fecha || '').localeCompare(String(a.fecha || '')));
-            listaMovimientos = arrMovCombustible;
-            renderizarHistorialCombustible();
-            let totalComprado = 0;
-            let inversionMesTotal = 0;
-            let inversionHistoricaTotal = 0;
-            let costoTotalGasto = 0; 
-            const hoyStr = new Date().toISOString().split('T')[0];
-            const mesActualStr = hoyStr.substring(0, 7);
+        window.sincronizarDatos = async () => {
+            const dot = document.getElementById('status-dot');
+            dot.className = "w-3 h-3 rounded-full bg-amber-500 animate-pulse";
+            try {
+                const snapInv = await getDocs(collection(db, "inventario_ethan"));
+                listaInventario = [];
+                snapInv.forEach(d => listaInventario.push({ id: d.id, ...d.data() }));
+                listaInventario.sort((a, b) => String(b.fecha || '').localeCompare(String(a.fecha || '')));
+                let totalComprado = 0;
+                let costoTotalGasto = 0;
+                let inversionMesTotal = 0;
+                let inversionHistoricaTotal = 0;
+                const hoyStr = new Date().toISOString().split('T')[0];
+                const mesActualStr = hoyStr.substring(0, 7);
 
                 let htmlInv = '';
                 listaInventario.forEach(item => {
@@ -1351,7 +1272,8 @@ window.sincronizarDatos = async () => {
                     const esEsteMes = m.fecha && m.fecha.startsWith(mesActualStr);
                     const fechaMov = m.fecha ? new Date(m.fecha + 'T00:00:00') : null;
                     const esEstaSemana = fechaMov && (fechaMov >= inicioSemanaActual && fechaMov <= finSemanaActual);
-if(m.categoria && (m.categoria.toLowerCase().includes('combustible') || m.categoria.toLowerCase().includes('gasolina'))) {
+
+                    if(m.categoria === 'Combustible') {
                         combustibleTotal += montoNum;
                         if(esEsteMes) combustibleMes += montoNum;
                     }
@@ -1366,8 +1288,10 @@ if(m.categoria && (m.categoria.toLowerCase().includes('combustible') || m.catego
                         if(esEstaSemana) gasSem += montoNum;
                     }
                 });
-                    renderizarMovimientosPorSemanas();
-                    renderizarHistorialCombustible();
+
+                renderizarMovimientosPorSemanas();
+                renderizarHistorialCombustible();
+
                 const snapCaja = await getDocs(collection(db, "caja_ethan"));
                 listaCaja = [];
                 snapCaja.forEach(d => listaCaja.push({ id: d.id, ...d.data() }));
@@ -1422,7 +1346,7 @@ if(m.categoria && (m.categoria.toLowerCase().includes('combustible') || m.catego
 
                 document.getElementById('fin-comb-total').innerText = `$${combustibleTotal.toFixed(2)}`;
                 document.getElementById('dash-gasto-combustible').innerText = `$${combustibleMes.toFixed(2)}`;
-                renderizarHistorialCombustible();
+                
                 let ventasMesTotal = 0;
                 let costoMercaderiaMes = 0;
 
@@ -1563,16 +1487,6 @@ if(m.categoria && (m.categoria.toLowerCase().includes('combustible') || m.catego
         }
 
         // Historial de Entradas y Salidas agrupado por Semanas con facilidad de abrir/cerrar
-        let filtroCategoriaSeleccionada = null;
-
-        window.filtrarPorCategoria = (cat) => {
-        if (filtroCategoriaSeleccionada === cat) {
-        filtroCategoriaSeleccionada = null;
-        } else {
-        filtroCategoriaSeleccionada = cat;
-        }
-        renderizarMovimientosPorSemanas();
-        }; 
         window.toggleSemanaAccordion = (idSemana) => {
             semanasAbiertas[idSemana] = !semanasAbiertas[idSemana];
             renderizarMovimientosPorSemanas();
@@ -1589,11 +1503,7 @@ if(m.categoria && (m.categoria.toLowerCase().includes('combustible') || m.catego
 
             // Agrupar por semana (Lunes a Domingo)
             const semanasMap = {};
-            const movimientosFiltrados = filtroCategoriaSeleccionada 
-            ? listaMovimientos.filter(m => m.categoria === filtroCategoriaSeleccionada)
-            : listaMovimientos;
-
-            movimientosFiltrados.forEach(m => {       
+            listaMovimientos.forEach(m => {
                 if(!m.fecha) return;
                 const idSem = obtenerIdSemana(m.fecha);
                 if(!semanasMap[idSem]) {
@@ -1617,14 +1527,7 @@ if(m.categoria && (m.categoria.toLowerCase().includes('combustible') || m.catego
             // Ordenar semanas de la más reciente a la más antigua
             const semanasKeys = Object.keys(semanasMap).sort().reverse();
             let html = '';
-                          if (filtroCategoriaSeleccionada) {
-                  html += `
-                      <div class="mb-4 flex items-center justify-between bg-indigo-50 border border-indigo-200 text-indigo-800 px-4 py-2 rounded-xl text-xs font-medium">
-                          <span>Filtrado por categoría: <strong class="font-bold">${filtroCategoriaSeleccionada}</strong></span>
-                          <button onclick="filtrarPorCategoria(null)" class="text-rose-600 hover:underline font-bold">Mostrar todos</button>
-                      </div>
-                  `;
-              }
+
             semanasKeys.forEach(idSem => {
                 const sem = semanasMap[idSem];
                 const balanceSemanal = sem.totalEntradas - sem.totalSalidas;
@@ -1645,95 +1548,77 @@ if(m.categoria && (m.categoria.toLowerCase().includes('combustible') || m.catego
                         </div>
                         <div class="${isOpen ? '' : 'hidden'} overflow-x-auto">
                             <table class="w-full text-left border-collapse text-sm">
-                                 <thead>
+                                <thead>
                                     <tr class="bg-slate-900 text-white text-xs uppercase">
                                         <th class="p-3">Fecha</th>
                                         <th class="p-3">Tipo</th>
                                         <th class="p-3">Categoría</th>
                                         <th class="p-3">Monto</th>
                                         <th class="p-3">Descripción</th>
-                                        ${filtroCategoriaSeleccionada === 'Crédito Colchón C. Ethan' ? '<th class="p-3">Recibo #</th>' : ''}
                                         <th class="p-3 text-center">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-slate-100 text-xs sm:text-sm">
-                    `;
-  
-                    sem.movimientos.forEach(m => {
-                        const esEntrada = m.tipo === 'Entrada';
-                        html += `
-                            <tr class="hover:bg-slate-50 border-b border-slate-100">
-                                <td class="p-3 text-slate-600">${m.fecha || '-'}</td>
-                                <td class="p-3"><span class="px-2 py-1 text-xs rounded-full ${esEntrada ? 'bg-emerald-100 text-emerald-700 font-semibold' : 'bg-rose-100 text-rose-700 font-semibold'}">${m.tipo || 'Salida'}</span></td>
-                             <td class="p-3 font-medium">
-                              <button type="button" 
-                                      onclick="event.stopPropagation(); filtrarPorCategoria('${m.categoria}')" 
-                                      class="hover:underline transition-colors ${filtroCategoriaSeleccionada === m.categoria ? 'text-indigo-600 font-bold' : 'text-slate-800 hover:text-indigo-600'}">
-                                  ${m.categoria || '-'}
-                              </button>
-                            </td>
+                `;
+
+                sem.movimientos.forEach(m => {
+                    const esEntrada = m.tipo === 'Entrada';
+                    html += `
+                        <tr class="hover:bg-slate-50 border-b border-slate-100">
+                            <td class="p-3 text-slate-600">${m.fecha || '-'}</td>
+                            <td class="p-3"><span class="px-2 py-1 text-xs rounded-full ${esEntrada ? 'bg-emerald-100 text-emerald-700 font-semibold' : 'bg-rose-100 text-rose-700 font-semibold'}">${m.tipo || 'Salida'}</span></td>
+                            <td class="p-3 font-medium text-slate-800">${m.categoria || '-'}</td>
                             <td class="p-3 font-semibold ${esEntrada ? 'text-emerald-600' : 'text-rose-600'}">$${(parseFloat(m.monto) || 0).toFixed(2)}</td>
                             <td class="p-3 text-slate-600">${m.descripcion || '-'}</td>
-                            ${filtroCategoriaSeleccionada === 'Crédito Colchón C. Ethan' 
-                                ? `<td class="p-3">
-                                      ${m.recibo ? `<span class="inline-block bg-slate-100 text-slate-700 text-xs font-semibold px-2 py-0.5 rounded">${m.recibo}</span>` : '-'}
-                                   </td>` 
-                                : ''}
                             <td class="p-3 text-center space-x-2">
                                 <button onclick="editarMovimientoPersonal('${m.id}')" class="text-indigo-600 hover:text-indigo-800"><i class="fa-solid fa-pen"></i></button>
                                 <button onclick="eliminarMovimientoPersonal('${m.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
                             </td>
                         </tr>
-                        `;
-                    });
+                    `;
+                });
 
-                    html += `
+                html += `
                                 </tbody>
                             </table>
                         </div>
                     </div>
-                    `;
-                });
+                `;
+            });
+
             contenedor.innerHTML = html;
         }
 
         window.editarMovimientoPersonal = (id) => {
-              const m = listaMovimientos.find(x => x.id === id);
-              if(!m) return;
-              document.getElementById('mov-id').value = m.id;
-              document.getElementById('mov-fecha').value = m.fecha || '';
-              document.getElementById('mov-tipo').value = m.tipo || 'Salida';
-              document.getElementById('mov-monto').value = m.monto || '';
-              document.getElementById('mov-obs').value = m.descripcion || '';
-              
-              const catSelect = document.getElementById('mov-cat');
-              let existe = false;
-              for(let i=0; i<catSelect.options.length; i++) {
-                  if(catSelect.options[i].value === m.categoria) {
-                      existe = true;
-                      break;
-                  }
-              }
-              if(existe) {
-                  catSelect.value = m.categoria;
-                  document.getElementById('contenedor-cat-manual').classList.add('hidden');
-              } else {
-                  catSelect.value = 'Agregar Manual';
-                  document.getElementById('contenedor-cat-manual').classList.remove('hidden');
-                  document.getElementById('mov-cat-manual').value = m.categoria || '';
-              }
+            const m = listaMovimientos.find(x => x.id === id);
+            if(!m) return;
+            document.getElementById('mov-id').value = m.id;
+            document.getElementById('mov-fecha').value = m.fecha || '';
+            document.getElementById('mov-tipo').value = m.tipo || 'Salida';
+            document.getElementById('mov-monto').value = m.monto || '';
+            document.getElementById('mov-obs').value = m.descripcion || '';
+            
+            const catSelect = document.getElementById('mov-cat');
+            let existe = false;
+            for(let i=0; i<catSelect.options.length; i++) {
+                if(catSelect.options[i].value === m.categoria) {
+                    existe = true;
+                    break;
+                }
+            }
+            if(existe) {
+                catSelect.value = m.categoria;
+                document.getElementById('contenedor-cat-manual').classList.add('hidden');
+            } else {
+                catSelect.value = 'Agregar Manual';
+                document.getElementById('contenedor-cat-manual').classList.remove('hidden');
+                document.getElementById('mov-cat-manual').value = m.categoria || '';
+            }
 
-              // Dispara la verificación para actualizar los contenedores dinámicos
-              window.verificarCategoriaPersonal(catSelect);
+            document.getElementById('mov-titulo-form').innerText = "Editar Movimiento Personal";
+            document.getElementById('modal-movimiento-personal').classList.remove('hidden');
+        };
 
-              // Carga el recibo si aplica
-              if(m.categoria === 'Crédito Colchón C. Ethan') {
-                  document.getElementById('mov-recibo').value = m.recibo || '';
-              }
-
-              document.getElementById('mov-titulo-form').innerText = "Editar Movimiento Personal";
-              document.getElementById('modal-movimiento-personal').classList.remove('hidden');
-          };
         window.eliminarMovimientoPersonal = async (id) => {
             if(confirm("Â¿Está seguro de eliminar este movimiento personal?")) {
                 await deleteDoc(doc(db, "movimientos_personales_ethan", id));
@@ -1742,32 +1627,30 @@ if(m.categoria && (m.categoria.toLowerCase().includes('combustible') || m.catego
         };
 
         window.guardarMovimientoPersonal = async (e) => {
-              e.preventDefault();
-              const id = document.getElementById('mov-id').value;
-              let categoria = document.getElementById('mov-cat').value;
-              if(categoria === 'Agregar Manual') {
-                  categoria = document.getElementById('mov-cat-manual').value;
-              }
-              const reciboVal = document.getElementById('mov-recibo') ? document.getElementById('mov-recibo').value.trim() : '';
+            e.preventDefault();
+            const id = document.getElementById('mov-id').value;
+            let categoria = document.getElementById('mov-cat').value;
+            if(categoria === 'Agregar Manual') {
+                categoria = document.getElementById('mov-cat-manual').value;
+            }
+            const data = {
+                fecha: document.getElementById('mov-fecha').value,
+                tipo: document.getElementById('mov-tipo').value,
+                monto: parseFloat(document.getElementById('mov-monto').value) || 0,
+                categoria: categoria,
+                descripcion: document.getElementById('mov-obs').value
+            };
 
-              const data = {
-                  fecha: document.getElementById('mov-fecha').value,
-                  tipo: document.getElementById('mov-tipo').value,
-                  monto: parseFloat(document.getElementById('mov-monto').value) || 0,
-                  categoria: categoria,
-                  recibo: (categoria === 'Crédito Colchón C. Ethan') ? reciboVal : '',
-                  descripcion: document.getElementById('mov-obs').value
-              };
+            if(id) {
+                await updateDoc(doc(db, "movimientos_personales_ethan", id), data);
+            } else {
+                await addDoc(collection(db, "movimientos_personales_ethan"), data);
+            }
+            cerrarModalMovimientoPersonal();
+            sincronizarDatos();
+            alert("Movimiento personal guardado con Éxito!");
+        };
 
-              if(id) {
-                  await updateDoc(doc(db, "movimientos_personales_ethan", id), data);
-              } else {
-                  await addDoc(collection(db, "movimientos_personales_ethan"), data);
-              }
-              cerrarModalMovimientoPersonal();
-              sincronizarDatos();
-              alert("Movimiento personal guardado con Éxito!");
-          };
         window.toggleMesCobros = (mesClave) => {
             const abierto = !mesesCobrosAbiertos[mesClave];
             mesesCobrosAbiertos[mesClave] = abierto;
@@ -2167,31 +2050,71 @@ if(m.categoria && (m.categoria.toLowerCase().includes('combustible') || m.catego
             alert("Carga de combustible guardada con Éxito!");
         };
 
+        function renderizarHistorialCombustible() {
+            const tabla = document.getElementById('tabla-combustible-cuerpo');
+            if(!tabla) return;
+            const combMovs = listaMovimientos.filter(m => m.categoria === 'Combustible');
+            let html = '';
+            combMovs.forEach(m => {
+                html += `
+                    <tr class="hover:bg-slate-50 border-b border-slate-100">
+                        <td class="p-3 text-slate-600">${m.fecha || '-'}</td>
+                        <td class="p-3 font-medium text-slate-800">${m.categoria || '-'}</td>
+                        <td class="p-3 font-semibold text-amber-600">$${(parseFloat(m.monto) || 0).toFixed(2)}</td>
+                        <td class="p-3 text-slate-600">${m.descripcion || '-'}</td>
+                        <td class="p-3 text-center space-x-2">
+                            <button onclick="editarMovimientoPersonal('${m.id}')" class="text-indigo-600 hover:text-indigo-800"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="eliminarMovimientoPersonal('${m.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+            tabla.innerHTML = html || '<tr><td colspan="5" class="p-4 text-center text-slate-400">Sin registros de combustible</td></tr>';
+
+            const { inicioSemanaActual, finSemanaActual, inicioSemanaAnterior, finSemanaAnterior } = obtenerRangosSemanales();
+            let totalSemAct = 0, totalSemAnt = 0;
+
+            combMovs.forEach(m => {
+                if(!m.fecha) return;
+                const f = new Date(m.fecha + 'T00:00:00');
+                const monto = parseFloat(m.monto || 0);
+                if(f >= inicioSemanaActual && f <= finSemanaActual) {
+                    totalSemAct += monto;
+                } else if(f >= inicioSemanaAnterior && f <= finSemanaAnterior) {
+                    totalSemAnt += monto;
+                }
+            });
+
+            const elAct = document.getElementById('comb-total-sem-actual');
+            const elAnt = document.getElementById('comb-total-sem-anterior');
+            if(elAct) elAct.innerText = `$${totalSemAct.toFixed(2)}`;
+            if(elAnt) elAnt.innerText = `$${totalSemAnt.toFixed(2)}`;
+        }
 
         window.filtrarCombustiblePorMes = () => {
-              const mesVal = document.getElementById('filtro-mes-combustible').value;
-              if(!mesVal) return;
-              const tabla = document.getElementById('tabla-combustible-cuerpo');
-              const combMovs = listaMovimientos.filter(m => m.categoria === 'Combustible' && m.fecha && m.fecha.startsWith(mesVal));
-              let html = '';
-              combMovs.forEach(m => {
-                  html += `
-                      <tr class="hover:bg-slate-50 border-b border-slate-100">
-                          <td class="p-3 text-slate-600">${m.fecha || '-'}</td>
-                          <td class="p-3 font-medium text-slate-600">${m.categoria || '-'}</td>
-                          <td class="p-3 font-semibold text-amber-600">$${(parseFloat(m.monto) || 0).toFixed(2)}</td>
-                          <td class="p-3 text-slate-600">${m.descripcion || '-'}</td>
-                          <td class="p-3 text-center space-x-2">
-                              <button onclick="editarMovimientoPersonal('${m.id}')" class="text-indigo-600 hover:text-indigo-800"><i class="fa-solid fa-pen"></i></button>
-                              <button onclick="eliminarMovimientoPersonal('${m.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
-                          </td>
-                      </tr>
-                  `;
-              });
-              if(tabla) tabla.innerHTML = html || '<tr><td colspan="5" class="p-4 text-center text-slate-400">Sin registros para este mes</td></tr>';
-              const infoFiltro = document.getElementById('info-filtro-combustible');
-              if(infoFiltro) infoFiltro.innerText = `Filtrado por mes: ${mesVal}`;
-          };
+            const mesVal = document.getElementById('filtro-mes-combustible').value;
+            if(!mesVal) return;
+            const tabla = document.getElementById('tabla-combustible-cuerpo');
+            const combMovs = listaMovimientos.filter(m => m.categoria === 'Combustible' && m.fecha && m.fecha.startsWith(mesVal));
+            let html = '';
+            combMovs.forEach(m => {
+                html += `
+                    <tr class="hover:bg-slate-50 border-b border-slate-100">
+                        <td class="p-3 text-slate-600">${m.fecha || '-'}</td>
+                        <td class="p-3 font-medium text-slate-800">${m.categoria || '-'}</td>
+                        <td class="p-3 font-semibold text-amber-600">$${(parseFloat(m.monto) || 0).toFixed(2)}</td>
+                        <td class="p-3 text-slate-600">${m.descripcion || '-'}</td>
+                        <td class="p-3 text-center space-x-2">
+                            <button onclick="editarMovimientoPersonal('${m.id}')" class="text-indigo-600 hover:text-indigo-800"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="eliminarMovimientoPersonal('${m.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+            tabla.innerHTML = html || '<tr><td colspan="5" class="p-4 text-center text-slate-400">Sin registros para este mes</td></tr>';
+            document.getElementById('info-filtro-combustible').innerText = `Filtrado por mes: ${mesVal}`;
+        };
+
         window.limpiarFiltroCombustible = () => {
             document.getElementById('filtro-mes-combustible').value = '';
             document.getElementById('info-filtro-combustible').innerText = "Mostrando todos los registros";
