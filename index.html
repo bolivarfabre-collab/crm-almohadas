@@ -2159,7 +2159,7 @@
       semanasOrdenadas.forEach((key, index) => {
                       const grupo = grupos[key];
                       const promedio = grupo.total / 7;
-                      const totalKmSemana = grupo.items.reduce((acc, m) => acc + (parseFloat(m.km) || 0), 0);
+                      const totalKmSemana = parseFloat(window.mapaKilometros?.[key]?.km) || 0;
   
                       let filasHtml = '';
                       grupo.items.forEach(m => {
