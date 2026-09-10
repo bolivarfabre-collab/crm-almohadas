@@ -461,89 +461,85 @@
                 </div>
             </div>
 
-            <!-- CONTROL COMBUSTIBLE -->
-              <div id="vista-combustible" class="space-y-6 hidden">
-                  <!-- Formulario de Registro Rápido -->
-                  <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
-                      <h2 class="font-bold text-slate-800 text-base">Registro Combustible</h2>
-                    <form onsubmit="guardarCombustibleRapido(event)" class="grid grid-cols-1 sm:grid-cols-4 gap-4 text-sm">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">Fecha</label>
-                            <input type="date" id="comb-fecha" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2">
+         <!-- CONTROL COMBUSTIBLE -->
+                <div id="vista-combustible" class="space-y-6 hidden">
+                    <!-- Formulario de Registro Rápido -->
+                    <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                        <h2 class="font-bold text-slate-800 text-base">Registro Combustible</h2>
+                        <form onsubmit="guardarCombustibleRapido(event)" class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Fecha</label>
+                                <input type="date" id="comb-fecha" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Costo Gasolina ($)</label>
+                                <input type="number" step="0.01" min="0" id="comb-monto" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2" placeholder="Ej: 4.00 o 11.00">
+                            </div>
+                            <div class="flex items-end">
+                                <button type="submit" class="w-full bg-amber-600 hover:bg-amber-500 text-white p-2 rounded-lg font-medium shadow-sm transition">Registrar Carga</button>
+                            </div>
+                        </form>
+                    </div>
+     
+                    <!-- Contenedor del Historial con las dos tarjetas separadas -->
+                    <div class="space-y-4">
+                        <!-- Grid de Tarjetas Superiores (Gasto Gasolina y Kilómetros) -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Tarjeta 1: Gasto Gasolina -->
+                            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
+                                <div class="bg-amber-50 text-amber-600 p-3 rounded-xl flex items-center justify-center shrink-0">
+                                    <i class="fa-solid fa-gas-pump text-xl"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h2 class="font-bold text-slate-800 text-sm mb-2">Gasto Gasolina</h2>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <div class="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 flex flex-col">
+                                            <span class="text-[9px] uppercase font-semibold text-slate-400">Semana Anterior</span>
+                                            <span id="comb-total-sem-anterior" class="text-xs font-bold text-slate-700">$0.00</span>
+                                        </div>
+                                        <div class="bg-amber-50/60 border border-amber-200 rounded-lg px-2.5 py-1.5 flex flex-col">
+                                            <span class="text-[9px] uppercase font-semibold text-amber-600">Semana Actual</span>
+                                            <span id="comb-total-sem-actual" class="text-xs font-bold text-amber-700">$0.00</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+     
+                              <!-- Tarjeta 2: Kilómetros -->
+                               <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
+                                   <div class="bg-blue-50 text-blue-600 p-3 rounded-xl flex items-center justify-center shrink-0">
+                                       <i class="fa-solid fa-road text-xl"></i>
+                                   </div>
+                                   <div class="flex-1">
+                                       <h2 class="font-bold text-slate-800 text-sm mb-2">Kilómetros</h2>
+                                       <div class="grid grid-cols-2 gap-2">
+                                           <div class="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 flex flex-col">
+                                               <span class="text-[9px] uppercase font-semibold text-slate-400">Semana Anterior</span>
+                                               <span id="comb-km-sem-anterior" class="text-xs font-bold text-slate-700">0 km</span>
+                                           </div>
+                                           <div class="bg-amber-50/60 border border-amber-200 rounded-lg px-2.5 py-1.5 flex flex-col">
+                                               <span class="text-[9px] uppercase font-semibold text-amber-600">Semana Actual</span>
+                                               <span id="comb-km-sem-actual" class="text-xs font-bold text-amber-700">0 km</span>
+                                           </div>
+                                       </div>
+                                   </div>
+                               </div>
                         </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">Costo Gasolina ($)</label>
-                            <input type="number" step="0.01" min="0" id="comb-monto" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2" placeholder="Ej: 4.00 o 11.00">
+     
+                        <!-- Tabla del Historial -->
+                        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
+                            <table class="w-full text-left border-collapse text-sm">
+                                <thead>
+                                    <tr class="bg-[#0B132B] text-white text-xs uppercase">
+                                        <th class="p-3">Fecha</th><th class="p-3">Categoría</th><th class="p-3">Monto</th><th class="p-3">Descripción</th><th class="p-3 text-center">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabla-combustible-cuerpo" class="divide-y divide-slate-100 text-xs sm:text-sm"></tbody>
+                            </table>
                         </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">Kilómetros (Km)</label>
-                            <input type="number" step="1" min="0" id="comb-km" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2" placeholder="Ej: 150">
-                        </div>
-                        <div class="flex items-end">
-                            <button type="submit" class="w-full bg-amber-600 hover:bg-amber-500 text-white p-2 rounded-lg font-medium shadow-sm transition">Registrar Carga</button>
-                        </div>
-                    </form>
-                                  </div>
-                  
-                  <!-- Contenedor del Historial con las dos tarjetas separadas -->
-                  <div class="space-y-4">
-                      <!-- Grid de Tarjetas Superiores (Gasto Gasolina y Kilómetros) -->
-                      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <!-- Tarjeta 1: Gasto Gasolina -->
-                          <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
-                              <div class="bg-amber-50 text-amber-600 p-3 rounded-xl flex items-center justify-center shrink-0">
-                                  <i class="fa-solid fa-gas-pump text-xl"></i>
-                              </div>
-                              <div class="flex-1">
-                                  <h2 class="font-bold text-slate-800 text-sm mb-2">Gasto Gasolina</h2>
-                                  <div class="grid grid-cols-2 gap-2">
-                                      <div class="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 flex flex-col">
-                                          <span class="text-[9px] uppercase font-semibold text-slate-400">Semana Anterior</span>
-                                          <span id="comb-total-sem-anterior" class="text-xs font-bold text-slate-700">$0.00</span>
-                                      </div>
-                                      <div class="bg-amber-50/60 border border-amber-200 rounded-lg px-2.5 py-1.5 flex flex-col">
-                                          <span class="text-[9px] uppercase font-semibold text-amber-600">Semana Actual</span>
-                                          <span id="comb-total-sem-actual" class="text-xs font-bold text-amber-700">$0.00</span>
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
+                    </div>
+                </div>
 
-                          <!-- Tarjeta 2: Kilómetros -->
-                          <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
-                              <div class="bg-blue-50 text-blue-600 p-3 rounded-xl flex items-center justify-center shrink-0">
-                                  <i class="fa-solid fa-road text-xl"></i>
-                              </div>
-                              <div class="flex-1">
-                                  <h2 class="font-bold text-slate-800 text-sm mb-2">Kilómetros</h2>
-                                  <div class="grid grid-cols-2 gap-2">
-                                      <div class="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 flex flex-col">
-                                          <span class="text-[9px] uppercase font-semibold text-slate-400">Semana Anterior</span>
-                                          <span id="comb-km-sem-anterior" class="text-xs font-bold text-slate-700">0 km</span>
-                                      </div>
-                                      <div class="bg-amber-50/60 border border-amber-200 rounded-lg px-2.5 py-1.5 flex flex-col">
-                                          <span class="text-[9px] uppercase font-semibold text-amber-600">Semana Actual</span>
-                                          <span id="comb-km-sem-actual" class="text-xs font-bold text-amber-700">0 km</span>
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-
-                      <!-- Tabla del Historial -->
-                      <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
-                          <table class="w-full text-left border-collapse text-sm">
-                              <thead>
-                                  <tr class="bg-[#0B132B] text-white text-xs uppercase">
-                                      <th class="p-3">Fecha</th><th class="p-3">Categoría</th><th class="p-3">Monto</th><th class="p-3">Descripción</th><th class="p-3 text-center">Acciones</th>
-                                  </tr>
-                              </thead>
-                              <tbody id="tabla-combustible-cuerpo" class="divide-y divide-slate-100 text-xs sm:text-sm"></tbody>
-                          </table>
-                      </div>
-                  </div>
-              </div>
-          
               <!-- CAJA -->
             
             <div id="vista-caja" class="space-y-6 hidden">
@@ -2102,160 +2098,199 @@
         };
 
         window.guardarCombustibleRapido = async (e) => {
-             e.preventDefault();
-             const data = {
-                 fecha: document.getElementById('comb-fecha').value,
-                 tipo: 'Salida',
-                 monto: parseFloat(document.getElementById('comb-monto').value) || 0,
-                 km: parseFloat(document.getElementById('comb-km').value) || 0,
-                 categoria: 'Combustible',
-                 descripcion: 'Carga de gasolina camioneta'
-             };
-             await addDoc(collection(db, "movimientos_personales_ethan"), data);
-             e.target.reset();
-             document.getElementById('comb-fecha').value = new Date().toISOString().split('T')[0];
-             sincronizarDatos();
-             alert("Carga de combustible guardada con Éxito!");
+              e.preventDefault();
+              const data = {
+                  fecha: document.getElementById('comb-fecha').value,
+                  tipo: 'Salida',
+                  monto: parseFloat(document.getElementById('comb-monto').value) || 0,
+                  km: 0,
+                  categoria: 'Combustible',
+                  descripcion: 'Carga de gasolina camioneta'
+              };
+              await addDoc(collection(db, "movimientos_personales_ethan"), data);
+              e.target.reset();
+              document.getElementById('comb-fecha').value = new Date().toISOString().split('T')[0];
+              sincronizarDatos();
+              alert("Carga de combustible guardada con Éxito!");
          };
-
-            const renderizarHistorialCombustibleConLista = (combMovs) => {
-              const tablaOriginal = document.getElementById('tabla-combustible-cuerpo');
-              const parentContainer = tablaOriginal ? (tablaOriginal.closest('.overflow-x-auto') || tablaOriginal.parentElement) : document.querySelector('.overflow-x-auto');
-              if(!parentContainer) return;
-              
-              if (combMovs.length === 0) {
-                  parentContainer.innerHTML = '<div class="p-4 text-center text-slate-400 bg-white border border-slate-200 rounded-lg">Sin registros de combustible</div>';
-                  return;
-              }
-
-              const obtenerLunes = (fechaStr) => {
-                  const partes = fechaStr.split('-');
-                  const fecha = partes.length === 3 ? new Date(partes[0], partes[1] - 1, partes[2]) : new Date(fechaStr);
-                  const dia = fecha.getDay();
-                  const diff = fecha.getDate() - dia + (dia === 0 ? -6 : 1);
-                  return new Date(fecha.setDate(diff));
-              };
-
-              const formatearFechaLocal = (d) => {
-                  return d.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
-              };
-
-              const grupos = {};
-              combMovs.forEach(m => {
-                  if (!m.fecha) return;
-                  const lunes = obtenerLunes(m.fecha);
-                  const domingo = new Date(lunes);
-                  domingo.setDate(lunes.getDate() + 6);
-                  
-                  const weekKey = lunes.toISOString().split('T')[0];
-                  const weekLabel = `Semana del ${formatearFechaLocal(lunes)} al ${formatearFechaLocal(domingo)}`;
-                  
-                  if (!grupos[weekKey]) {
-                      grupos[weekKey] = { label: weekLabel, items: [], total: 0 };
-                  }
-                  grupos[weekKey].items.push(m);
-                  grupos[weekKey].total += parseFloat(m.monto || 0);
-              });
-
-              const semanasOrdenadas = Object.keys(grupos).sort().reverse();
-              let htmlAcumulado = '';
-
-semanasOrdenadas.forEach((key, index) => {
-                    const grupo = grupos[key];
-                    const promedio = grupo.total / 7;
-                    const totalKmSemana = grupo.items.reduce((acc, m) => acc + (parseFloat(m.km) || 0), 0);
-
-                    let filasHtml = '';
-                    grupo.items.forEach(m => {
-                        filasHtml += `
-                            <tr class="hover:bg-slate-50 border-b border-slate-100">
-                                <td class="p-3 text-slate-600">${m.fecha || '-'}</td>
-                                <td class="p-3 font-medium text-slate-800">${m.categoria || '-'}</td>
-                                <td class="p-3 font-semibold text-amber-600">$${(parseFloat(m.monto) || 0).toFixed(2)}</td>
-                                <td class="p-3 text-slate-600">${m.descripcion || '-'} (${m.km || 0} km)</td>
-                                <td class="p-3 text-center space-x-2">
-                                    <button onclick="editarMovimientoPersonal('${m.id}')" class="text-indigo-600 hover:text-indigo-800"><i class="fa-solid fa-pen"></i></button>
-                                    <button onclick="eliminarMovimientoPersonal('${m.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
-                                </td>
-                            </tr>
-                        `;
-                    });
-
-                    const isOpen = index === 0 ? 'open' : '';
-
-                    htmlAcumulado += `
-                        <details ${isOpen} class="mb-3 bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden">
-                            <summary class="px-4 py-3 font-medium text-white bg-[#0f172a] cursor-pointer hover:bg-slate-800 transition-colors select-none flex justify-between items-center">
-                                <span class="flex items-center gap-2">
-                                    <span>📅</span> ${grupo.label}
-                                </span>
-                                <div class="flex items-center gap-4" onclick="event.stopPropagation()">
+  
+              const renderizarHistorialCombustibleConLista = (combMovs) => {
+                const tablaOriginal = document.getElementById('tabla-combustible-cuerpo');
+                const parentContainer = tablaOriginal ? (tablaOriginal.closest('.overflow-x-auto') || tablaOriginal.parentElement) : document.querySelector('.overflow-x-auto');
+                if(!parentContainer) return;
+                
+                if (combMovs.length === 0) {
+                    parentContainer.innerHTML = '<div class="p-4 text-center text-slate-400 bg-white border border-slate-200 rounded-lg">Sin registros de combustible</div>';
+                    return;
+                }
+  
+                const obtenerLunes = (fechaStr) => {
+                    const partes = fechaStr.split('-');
+                    const fecha = partes.length === 3 ? new Date(partes[0], partes[1] - 1, partes[2]) : new Date(fechaStr);
+                    const dia = fecha.getDay();
+                    const diff = fecha.getDate() - dia + (dia === 0 ? -6 : 1);
+                    return new Date(fecha.setDate(diff));
+                };
+  
+                const formatearFechaLocal = (d) => {
+                    return d.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                };
+  
+                const grupos = {};
+                combMovs.forEach(m => {
+                    if (!m.fecha) return;
+                    const lunes = obtenerLunes(m.fecha);
+                    const domingo = new Date(lunes);
+                    domingo.setDate(lunes.getDate() + 6);
+                    
+                    const weekKey = lunes.toISOString().split('T')[0];
+                    const weekLabel = `Semana del ${formatearFechaLocal(lunes)} al ${formatearFechaLocal(domingo)}`;
+                    
+                    if (!grupos[weekKey]) {
+                        grupos[weekKey] = { label: weekLabel, items: [], total: 0 };
+                    }
+                    grupos[weekKey].items.push(m);
+                    grupos[weekKey].total += parseFloat(m.monto || 0);
+                });
+  
+                const semanasOrdenadas = Object.keys(grupos).sort().reverse();
+                let htmlAcumulado = '';
+  
+      semanasOrdenadas.forEach((key, index) => {
+                      const grupo = grupos[key];
+                      const promedio = grupo.total / 7;
+                      const totalKmSemana = grupo.items.reduce((acc, m) => acc + (parseFloat(m.km) || 0), 0);
+  
+                      let filasHtml = '';
+                      grupo.items.forEach(m => {
+                          filasHtml += `
+                              <tr class="hover:bg-slate-50 border-b border-slate-100">
+                                  <td class="p-3 text-slate-600">${m.fecha || '-'}</td>
+                                  <td class="p-3 font-medium text-slate-800">${m.categoria || '-'}</td>
+                                  <td class="p-3 font-semibold text-amber-600">$${(parseFloat(m.monto) || 0).toFixed(2)}</td>
+                                  <td class="p-3 text-slate-600">${m.descripcion || '-'}</td>
+                                  <td class="p-3 text-center space-x-2">
+                                      <button onclick="editarMovimientoPersonal('${m.id}')" class="text-indigo-600 hover:text-indigo-800"><i class="fa-solid fa-pen"></i></button>
+                                      <button onclick="eliminarMovimientoPersonal('${m.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
+                                  </td>
+                              </tr>
+                          `;
+                      });
+  
+                      const isOpen = index === 0 ? 'open' : '';
+  
+                      htmlAcumulado += `
+                          <details ${isOpen} class="mb-3 bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden">
+                              <summary class="px-4 py-3 font-medium text-white bg-[#0f172a] cursor-pointer hover:bg-slate-800 transition-colors select-none flex justify-between items-center">
+                                  <span class="flex items-center gap-2">
+                                      <span>📅</span> ${grupo.label}
+                                  </span>
+                                 <div class="flex items-center gap-2" onclick="event.stopPropagation()">
                                     <span class="text-xs bg-slate-800 text-amber-400 px-3 py-1 rounded-full font-semibold border border-slate-700">
                                         Promedio: $${promedio.toFixed(2)} (Total: $${grupo.total.toFixed(2)})
                                     </span>
-                                    <span class="text-xs bg-slate-800 text-blue-400 px-3 py-1 rounded-full font-semibold border border-slate-700">
+                                    <span onclick="registrarKmRapido('${key}', ${totalKmSemana})" class="text-xs bg-slate-800 text-blue-400 px-3 py-1 rounded-full font-semibold border border-slate-700 cursor-pointer hover:bg-slate-700 transition">
                                         Km: ${totalKmSemana} km
                                     </span>
                                 </div>
-                            </summary>
-                          <div class="overflow-x-auto bg-white">
-                              <table class="w-full text-left border-collapse">
-                                  <tbody>
-                                      ${filasHtml}
-                                  </tbody>
-                              </table>
-                          </div>
-                      </details>
-                  `;
-              });
+                                </summary>
+                              <div class="overflow-x-auto bg-white">
+                                  <table class="w-full text-left border-collapse">
+                                      <tbody>
+                                          ${filasHtml}
+                                      </tbody>
+                                  </table>
+                              </div>
+                          </details>
+                      `;
+                  });
+  
+                htmlAcumulado += `<table style="display:none;"><tbody id="tabla-combustible-cuerpo"></tbody></table>`;
+                parentContainer.innerHTML = htmlAcumulado;
+            };
+    window.renderizarHistorialCombustible = async () => {
+                const combMovs = listaMovimientos.filter(m => m.categoria === 'Combustible');
+                
+                // 1. Cargamos el mapa de kilómetros directo desde Firebase
+                window.mapaKilometros = window.mapaKilometros || {};
+                try {
+                    const querySnapshot = await getDocs(collection(db, "kilometros_ethan"));
+                    querySnapshot.forEach((docSnap) => {
+                        window.mapaKilometros[docSnap.id] = docSnap.data();
+                    });
+                } catch (e) {
+                    console.error("Error al cargar kilómetros de Firebase:", e);
+                }
 
-              htmlAcumulado += `<table style="display:none;"><tbody id="tabla-combustible-cuerpo"></tbody></table>`;
-              parentContainer.innerHTML = htmlAcumulado;
-          };
-       function renderizarHistorialCombustible() {
-              const combMovs = listaMovimientos.filter(m => m.categoria === 'Combustible');
-              renderizarHistorialCombustibleConLista(combMovs);
+                renderizarHistorialCombustibleConLista(combMovs);
+    
+                const { inicioSemanaActual, finSemanaActual, inicioSemanaAnterior, finSemanaAnterior } = obtenerRangosSemanales();
+                let totalSemAct = 0, totalSemAnt = 0;
+                let kmSemAct = 0, kmSemAnt = 0;
+    
+                combMovs.forEach(m => {
+                    if(!m.fecha) return;
+                    const f = new Date(m.fecha + 'T00:00:00');
+                    const monto = parseFloat(m.monto || 0);
+                    if(f >= inicioSemanaActual && f <= finSemanaActual) {
+                        totalSemAct += monto;
+                    } else if(f >= inicioSemanaAnterior && f <= finSemanaAnterior) {
+                        totalSemAnt += monto;
+                    }
+                });
+    
+                const obtenerLunesStr = (d) => {
+                    const fecha = new Date(d);
+                    const dia = fecha.getDay();
+                    const diff = fecha.getDate() - dia + (dia === 0 ? -6 : 1);
+                    const lunes = new Date(fecha.setDate(diff));
+                    const anio = lunes.getFullYear();
+                    const mes = String(lunes.getMonth() + 1).padStart(2, '0');
+                    const diaStr = String(lunes.getDate()).padStart(2, '0');
+                    return `${anio}-${mes}-${diaStr}`;
+                };
+    
+                const keySemAct = obtenerLunesStr(inicioSemanaActual);
+                const keySemAnt = obtenerLunesStr(inicioSemanaAnterior);
+    
+                // 2. Leemos directamente desde el caché sincronizado de Firebase
+                kmSemAct = parseFloat(window.mapaKilometros[keySemAct]?.km) || 0;
+                kmSemAnt = parseFloat(window.mapaKilometros[keySemAnt]?.km) || 0;
+    
+                const elAct = document.getElementById('comb-total-sem-actual');
+                const elAnt = document.getElementById('comb-total-sem-anterior');
+                if(elAct) elAct.innerText = `$${totalSemAct.toFixed(2)}`;
+                if(elAnt) elAnt.innerText = `$${totalSemAnt.toFixed(2)}`;
+    
+                const kmElAct = document.getElementById('comb-km-sem-actual');
+                const kmElAnt = document.getElementById('comb-km-sem-anterior');
+                if(kmElAct) {
+                    kmElAct.innerText = `${kmSemAct} km`;
+                }
+                if(kmElAnt) {
+                    kmElAnt.innerText = `${kmSemAnt} km`;
+                }
+             }
 
-              const { inicioSemanaActual, finSemanaActual, inicioSemanaAnterior, finSemanaAnterior } = obtenerRangosSemanales();
-              let totalSemAct = 0, totalSemAnt = 0;
-              let kmSemAct = 0, kmSemAnt = 0;
-
-              combMovs.forEach(m => {
-                  if(!m.fecha) return;
-                  const f = new Date(m.fecha + 'T00:00:00');
-                  const monto = parseFloat(m.monto || 0);
-                  if(f >= inicioSemanaActual && f <= finSemanaActual) {
-                      totalSemAct += monto;
-                  } else if(f >= inicioSemanaAnterior && f <= finSemanaAnterior) {
-                      totalSemAnt += monto;
-                  }
-              });
-
-              const obtenerLunesStr = (d) => {
-                  const fecha = new Date(d);
-                  const dia = fecha.getDay();
-                  const diff = fecha.getDate() - dia + (dia === 0 ? -6 : 1);
-                  const lunes = new Date(fecha.setDate(diff));
-                  return lunes.toISOString().split('T')[0];
-              };
-
-              const keySemAct = obtenerLunesStr(inicioSemanaActual);
-              const keySemAnt = obtenerLunesStr(inicioSemanaAnterior);
-
-              kmSemAct = parseFloat(localStorage.getItem(`km_semana_${keySemAct}`)) || 0;
-              kmSemAnt = parseFloat(localStorage.getItem(`km_semana_${keySemAnt}`)) || 0;
-
-              const elAct = document.getElementById('comb-total-sem-actual');
-              const elAnt = document.getElementById('comb-total-sem-anterior');
-              if(elAct) elAct.innerText = `$${totalSemAct.toFixed(2)}`;
-              if(elAnt) elAnt.innerText = `$${totalSemAnt.toFixed(2)}`;
-
-              const kmElAct = document.getElementById('comb-km-sem-actual');
-              const kmElAnt = document.getElementById('comb-km-sem-anterior');
-              if(kmElAct) kmElAct.innerText = `${kmSemAct} km`;
-              if(kmElAnt) kmElAnt.innerText = `${kmSemAnt} km`;
-          }
-
+        // Función auxiliar para registrar kilómetros haciendo clic en las tarjetas
+             window.registrarKmRapido = async (weekKey, valorActual) => {
+                 const nuevoValor = prompt("Ingrese los kilómetros recorridos en esta semana:", valorActual);
+                 if (nuevoValor === null) return;
+                 const kmNum = parseFloat(nuevoValor);
+                 if (isNaN(kmNum) || kmNum < 0) {
+                     alert("Por favor ingrese un número válido.");
+                     return;
+                 }
+                 try {
+                     await setDoc(doc(db, "kilometros_ethan", weekKey), { km: kmNum }, { merge: true });
+                     if (window.mapaKilometros) window.mapaKilometros[weekKey] = { km: kmNum };
+                 } catch (e) {
+                     console.error("Error guardando en Firebase:", e);
+                 }
+                 renderizarHistorialCombustible();
+                 alert("¡Kilómetros actualizados con éxito!");
+             };
+                         
         window.guardarKmSemana = async (weekKey) => {
             const input = document.getElementById(`input-km-${weekKey}`);
             if (!input) return;
