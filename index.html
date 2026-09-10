@@ -1517,9 +1517,23 @@
             };
         }
 
-        // Historial de Entradas y Salidas agrupado por Semanas con facilidad de abrir/cerrar
+// Historial de Entradas y Salidas agrupado por Semanas
         window.toggleSemanaAccordion = (idSemana) => {
             semanasAbiertas[idSemana] = !semanasAbiertas[idSemana];
+            renderizarMovimientosPorSemanas();
+        };
+
+        // Variable global y función expuesta para el filtro de categorías por clic
+        if (typeof window.categoriaFiltroActiva === 'undefined') {
+            window.categoriaFiltroActiva = null;
+        }
+
+        window.filtrarPorCategoriaMovimiento = (categoria) => {
+            if (window.categoriaFiltroActiva === categoria) {
+                window.categoriaFiltroActiva = null; // Segundo clic: quita el filtro y muestra todo
+            } else {
+                window.categoriaFiltroActiva = categoria; // Primer clic: filtra solo esta categoría
+            }
             renderizarMovimientosPorSemanas();
         };
 
@@ -1532,9 +1546,24 @@
                 return;
             }
 
+            // Aplicar filtro si está activo
+            let movimientosAProcesar = listaMovimientos;
+            if (window.categoriaFiltroActiva) {
+                movimientosAProcesar = listaMovimientos.filter(m => m.categoria === window.categoriaFiltroActiva);
+            }
+
+            if(movimientosAProcesar.length === 0) {
+                contenedor.innerHTML = `
+                    <div class="bg-white p-6 rounded-xl border border-slate-200 text-center text-slate-500 text-sm">
+                        No hay movimientos para la categoría <b>"${window.categoriaFiltroActiva}"</b>. 
+                        <button onclick="filtrarPorCategoriaMovimiento('${window.categoriaFiltroActiva}')" class="ml-2 text-indigo-600 underline font-semibold">Ver todos</button>
+                    </div>`;
+                return;
+            }
+
             // Agrupar por semana (Lunes a Domingo)
             const semanasMap = {};
-            listaMovimientos.forEach(m => {
+            movimientosAProcesar.forEach(m => {
                 if(!m.fecha) return;
                 const idSem = obtenerIdSemana(m.fecha);
                 if(!semanasMap[idSem]) {
@@ -1562,7 +1591,7 @@
             semanasKeys.forEach(idSem => {
                 const sem = semanasMap[idSem];
                 const balanceSemanal = sem.totalEntradas - sem.totalSalidas;
-                const isOpen = semanasAbiertas[idSem] !== false; // por defecto abierto o según estado
+                const isOpen = semanasAbiertas[idSem] !== false;
 
                 html += `
                     <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden mb-4">
@@ -1590,27 +1619,30 @@
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-slate-100 text-xs sm:text-sm">
-                `;
+        `;
 
-                sem.movimientos.forEach(m => {
-                    const esEntrada = m.tipo === 'Entrada';
-                    html += `
-                        <tr class="hover:bg-slate-50 border-b border-slate-100">
-                            <td class="p-3 text-slate-600">${m.fecha || '-'}</td>
-                            <td class="p-3"><span class="px-2 py-1 text-xs rounded-full ${esEntrada ? 'bg-emerald-100 text-emerald-700 font-semibold' : 'bg-rose-100 text-rose-700 font-semibold'}">${m.tipo || 'Salida'}</span></td>
-                            <td class="p-3 font-medium text-slate-800">${m.categoria || '-'}</td>
-                            <td class="p-3 font-semibold ${esEntrada ? 'text-emerald-600' : 'text-rose-600'}">$${(parseFloat(m.monto) || 0).toFixed(2)}</td>
-                            <td class="p-3 text-slate-600">${m.descripcion || '-'}</td>
-                            <td class="p-3 text-center space-x-2">
-                                <button onclick="editarMovimientoPersonal('${m.id}')" class="text-indigo-600 hover:text-indigo-800"><i class="fa-solid fa-pen"></i></button>
-                                <button onclick="eliminarMovimientoPersonal('${m.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
-                            </td>
-                        </tr>
-                    `;
-                });
-
-                html += `
-                                </tbody>
+        sem.movimientos.forEach(m => {
+            const esEntrada = m.tipo === 'Entrada';
+            html += `
+                <tr class="hover:bg-slate-50 border-b border-slate-100">
+                    <td class="p-3 text-slate-600">${m.fecha || '-'}</td>
+                    <td class="p-3"><span class="px-2 py-1 text-xs rounded-full ${esEntrada ? 'bg-emerald-100 text-emerald-700 font-semibold' : 'bg-rose-100 text-rose-700 font-semibold'}">${m.tipo || 'Salida'}</span></td>
+                    <td class="p-3">
+                        <span onclick="filtrarPorCategoriaMovimiento('${m.categoria}')" class="cursor-pointer font-medium text-indigo-600 hover:underline" title="Haz clic para filtrar por esta categoría">
+                            ${m.categoria || '-'}
+                        </span>
+                    </td>
+                    <td class="p-3 font-semibold ${esEntrada ? 'text-emerald-600' : 'text-rose-600'}">$${(parseFloat(m.monto) || 0).toFixed(2)}</td>
+                    <td class="p-3 text-slate-600">${m.descripcion || '-'}</td>
+                    <td class="p-3 text-center space-x-2">
+                        <button onclick="editarMovimientoPersonal('${m.id}')" class="text-indigo-600 hover:text-indigo-800"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="eliminarMovimientoPersonal('${m.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>
+            `;
+        });
+                        html += `
+                                    </tbody>
                             </table>
                         </div>
                     </div>
@@ -1619,7 +1651,7 @@
 
             contenedor.innerHTML = html;
         }
-
+                
         window.editarMovimientoPersonal = (id) => {
             const m = listaMovimientos.find(x => x.id === id);
             if(!m) return;
@@ -2223,9 +2255,30 @@
               if(kmElAct) kmElAct.innerText = `${kmSemAct} km`;
               if(kmElAnt) kmElAnt.innerText = `${kmSemAnt} km`;
           }
-        
-        window.guardarKmSemana = (weekKey, valor) => {
-            localStorage.setItem(`km_semana_${weekKey}`, valor);
+
+        window.guardarKmSemana = async (weekKey) => {
+            const input = document.getElementById(`input-km-${weekKey}`);
+            if (!input) return;
+            const valor = parseFloat(input.value) || 0;
+            try {
+                await setDoc(doc(db, "kilometros_ethan", weekKey), { km: valor }, { merge: true });
+                alert('¡Kilómetros guardados en Firebase correctamente!');
+            } catch (error) {
+                console.error("Error al guardar km:", error);
+                alert('Hubo un error al guardar los kilómetros.');
+            }
+        };
+
+        window.eliminarKmSemana = async (weekKey) => {
+            try {
+                await setDoc(doc(db, "kilometros_ethan", weekKey), { km: 0 }, { merge: true });
+                const input = document.getElementById(`input-km-${weekKey}`);
+                if (input) input.value = '';
+                alert('Registro de kilómetros eliminado.');
+            } catch (error) {
+                console.error("Error al eliminar km:", error);
+                alert('Hubo un error al eliminar los kilómetros.');
+            }
         };
 
         window.filtrarCombustiblePorMes = () => {
